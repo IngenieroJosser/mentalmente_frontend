@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                                  Int               @id @default(autoincrement())
+  usuario                             String
+  correo                              String            @unique
+  genero                              String
+  contrasena                          String
+  createdAt                           DateTime          @default(now())
+}
+
+model MedicalRecord {
+  id                                  String            @id @default(cuid())
+  numero_historia_clinica             String
+  nombre_paciente                     String
+  tipo_identificacion                 String
+  edad                                String
+  fecha_nacimiento                    String
+  escolaridad                         String?
+  ocupacion                           String?
+  lugar_nacimiento                    String?
+  nacionalidad                        String?
+  religion                            String?
+  direccion_residencia                String?
+  barrio                              String?
+  ciudad                              String?
+  departamento                        String?
+  fecha_ingreso                       String
+  celular                             String?
+  telefono                            String?
+  e_mail                              String?
+  eps                                 String?
+  cotizante                           String?
+  beneficiario                        String?
+  remitido_por                        String?
+
+  responsable1_nombre                 String?
+  responsable1_parentesco             String?
+  responsable1_celular                String?
+  responsable1_ocupacion              String?
+
+  responsable2_nombre                 String?
+  responsable2_parentesco             String?
+  responsable2_celular                String?
+  responsable2_ocupacion              String?
+
+  atendido_por                        String?
+
+  antecedentes_personales             String?
+  antecedentes_patologicos            String?
+  antecedentes_quirurgicos            String?
+  antecedentes_psicopatologicos       String?
+  historia_de_trauma_o_abuso          String?
+  estado_del_sueno                    String?
+  consumo_sustancias                  String?
+
+  antecedentes_familiares_patologicos String?
+  antecedentes_familiares_traumaticos String?
+  antecedentes_familiares_consumo     String?
+
+  embarazo                            String?
+  parto                               String?
+  desarrollo_psicomotor               String?
+  dinamica_familiar                   String?
+  motivo_consulta                     String?
+  historia_del_problema               String?
+  expectativa_terapia                 String?
+  examen_mental                       String?
+  evaluacion_psicologica              String?
+  idx_o_dx                            String?
+  objetivos_terapeuticos              String?
+  plan_terapeutico                    String?
+  derivacion_o_remision               String?
+  recomendaciones                     String?
+
+  evolucion_nombre                    String?
+  evolucion_historia_no               String?
+  evolucion                           String?
+  digitado_por                        String?
+
+  createdAt                           String              @default("now")
+  updatedAt                           String              @default("now")
+}
