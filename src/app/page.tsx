@@ -7,6 +7,27 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from 'next/image';
 
+// Tipo para los elementos flotantes
+type FloatingElement = {
+  type: string;
+  icon: any;
+  color: string;
+  size: number;
+  x: number;
+  y: number;
+  sizeActual: number;
+  speedX: number;
+  speedY: number;
+  alpha: number;
+  maxAlpha: number;
+  life: number;
+  maxLife: number;
+  direction: number;
+  rotation: number;
+  rotationSpeed: number;
+  pulseDirection: number;
+};
+
 export default function MentalmenteLogin() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(true);
@@ -23,6 +44,7 @@ export default function MentalmenteLogin() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
+    // Función para establecer el tamaño del canvas
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -39,50 +61,60 @@ export default function MentalmenteLogin() {
       { name: 'star', icon: Star, color: '#c77914', size: 25 }
     ];
     
-    const elements: any[] = [];
+    const elements: FloatingElement[] = [];
     const maxElements = 12;
     
     // Crear elementos iniciales
-    for (let i = 0; i < maxElements; i++) {
-      createNewElement();
-    }
-    
-    function createNewElement() {
+    const createNewElement = () => {
       const type = elementTypes[Math.floor(Math.random() * elementTypes.length)];
       const alpha = Math.random() * 0.5 + 0.1;
-      const life = Math.random() * 100 + 50; // Vida aleatoria
-      const maxLife = life * 2; // Vida máxima (aparece y desaparece)
+      const life = Math.random() * 100 + 50;
+      const maxLife = life * 2;
       
       elements.push({
-        type,
+        type: type.name,
+        icon: type.icon,
+        color: type.color,
+        size: type.size,
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: type.size,
+        sizeActual: type.size,
         speedX: (Math.random() - 0.5) * 0.5,
         speedY: (Math.random() - 0.5) * 0.5,
         alpha,
         maxAlpha: alpha,
         life,
         maxLife,
-        direction: Math.random() > 0.5 ? 1 : -1, // 1 = apareciendo, -1 = desapareciendo
+        direction: Math.random() > 0.5 ? 1 : -1,
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: Math.random() * 0.02 - 0.01
+        rotationSpeed: Math.random() * 0.02 - 0.01,
+        pulseDirection: 1
       });
+    };
+    
+    for (let i = 0; i < maxElements; i++) {
+      createNewElement();
     }
     
-    const drawElement = (element: any) => {
-      const { type, x, y, size, alpha, rotation } = element;
+    const drawElement = (element: FloatingElement) => {
+      const { type, x, y, sizeActual, alpha, rotation, color } = element;
       
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(rotation);
       ctx.globalAlpha = alpha;
       
-      // Simular dibujo del icono
+      // Dibujar un círculo de fondo para el icono
+      ctx.beginPath();
+      ctx.arc(0, 0, sizeActual * 0.7, 0, Math.PI * 2);
+      ctx.fillStyle = `${color}20`; // Color con transparencia
+      ctx.fill();
+      
+      // Dibujar el icono simbólico
       ctx.beginPath();
       
       // Cada tipo tiene un dibujo especial
-      switch(type.name) {
+      switch(type) {
         case 'brain':
           // Forma de cerebro
           ctx.moveTo(0, -15);
@@ -96,16 +128,16 @@ export default function MentalmenteLogin() {
           
         case 'heart':
           // Forma de corazón
-          ctx.moveTo(0, -size/3);
+          ctx.moveTo(0, -sizeActual/3);
           ctx.bezierCurveTo(
-            size/2, -size/2,
-            size, size/3,
-            0, size/2
+            sizeActual/2, -sizeActual/2,
+            sizeActual, sizeActual/3,
+            0, sizeActual/2
           );
           ctx.bezierCurveTo(
-            -size, size/3,
-            -size/2, -size/2,
-            0, -size/3
+            -sizeActual, sizeActual/3,
+            -sizeActual/2, -sizeActual/2,
+            0, -sizeActual/3
           );
           break;
           
@@ -123,18 +155,18 @@ export default function MentalmenteLogin() {
           
         case 'leaf':
           // Forma de hoja
-          ctx.moveTo(0, size/2);
-          ctx.lineTo(0, -size/2);
-          ctx.moveTo(0, -size/3);
-          ctx.quadraticCurveTo(-size/2, -size/4, 0, size/3);
-          ctx.moveTo(0, -size/3);
-          ctx.quadraticCurveTo(size/2, -size/4, 0, size/3);
+          ctx.moveTo(0, sizeActual/2);
+          ctx.lineTo(0, -sizeActual/2);
+          ctx.moveTo(0, -sizeActual/3);
+          ctx.quadraticCurveTo(-sizeActual/2, -sizeActual/4, 0, sizeActual/3);
+          ctx.moveTo(0, -sizeActual/3);
+          ctx.quadraticCurveTo(sizeActual/2, -sizeActual/4, 0, sizeActual/3);
           break;
           
         case 'star':
           // Forma de estrella
           const spikes = 5;
-          const outerRadius = size / 2;
+          const outerRadius = sizeActual / 2;
           const innerRadius = outerRadius / 2;
           
           let rot = Math.PI / 2 * 3;
@@ -156,7 +188,7 @@ export default function MentalmenteLogin() {
           break;
       }
       
-      ctx.strokeStyle = type.color;
+      ctx.strokeStyle = color;
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.restore();
@@ -166,7 +198,10 @@ export default function MentalmenteLogin() {
       if (!ctx) return;
       
       // Fondo degradado
-      ctx.fillStyle = '#0a1727';
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#0a1727');
+      gradient.addColorStop(1, '#102235');
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Actualizar y dibujar elementos
@@ -188,6 +223,12 @@ export default function MentalmenteLogin() {
           continue;
         }
         
+        // Efecto de pulso (cambio de tamaño)
+        element.sizeActual += 0.05 * element.pulseDirection;
+        if (element.sizeActual > element.size * 1.2 || element.sizeActual < element.size * 0.8) {
+          element.pulseDirection *= -1;
+        }
+        
         // Calcular alpha basado en el ciclo de vida
         const halfLife = element.maxLife / 2;
         if (element.life > halfLife) {
@@ -204,6 +245,25 @@ export default function MentalmenteLogin() {
         
         // Dibujar elemento
         drawElement(element);
+      }
+      
+      // Dibujar conexiones entre elementos cercanos
+      ctx.strokeStyle = 'rgba(199, 121, 20, 0.1)';
+      ctx.lineWidth = 1;
+      
+      for (let i = 0; i < elements.length; i++) {
+        for (let j = i + 1; j < elements.length; j++) {
+          const dx = elements[i].x - elements[j].x;
+          const dy = elements[i].y - elements[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 150) {
+            ctx.beginPath();
+            ctx.moveTo(elements[i].x, elements[i].y);
+            ctx.lineTo(elements[j].x, elements[j].y);
+            ctx.stroke();
+          }
+        }
       }
       
       requestAnimationFrame(animate);
@@ -283,7 +343,7 @@ export default function MentalmenteLogin() {
           <div>
             <div className="flex items-center mb-8">
               <div className="bg-[rgba(199,121,20,.2)] p-3 rounded-xl mr-3 flex items-center justify-center">
-                {/* Solución para la imagen - tamaño adecuado y calidad */}
+                {/* Contenedor de imagen con tamaño fijo y calidad máxima */}
                 <div className="relative w-24 h-24">
                   <Image
                     src="/img/logo.png"
@@ -296,7 +356,7 @@ export default function MentalmenteLogin() {
                   />
                 </div>
               </div>
-              {/* <h1 className="text-3xl font-bold text-white font-serif tracking-tight">Mentalmente</h1> */}
+              <h1 className="text-3xl font-bold text-white font-serif tracking-tight">Mentalmente</h1>
             </div>
             
             <h2 className="text-2xl font-bold text-white mt-16 mb-6">Su espacio seguro para el bienestar mental</h2>
