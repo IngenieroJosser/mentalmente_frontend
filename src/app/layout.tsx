@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto } from 'next/font/google'
+import { Roboto } from 'next/font/google';
 import "./globals.css";
 
 const roboto = Roboto({
@@ -41,19 +41,17 @@ export const metadata: Metadata = {
   ],
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.variable} font-sans`}>
+    <html lang="es" className={`${roboto.variable} font-sans`}>
       <head>
-        {/* Favicon estándar */}
-        <link rel="icon" href="/img/logo_mentalmente.png" />
-        {/* Otros formatos opcionales */}
+        {/* Favicon PNG ubicado en /public/img */}
         <link rel="icon" type="image/png" href="/img/logo_mentalmente.png" />
+        {/* Favicon SVG (si tienes uno en el futuro) */}
         <link rel="icon" type="image/svg+xml" href="/img/logo_mentalmente.png" />
       </head>
       <body>{children}</body>
