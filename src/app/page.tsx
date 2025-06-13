@@ -356,7 +356,7 @@ export default function MentalmenteLogin() {
                   />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-white font-serif tracking-tight">Mentalmente</h1>
+              {/* <h1 className="text-3xl font-bold text-white font-serif tracking-tight">Mentalmente</h1> */}
             </div>
             
             <h2 className="text-2xl font-bold text-white mt-16 mb-6">Su espacio seguro para el bienestar mental</h2>
