@@ -136,7 +136,7 @@ const DashboardMentalmentePage = () => {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar - Versión móvil */}
       {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
+        <div className="md:hidden fixed inset-0 z-50 bg-[rgba(0,0,0,0.2)] backdrop-blur-md" onClick={() => setIsMenuOpen(false)}>
           <div className="w-64 h-full bg-[#19334c] text-white" onClick={e => e.stopPropagation()}>
             <div className="p-5 flex items-center justify-between border-b border-[#2a4b6c]">
               <div className="flex items-center space-x-3">

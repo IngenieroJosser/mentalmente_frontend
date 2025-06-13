@@ -1,4 +1,4 @@
-import { User, Calendar, FileText, Activity } from "lucide-react";
+// import { User, Calendar, FileText, Activity } from "lucide-react";
 
 export const elementTypes = [
   { name: 'brain', color: '#19334c', size: 40 },
