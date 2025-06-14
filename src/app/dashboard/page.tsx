@@ -20,6 +20,8 @@ import {
   Bell,
   Menu
 } from 'lucide-react';
+import Image from 'next/image';
+import { clinicalHistories, templates, filters } from '@/lib/constants';
 
 const DashboardMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -28,54 +30,6 @@ const DashboardMentalmentePage = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Datos de ejemplo ajustados al modelo actual
-  const clinicalHistories = [
-    {
-      id: 1,
-      patientName: 'María Rodríguez',
-      lastUpdate: '15 Jun 2023',
-      therapist: 'Dra. Laura Méndez',
-    },
-    {
-      id: 2,
-      patientName: 'Carlos Pérez',
-      lastUpdate: 'Hoy',
-      therapist: 'Dra. Laura Méndez',
-    },
-    {
-      id: 3,
-      patientName: 'Ana Martínez',
-      lastUpdate: '12 Jun 2023',
-      therapist: 'Dra. Laura Méndez',
-    },
-    {
-      id: 4,
-      patientName: 'Luis García',
-      lastUpdate: '10 Jun 2023',
-      therapist: 'Dr. Javier López',
-    },
-    {
-      id: 5,
-      patientName: 'Sofía López',
-      lastUpdate: 'Ayer',
-      therapist: 'Dra. Laura Méndez',
-    },
-  ];
-
-  // Plantillas de historias clínicas
-  const templates = [
-    { id: 1, name: 'Evaluación Psicológica Inicial', category: 'Evaluación' },
-    { id: 2, name: 'Seguimiento Terapéutico', category: 'Seguimiento' },
-    { id: 3, name: 'Terapia Cognitivo-Conductual', category: 'Terapia' },
-    { id: 4, name: 'Informe de Cierre de Caso', category: 'Cierre' },
-  ];
-
-  // Filtros simplificados
-  const filters = [
-    { id: 'all', name: 'Todas' },
-    { id: 'my', name: 'Mis Historias' },
-  ];
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -135,11 +89,23 @@ const DashboardMentalmentePage = () => {
       {/* Sidebar - Versión desktop */}
       <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
-          <div className="bg-[#c77914] p-2 rounded-lg">
-            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
+          <div className="flex items-center justify-center mb-8">
+          <div className="bg-[#19334c] p-3 rounded-xl flex items-center justify-center border border-[#c77914]/30">
+            <div className="relative w-14 h-14">
+              <Image
+                src="/img/logo.png"
+                alt="Logo de Mentalmente"
+                layout="fill"
+                objectFit="contain"
+                quality={100}
+                priority
+                className="rounded-lg"
+              />
+            </div>
           </div>
+        </div>
           <div>
-            <h1 className="font-bold">Mentalmente</h1>
+            <h1 className="font-bold mt-[-2em]">Mentalmente</h1>
             <p className="text-xs text-[#a0b1c5]">Historias Clínicas Digitales</p>
           </div>
         </div>
@@ -322,7 +288,7 @@ const DashboardMentalmentePage = () => {
                   <div className="p-5 border-b border-gray-100">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
+                        <h3 className="font-bold text-lg text-[#19334c]">{history.patient}</h3>
                         <div className="mt-2 text-sm text-gray-600">
                           <span className="font-medium">Terapeuta:</span> {history.therapist}
                         </div>
@@ -369,7 +335,7 @@ const DashboardMentalmentePage = () => {
                   {clinicalHistories.map(history => (
                     <tr key={history.id} className="border-t border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-medium text-[#19334c]">{history.patientName}</div>
+                        <div className="font-medium text-[#19334c]">{history.patient}</div>
                       </td>
                       <td className="py-4 px-4 text-sm">
                         {history.therapist}

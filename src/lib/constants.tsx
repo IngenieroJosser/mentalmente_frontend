@@ -1,25 +1,9 @@
 import {
-  FileText,
-  User,
-  Search,
-  PlusCircle,
-  ChevronDown,
   Clock,
   CheckCircle,
   Edit,
-  FilePlus,
   Folder,
-  LayoutGrid,
-  List,
-  Filter,
-  Download,
-  Printer,
-  Calendar,
   BarChart2,
-  Settings,
-  LogOut,
-  Bell,
-  Menu,
 } from "lucide-react";
 
 export const elementTypes = [
