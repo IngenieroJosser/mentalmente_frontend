@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from 'next/font/google';
 import "./globals.css";
+import ClientLayout from "@/components/ClientLayout";
 
 const roboto = Roboto({
   weight: '400',
@@ -43,18 +44,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${roboto.variable} font-sans`}>
-      <head>
-        {/* Favicon PNG ubicado en /public/img */}
-        <link rel="icon" type="image/png" href="/img/logo_mentalmente.png" />
-        {/* Favicon SVG (si tienes uno en el futuro) */}
-        <link rel="icon" type="image/svg+xml" href="/img/logo_mentalmente.png" />
-      </head>
-      <body>{children}</body>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${roboto.className} antialiased`}>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
+      </body>
     </html>
   );
 }
