@@ -20,14 +20,6 @@ import {
   Bell,
   Menu
 } from 'lucide-react';
-import { 
-  clinicalHistoryTypes, 
-  historyStatuses, 
-  clinicalHistories, 
-  templates, 
-  stats, 
-  filters 
-} from '@/lib/constants';
 
 const DashboardMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -37,13 +29,53 @@ const DashboardMentalmentePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Función para obtener clase de progreso dinámicamente
-  const getProgressColorClass = (progress: number) => {
-    if (progress === 100) return 'bg-green-500';
-    if (progress > 70) return 'bg-blue-500';
-    if (progress > 40) return 'bg-yellow-500';
-    return 'bg-gray-500';
-  };
+  // Datos de ejemplo ajustados al modelo actual
+  const clinicalHistories = [
+    {
+      id: 1,
+      patientName: 'María Rodríguez',
+      lastUpdate: '15 Jun 2023',
+      therapist: 'Dra. Laura Méndez',
+    },
+    {
+      id: 2,
+      patientName: 'Carlos Pérez',
+      lastUpdate: 'Hoy',
+      therapist: 'Dra. Laura Méndez',
+    },
+    {
+      id: 3,
+      patientName: 'Ana Martínez',
+      lastUpdate: '12 Jun 2023',
+      therapist: 'Dra. Laura Méndez',
+    },
+    {
+      id: 4,
+      patientName: 'Luis García',
+      lastUpdate: '10 Jun 2023',
+      therapist: 'Dr. Javier López',
+    },
+    {
+      id: 5,
+      patientName: 'Sofía López',
+      lastUpdate: 'Ayer',
+      therapist: 'Dra. Laura Méndez',
+    },
+  ];
+
+  // Plantillas de historias clínicas
+  const templates = [
+    { id: 1, name: 'Evaluación Psicológica Inicial', category: 'Evaluación' },
+    { id: 2, name: 'Seguimiento Terapéutico', category: 'Seguimiento' },
+    { id: 3, name: 'Terapia Cognitivo-Conductual', category: 'Terapia' },
+    { id: 4, name: 'Informe de Cierre de Caso', category: 'Cierre' },
+  ];
+
+  // Filtros simplificados
+  const filters = [
+    { id: 'all', name: 'Todas' },
+    { id: 'my', name: 'Mis Historias' },
+  ];
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -100,7 +132,7 @@ const DashboardMentalmentePage = () => {
         </div>
       )}
 
-      {/* Sidebar - Versión desktop - CORRECCIÓN: Cambiado md:block a md:flex */}
+      {/* Sidebar - Versión desktop */}
       <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
           <div className="bg-[#c77914] p-2 rounded-lg">
@@ -243,28 +275,6 @@ const DashboardMentalmentePage = () => {
             </div>
           </div>
 
-          {/* Estadísticas */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {stats.map((stat, index) => (
-              <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-gray-500 text-sm">{stat.title}</p>
-                    <p className="text-xl font-bold mt-1 text-[#19334c]">{stat.value}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-[#19334c]/10">
-                    <div className="text-[#19334c]">
-                      {stat.icon}
-                    </div>
-                  </div>
-                </div>
-                <p className={`text-xs mt-2 ${stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                  {stat.change} desde la última semana
-                </p>
-              </div>
-            ))}
-          </div>
-
           {/* Filtros y controles de vista */}
           <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -312,14 +322,9 @@ const DashboardMentalmentePage = () => {
                   <div className="p-5 border-b border-gray-100">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-lg text-[#19334c]">{history.patient}</h3>
-                        <div className="flex items-center mt-1">
-                          <span className={`px-2 py-1 rounded-full text-xs ${history.color}`}>
-                            {history.type}
-                          </span>
-                          <span className={`px-2 py-1 rounded-full text-xs ml-2 ${history.statusColor}`}>
-                            {history.status}
-                          </span>
+                        <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
+                        <div className="mt-2 text-sm text-gray-600">
+                          <span className="font-medium">Terapeuta:</span> {history.therapist}
                         </div>
                       </div>
                       <button 
@@ -332,23 +337,9 @@ const DashboardMentalmentePage = () => {
                   </div>
                   
                   <div className="p-5">
-                    <div className="flex justify-between text-sm mb-3">
+                    <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Última actualización:</span>
                       <span className="font-medium">{history.lastUpdate}</span>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Progreso</span>
-                        <span className="font-medium">{history.progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        {/* CORRECCIÓN: Reemplazado style inline por clase dinámica */}
-                        <div 
-                          className={`h-2 rounded-full ${getProgressColorClass(history.progress)}`} 
-                          style={{ width: `${history.progress}%` }}
-                        ></div>
-                      </div>
                     </div>
                     
                     <div className="flex justify-between mt-4">
@@ -356,7 +347,7 @@ const DashboardMentalmentePage = () => {
                         Ver detalles
                       </button>
                       <button className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center">
-                        <Edit size={14} className="mr-1" /> Continuar
+                        <Edit size={14} className="mr-1" /> Editar
                       </button>
                     </div>
                   </div>
@@ -369,10 +360,8 @@ const DashboardMentalmentePage = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Paciente</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Tipo</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Estado</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Terapeuta</th>
                     <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Última Actualización</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Progreso</th>
                     <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Acciones</th>
                   </tr>
                 </thead>
@@ -380,32 +369,12 @@ const DashboardMentalmentePage = () => {
                   {clinicalHistories.map(history => (
                     <tr key={history.id} className="border-t border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-medium text-[#19334c]">{history.patient}</div>
-                        <div className="text-sm text-gray-600">{history.therapist}</div>
+                        <div className="font-medium text-[#19334c]">{history.patientName}</div>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs ${history.color}`}>
-                          {history.type}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs ${history.statusColor}`}>
-                          {history.status}
-                        </span>
+                      <td className="py-4 px-4 text-sm">
+                        {history.therapist}
                       </td>
                       <td className="py-4 px-4 text-sm">{history.lastUpdate}</td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center">
-                          <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                            {/* CORRECCIÓN: Reemplazado style inline por clase dinámica */}
-                            <div 
-                              className={`h-2 rounded-full ${getProgressColorClass(history.progress)}`} 
-                              style={{ width: `${history.progress}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm">{history.progress}%</span>
-                        </div>
-                      </td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
                           <button className="p-1.5 text-gray-500 hover:text-[#c77914]" aria-label="Edit">
@@ -445,38 +414,6 @@ const DashboardMentalmentePage = () => {
                   </button>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Tipos de historias y estados */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-semibold text-lg mb-4 text-[#19334c]">Tipos de Historias Clínicas</h3>
-              <div className="space-y-3">
-                {clinicalHistoryTypes.map(type => (
-                  <div key={type.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className={type.color}>{type.name}</span>
-                    <span className="text-sm text-gray-600">24 historias</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-semibold text-lg mb-4 text-[#19334c]">Estados de Historias</h3>
-              <div className="space-y-3">
-                {historyStatuses.map(status => (
-                  <div key={status.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className={`p-1.5 rounded-full mr-2 ${status.color}`}>
-                        {status.icon}
-                      </div>
-                      <span>{status.name}</span>
-                    </div>
-                    <span className="text-sm text-gray-600">42 historias</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
