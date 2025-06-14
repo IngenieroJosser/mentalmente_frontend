@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserCircle, Lock, ShieldCheck, HeartHandshake, Scale, Leaf, Star } from 'lucide-react';
+import { UserCircle, Lock, ShieldCheck, HeartHandshake, Scale, Leaf, Star, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from 'next/image';
@@ -13,8 +13,10 @@ export default function MentalmenteLogin() {
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   // Usar el hook de animación del canvas
   useCanvasAnimation(canvasRef);
@@ -56,8 +58,14 @@ export default function MentalmenteLogin() {
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    // Enfocar el campo de contraseña después de cambiar la visibilidad
+    setTimeout(() => passwordRef.current?.focus(), 0);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0a1727]">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-[#f0f7ff] to-[#0d1f33]">
       {/* Fondo con elementos de salud mental */}
       <canvas 
         ref={canvasRef}
@@ -65,13 +73,13 @@ export default function MentalmenteLogin() {
       />
       
       {/* Degradado suave */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#19334c]/80 to-[#0a1727]/90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#ffffff]/70 to-[#0d1f33]/90" />
       
       {/* Elementos decorativos fijos */}
-      <div className="absolute top-10 left-10 opacity-10">
+      <div className="absolute top-10 left-10 opacity-15">
         <Scale className="h-24 w-24 text-[#c77914]" strokeWidth={1} />
       </div>
-      <div className="absolute bottom-10 right-10 opacity-10">
+      <div className="absolute bottom-10 right-10 opacity-15">
         <Star className="h-24 w-24 text-[#c77914]" strokeWidth={1} />
       </div>
       
@@ -79,11 +87,10 @@ export default function MentalmenteLogin() {
       
       <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm bg-white/5 border border-white/10">
         {/* Panel izquierdo - Bienvenida e ilustración */}
-        <div className="w-full md:w-2/5 bg-gradient-to-br from-[#19334c] to-[#12263d] p-10 flex flex-col justify-between">
+        <div className="w-full md:w-2/5 bg-gradient-to-br from-[#19334c] to-[#12263d] p-8 md:p-10 flex flex-col justify-between">
           <div>
-            <div className="flex items-center mb-8">
-              <div className="bg-[rgba(199,121,20,.2)] p-3 rounded-xl mr-3 flex items-center justify-center">
-                {/* Contenedor de imagen con tamaño fijo y calidad máxima */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="bg-[#19334c] p-3 rounded-xl flex items-center justify-center border border-[#c77914]/30">
                 <div className="relative w-24 h-24">
                   <Image
                     src="/img/logo.png"
@@ -98,15 +105,17 @@ export default function MentalmenteLogin() {
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold text-white mt-16 mb-6">Su espacio seguro para el bienestar mental</h2>
-            <p className="text-[#a0b1c5] mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-white mt-10 mb-6 text-center md:text-left">
+              Su espacio seguro para el bienestar mental
+            </h2>
+            <p className="text-[#a0b1c5] mb-8 text-center md:text-left">
               Transformando vidas a través del cuidado especializado con altos estándares de calidad y ética profesional.
             </p>
             
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
-                  <HeartHandshake className="h-6 w-6 text-[#c77914]" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
+                  <HeartHandshake className="h-5 w-5 md:h-6 md:w-6 text-[#c77914]" />
                 </div>
                 <div>
                   <p className="text-white font-medium">Atención personalizada</p>
@@ -115,8 +124,8 @@ export default function MentalmenteLogin() {
               </div>
               
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
-                  <Scale className="h-6 w-6 text-[#c77914]" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
+                  <Scale className="h-5 w-5 md:h-6 md:w-6 text-[#c77914]" />
                 </div>
                 <div>
                   <p className="text-white font-medium">Ética profesional</p>
@@ -125,8 +134,8 @@ export default function MentalmenteLogin() {
               </div>
               
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
-                  <Leaf className="h-6 w-6 text-[#c77914]" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#c77914]/20 flex items-center justify-center">
+                  <Leaf className="h-5 w-5 md:h-6 md:w-6 text-[#c77914]" />
                 </div>
                 <div>
                   <p className="text-white font-medium">Crecimiento personal</p>
@@ -138,8 +147,8 @@ export default function MentalmenteLogin() {
           
           <div className="mt-8">
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-3">
-                <ShieldCheck className="h-5 w-5 text-[#c77914]" />
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 flex items-center justify-center mr-3">
+                <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-[#c77914]" />
               </div>
               <p className="text-xs text-[#a0b1c5]">
                 Tus datos están protegidos con los más altos estándares de confidencialidad y ética profesional
@@ -149,18 +158,18 @@ export default function MentalmenteLogin() {
         </div>
         
         {/* Panel derecho - Formulario de login */}
-        <div className="w-full md:w-3/5 bg-white p-10">
-          <div className="text-center mb-10">
+        <div className="w-full md:w-3/5 bg-white p-6 md:p-10">
+          <div className="text-center mb-8 md:mb-10">
             <div className="flex justify-center mb-4">
               <div className="bg-[#19334c] p-2 rounded-full">
                 <Lock className="h-6 w-6 text-white" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-[#19334c] uppercase">Inicio de sesión</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#19334c] uppercase">Inicio de sesión</h2>
             <p className="text-[#6b7280] mt-2">Accede a tu espacio profesional seguro</p>
           </div>
           
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
             {/* Campo Email */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -173,22 +182,37 @@ export default function MentalmenteLogin() {
                 onChange={(e) => setCredentials({...credentials, email: e.target.value})}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
                 placeholder="correo@mentalmente.com"
+                autoComplete="username"
               />
             </div>
             
-            {/* Campo Contraseña */}
+            {/* Campo Contraseña con visibilidad */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-[#c77914]" />
               </div>
               <input
-                type="password"
+                ref={passwordRef}
+                type={showPassword ? "text" : "password"}
                 required
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
+                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
                 placeholder="••••••••"
+                autoComplete="current-password"
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6b7280] hover:text-[#c77914] transition-colors"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
             
             {/* Opciones adicionales */}
@@ -216,12 +240,12 @@ export default function MentalmenteLogin() {
             </div>
             
             {/* Botón de Login */}
-            <div className="mt-8">
+            <div className="mt-6 md:mt-8">
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full py-4 px-6 rounded-xl font-medium text-white flex items-center justify-center transition-all duration-300 transform ${
-                  isLoading ? 'bg-[#c77914]/80' : 'bg-[#c77914] hover:bg-[#a56611] hover:scale-[1.02] shadow-lg'
+                className={`w-full py-3 md:py-4 px-6 rounded-xl font-medium text-white flex items-center justify-center transition-all duration-300 transform ${
+                  isLoading ? 'bg-[#c77914]/80' : 'bg-gradient-to-r from-[#c77914] to-[#d98a2c] hover:from-[#a56611] hover:to-[#c77914] hover:scale-[1.02] shadow-lg'
                 }`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -237,14 +261,9 @@ export default function MentalmenteLogin() {
                 ) : (
                   <span className="flex items-center">
                     Acceso Seguro
-                    <svg 
+                    <ArrowRight 
                       className={`ml-2 h-5 w-5 transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
+                    />
                   </span>
                 )}
               </button>
@@ -252,20 +271,21 @@ export default function MentalmenteLogin() {
           </form>
           
           {/* Solicitar acceso */}
-          <div className="mt-10 pt-6 border-t border-gray-100 text-center">
+          <div className="mt-8 pt-5 border-t border-gray-100 text-center">
             <p className="text-[#6b7280]">
               ¿Primera vez en Mentalmente?{' '}
               <button 
                 onClick={handleRequestAccess}
-                className="font-medium text-[#c77914] hover:text-[#a56611] transition-colors"
+                className="font-medium text-[#c77914] hover:text-[#a56611] transition-colors flex items-center justify-center mx-auto"
               >
                 Solicita tu acceso profesional
+                <ArrowRight className="ml-1 h-4 w-4" />
               </button>
             </p>
           </div>
           
           {/* Sello de calidad */}
-          <div className="mt-8 flex items-center justify-center">
+          <div className="mt-6 flex items-center justify-center">
             <div className="flex items-center bg-[#f9fafb] px-4 py-2 rounded-full border border-[#e5e7eb]">
               <ShieldCheck className="h-4 w-4 text-[#c77914] mr-2" />
               <span className="text-xs text-[#6b7280]">Sistema certificado con estándares de calidad</span>
@@ -275,7 +295,7 @@ export default function MentalmenteLogin() {
       </div>
       
       {/* Footer */}
-      <div className="absolute bottom-4 left-0 right-0 text-center text-xs text-[#a0b1c5] z-10">
+      <div className="absolute bottom-4 left-0 right-0 text-center text-xs text-[#a0b1c5] z-10 px-4">
         © {new Date().getFullYear()} Mentalmente. Todos los derechos reservados. Ética · Calidad · Confidencialidad
       </div>
     </div>
