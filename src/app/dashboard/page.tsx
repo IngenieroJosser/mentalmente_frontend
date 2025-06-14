@@ -6,11 +6,8 @@ import {
   Search, 
   PlusCircle,
   ChevronDown,
-  Clock,
-  CheckCircle,
   Edit,
   FilePlus,
-  Folder,
   LayoutGrid,
   List,
   Filter,
@@ -23,6 +20,14 @@ import {
   Bell,
   Menu
 } from 'lucide-react';
+import { 
+  clinicalHistoryTypes, 
+  historyStatuses, 
+  clinicalHistories, 
+  templates, 
+  stats, 
+  filters 
+} from '@/lib/constants';
 
 const DashboardMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -32,105 +37,13 @@ const DashboardMentalmentePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Tipos de historias clínicas
-  const clinicalHistoryTypes = [
-    { id: 'initial', name: 'Evaluación Inicial', color: 'bg-blue-100 text-blue-800' },
-    { id: 'follow', name: 'Seguimiento', color: 'bg-green-100 text-green-800' },
-    { id: 'therapy', name: 'Terapia', color: 'bg-purple-100 text-purple-800' },
-    { id: 'closure', name: 'Cierre de Caso', color: 'bg-amber-100 text-amber-800' },
-  ];
-
-  // Estados de las historias
-  const historyStatuses = [
-    { id: 'draft', name: 'Borrador', icon: <Edit size={14} />, color: 'bg-gray-100 text-gray-800' },
-    { id: 'in-progress', name: 'En Progreso', icon: <Clock size={14} />, color: 'bg-yellow-100 text-yellow-800' },
-    { id: 'completed', name: 'Completada', icon: <CheckCircle size={14} />, color: 'bg-green-100 text-green-800' },
-  ];
-
-  // Historias clínicas de ejemplo
-  const clinicalHistories = [
-    {
-      id: 1,
-      patient: 'María Rodríguez',
-      type: 'Evaluación Inicial',
-      status: 'Completada',
-      lastUpdate: '15 Jun 2023',
-      therapist: 'Dra. Laura Méndez',
-      progress: 100,
-      color: 'bg-blue-100 text-blue-800',
-      statusColor: 'bg-green-100 text-green-800'
-    },
-    {
-      id: 2,
-      patient: 'Carlos Pérez',
-      type: 'Seguimiento',
-      status: 'En Progreso',
-      lastUpdate: 'Hoy',
-      therapist: 'Dra. Laura Méndez',
-      progress: 65,
-      color: 'bg-green-100 text-green-800',
-      statusColor: 'bg-yellow-100 text-yellow-800'
-    },
-    {
-      id: 3,
-      patient: 'Ana Martínez',
-      type: 'Terapia',
-      status: 'Borrador',
-      lastUpdate: '12 Jun 2023',
-      therapist: 'Dra. Laura Méndez',
-      progress: 30,
-      color: 'bg-purple-100 text-purple-800',
-      statusColor: 'bg-gray-100 text-gray-800'
-    },
-    {
-      id: 4,
-      patient: 'Luis García',
-      type: 'Evaluación Inicial',
-      status: 'Completada',
-      lastUpdate: '10 Jun 2023',
-      therapist: 'Dr. Javier López',
-      progress: 100,
-      color: 'bg-blue-100 text-blue-800',
-      statusColor: 'bg-green-100 text-green-800'
-    },
-    {
-      id: 5,
-      patient: 'Sofía López',
-      type: 'Cierre de Caso',
-      status: 'En Progreso',
-      lastUpdate: 'Ayer',
-      therapist: 'Dra. Laura Méndez',
-      progress: 85,
-      color: 'bg-amber-100 text-amber-800',
-      statusColor: 'bg-yellow-100 text-yellow-800'
-    },
-  ];
-
-  // Plantillas de historias clínicas
-  const templates = [
-    { id: 1, name: 'Evaluación Psicológica Inicial', category: 'Evaluación' },
-    { id: 2, name: 'Seguimiento Terapéutico', category: 'Seguimiento' },
-    { id: 3, name: 'Terapia Cognitivo-Conductual', category: 'Terapia' },
-    { id: 4, name: 'Informe de Cierre de Caso', category: 'Cierre' },
-  ];
-
-  // Estadísticas de historias clínicas
-  const stats = [
-    { title: 'Historias Totales', value: '142', change: '+12%', icon: <Folder size={20} /> },
-    { title: 'Completadas', value: '94', change: '+8%', icon: <CheckCircle size={20} /> },
-    { title: 'En Progreso', value: '28', change: '+5', icon: <Clock size={20} /> },
-    { title: 'Tiempo Promedio', value: '45 min', change: '-5 min', icon: <BarChart2 size={20} /> },
-  ];
-
-  // Filtros
-  const filters = [
-    { id: 'all', name: 'Todas' },
-    { id: 'my', name: 'Mis Historias' },
-    { id: 'initial', name: 'Evaluaciones' },
-    { id: 'follow', name: 'Seguimientos' },
-    { id: 'therapy', name: 'Terapias' },
-    { id: 'closure', name: 'Cierres' },
-  ];
+  // Función para obtener clase de progreso dinámicamente
+  const getProgressColorClass = (progress: number) => {
+    if (progress === 100) return 'bg-green-500';
+    if (progress > 70) return 'bg-blue-500';
+    if (progress > 40) return 'bg-yellow-500';
+    return 'bg-gray-500';
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -187,8 +100,8 @@ const DashboardMentalmentePage = () => {
         </div>
       )}
 
-      {/* Sidebar - Versión desktop */}
-      <aside className="hidden md:block w-64 bg-[#19334c] text-white flex flex-col">
+      {/* Sidebar - Versión desktop - CORRECCIÓN: Cambiado md:block a md:flex */}
+      <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
           <div className="bg-[#c77914] p-2 rounded-lg">
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
@@ -430,12 +343,9 @@ const DashboardMentalmentePage = () => {
                         <span className="font-medium">{history.progress}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
+                        {/* CORRECCIÓN: Reemplazado style inline por clase dinámica */}
                         <div 
-                          className={`h-2 rounded-full ${
-                            history.progress === 100 ? 'bg-green-500' : 
-                            history.progress > 70 ? 'bg-blue-500' : 
-                            history.progress > 40 ? 'bg-yellow-500' : 'bg-gray-500'
-                          }`} 
+                          className={`h-2 rounded-full ${getProgressColorClass(history.progress)}`} 
                           style={{ width: `${history.progress}%` }}
                         ></div>
                       </div>
@@ -487,12 +397,9 @@ const DashboardMentalmentePage = () => {
                       <td className="py-4 px-4">
                         <div className="flex items-center">
                           <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                            {/* CORRECCIÓN: Reemplazado style inline por clase dinámica */}
                             <div 
-                              className={`h-2 rounded-full ${
-                                history.progress === 100 ? 'bg-green-500' : 
-                                history.progress > 70 ? 'bg-blue-500' : 
-                                history.progress > 40 ? 'bg-yellow-500' : 'bg-gray-500'
-                              }`} 
+                              className={`h-2 rounded-full ${getProgressColorClass(history.progress)}`} 
                               style={{ width: `${history.progress}%` }}
                             ></div>
                           </div>
