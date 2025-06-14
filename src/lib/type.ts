@@ -1,3 +1,5 @@
+import { MedicalRecord, User } from '@prisma/client';
+
 export type FloatingElement = {
   type: string;
   color: string;
@@ -16,3 +18,18 @@ export type FloatingElement = {
   rotationSpeed: number;
   pulseDirection: number;
 };
+
+// Definir el tipo extendido
+export type MedicalRecordWithUser = MedicalRecord & {
+  user: {
+    id: number;
+    usuario: string;
+    correo: string;
+  } | null;
+};
+
+export interface HistoryFormProps {
+  historyId?: number;
+  onSuccess: () => void;
+  onCancel: () => void;
+}

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, 
   User, 
@@ -18,22 +18,76 @@ import {
   Settings,
   LogOut,
   Bell,
-  Menu
+  Menu,
+  Trash2
 } from 'lucide-react';
 import Image from 'next/image';
-import { clinicalHistories, templates, filters } from '@/lib/constants';
+import { templates, filters } from '@/lib/constants';
+import { fetchHistories, deleteHistory, MedicalRecordWithUser } from '@/services/historyService';
+import HistoryForm from '@/components/HistoryForm';
 
 const DashboardMentalmentePage = () => {
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('histories');
   const [viewMode, setViewMode] = useState('grid');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [clinicalHistories, setClinicalHistories] = useState<MedicalRecordWithUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [showForm, setShowForm] = useState(false);
+  const [editingHistory, setEditingHistory] = useState<number | null>(null);
+  const limit = 9;
+
+  const loadHistories = async () => {
+    setIsLoading(true);
+    try {
+      const result = await fetchHistories(currentPage, limit, searchTerm);
+      setClinicalHistories(result.data);
+      setTotalRecords(result.total);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      console.error('Error cargando historias:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHistories();
+  }, [currentPage, searchTerm]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
+      try {
+        await deleteHistory(id);
+        loadHistories();
+      } catch (error) {
+        console.error('Error eliminando historia:', error);
+      }
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar - Versión móvil */}
+      {/* Sidebar - Mobile */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-[rgba(0,0,0,0.2)] backdrop-blur-md" onClick={() => setIsMenuOpen(false)}>
           <div className="w-64 h-full bg-[#19334c] text-white" onClick={e => e.stopPropagation()}>
@@ -86,7 +140,7 @@ const DashboardMentalmentePage = () => {
         </div>
       )}
 
-      {/* Sidebar - Versión desktop */}
+      {/* Sidebar - Desktop */}
       <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
           <div className="flex items-center justify-center mb-8">
@@ -153,7 +207,7 @@ const DashboardMentalmentePage = () => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
+      {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
@@ -175,7 +229,8 @@ const DashboardMentalmentePage = () => {
               placeholder="Buscar historias, pacientes, plantillas..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
+              aria-label="Buscar historias clínicas"
             />
           </div>
           
@@ -183,7 +238,7 @@ const DashboardMentalmentePage = () => {
             <button 
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
               className="p-2 rounded-full hover:bg-gray-100 relative"
-              aria-label="Notifications"
+              aria-label="Notificaciones"
             >
               <Bell size={20} className="text-gray-600" />
               <span className="absolute top-1 right-1 bg-[#c77914] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
@@ -192,13 +247,14 @@ const DashboardMentalmentePage = () => {
             <button 
               onClick={() => setIsProfileOpen(!isProfileOpen)}
               className="flex items-center space-x-2"
+              aria-label="Perfil de usuario"
             >
               <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
               <span className="hidden md:inline text-sm font-medium">Dra. Méndez</span>
             </button>
           </div>
           
-          {/* Menú de perfil */}
+          {/* Profile Menu */}
           {isProfileOpen && (
             <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
               <div className="p-4 border-b border-gray-200">
@@ -206,10 +262,16 @@ const DashboardMentalmentePage = () => {
                 <p className="text-sm text-gray-600">laura@mentalmente.com</p>
               </div>
               <div className="py-2">
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center">
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
+                  aria-label="Configuración"
+                >
                   <Settings size={16} className="mr-2 text-gray-600" /> Configuración
                 </button>
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center">
+                <button 
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
+                  aria-label="Cerrar sesión"
+                >
                   <LogOut size={16} className="mr-2 text-gray-600" /> Cerrar sesión
                 </button>
               </div>
@@ -217,31 +279,44 @@ const DashboardMentalmentePage = () => {
           )}
         </header>
 
-        {/* Contenido - Dashboard de Historias Clínicas */}
+        {/* Content - Clinical History Dashboard */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#f8fafc]">
-          {/* Encabezado y acciones */}
+          {/* Header and Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
               <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas</h1>
               <p className="text-gray-600">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center">
+              <button 
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center"
+                aria-label="Filtros"
+              >
                 <Filter size={16} className="mr-2" />
                 Filtros
               </button>
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center">
+              <button 
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center"
+                aria-label="Exportar datos"
+              >
                 <Download size={16} className="mr-2" />
                 Exportar
               </button>
-              <button className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center">
+              <button 
+                onClick={() => {
+                  setEditingHistory(null);
+                  setShowForm(true);
+                }}
+                className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center"
+                aria-label="Crear nueva historia clínica"
+              >
                 <PlusCircle size={16} className="mr-2" />
                 Nueva Historia
               </button>
             </div>
           </div>
 
-          {/* Filtros y controles de vista */}
+          {/* Filters and View Controls */}
           <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex flex-wrap gap-2">
@@ -254,6 +329,7 @@ const DashboardMentalmentePage = () => {
                         ? 'bg-[#19334c] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
+                    aria-label={`Filtro: ${filter.name}`}
                   >
                     {filter.name}
                   </button>
@@ -265,14 +341,14 @@ const DashboardMentalmentePage = () => {
                 <button 
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
-                  aria-label="Grid view"
+                  aria-label="Vista de cuadrícula"
                 >
                   <LayoutGrid size={18} />
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
-                  aria-label="List view"
+                  aria-label="Vista de lista"
                 >
                   <List size={18} />
                 </button>
@@ -280,41 +356,66 @@ const DashboardMentalmentePage = () => {
             </div>
           </div>
 
-          {/* Listado de historias clínicas */}
-          {viewMode === 'grid' ? (
+          {/* Clinical Histories List */}
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+            </div>
+          ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {clinicalHistories.map(history => (
                 <div key={history.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md">
                   <div className="p-5 border-b border-gray-100">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-lg text-[#19334c]">{history.patient}</h3>
+                        <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
                         <div className="mt-2 text-sm text-gray-600">
-                          <span className="font-medium">Terapeuta:</span> {history.therapist}
+                          <span className="font-medium">Terapeuta:</span> {history.user?.usuario || 'Dra. Laura Méndez'}
                         </div>
                       </div>
-                      <button 
-                        className="text-gray-400 hover:text-[#c77914]"
-                        aria-label="More options"
-                      >
-                        <ChevronDown size={18} />
-                      </button>
+                      <div className="relative">
+                        <button 
+                          className="text-gray-400 hover:text-[#c77914]"
+                          aria-label="Opciones"
+                        >
+                          <ChevronDown size={18} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   
                   <div className="p-5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Última actualización:</span>
-                      <span className="font-medium">{history.lastUpdate}</span>
+                      <span className="font-medium">{formatDate(history.updatedAt.toString())}</span>
                     </div>
                     
                     <div className="flex justify-between mt-4">
-                      <button className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg">
+                      <button 
+                        className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg"
+                        aria-label="Ver detalles"
+                      >
                         Ver detalles
                       </button>
-                      <button className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center">
-                        <Edit size={14} className="mr-1" /> Editar
-                      </button>
+                      <div className="flex space-x-2">
+                        <button 
+                          onClick={() => {
+                            setEditingHistory(history.id);
+                            setShowForm(true);
+                          }}
+                          className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center"
+                          aria-label="Editar historia"
+                        >
+                          <Edit size={14} className="mr-1" /> Editar
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(history.id)}
+                          className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
+                          aria-label="Eliminar historia"
+                        >
+                          <Trash2 size={14} className="mr-1" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -335,18 +436,35 @@ const DashboardMentalmentePage = () => {
                   {clinicalHistories.map(history => (
                     <tr key={history.id} className="border-t border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-medium text-[#19334c]">{history.patient}</div>
+                        <div className="font-medium text-[#19334c]">{history.patientName}</div>
                       </td>
                       <td className="py-4 px-4 text-sm">
-                        {history.therapist}
+                        {history.user?.usuario || 'Dra. Laura Méndez'}
                       </td>
-                      <td className="py-4 px-4 text-sm">{history.lastUpdate}</td>
+                      <td className="py-4 px-4 text-sm">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
-                          <button className="p-1.5 text-gray-500 hover:text-[#c77914]" aria-label="Edit">
+                          <button 
+                            onClick={() => {
+                              setEditingHistory(history.id);
+                              setShowForm(true);
+                            }}
+                            className="p-1.5 text-gray-500 hover:text-[#c77914]" 
+                            aria-label="Editar historia"
+                          >
                             <Edit size={16} />
                           </button>
-                          <button className="p-1.5 text-gray-500 hover:text-[#19334c]" aria-label="Print">
+                          <button 
+                            onClick={() => handleDelete(history.id)}
+                            className="p-1.5 text-gray-500 hover:text-red-500" 
+                            aria-label="Eliminar historia"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                          <button 
+                            className="p-1.5 text-gray-500 hover:text-[#19334c]" 
+                            aria-label="Imprimir historia"
+                          >
                             <Printer size={16} />
                           </button>
                         </div>
@@ -358,11 +476,42 @@ const DashboardMentalmentePage = () => {
             </div>
           )}
 
-          {/* Plantillas de historias clínicas */}
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-6">
+            <div className="text-sm text-gray-600">
+              Mostrando {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalRecords)} de {totalRecords} registros
+            </div>
+            <div className="flex space-x-2">
+              <button 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+                className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                aria-label="Página anterior"
+              >
+                Anterior
+              </button>
+              <span className="px-3 py-1 bg-white border rounded">
+                Página {currentPage} de {totalPages}
+              </span>
+              <button 
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => p + 1)}
+                className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                aria-label="Página siguiente"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+
+          {/* Templates Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
             <div className="flex justify-between items-center mb-5">
               <h2 className="font-semibold text-lg text-[#19334c]">Plantillas de Historias Clínicas</h2>
-              <button className="text-sm text-[#19334c] hover:text-[#c77914] font-medium">
+              <button 
+                className="text-sm text-[#19334c] hover:text-[#c77914] font-medium"
+                aria-label="Ver todas las plantillas"
+              >
                 Ver todas
               </button>
             </div>
@@ -375,7 +524,10 @@ const DashboardMentalmentePage = () => {
                   </div>
                   <h3 className="font-medium mb-1">{template.name}</h3>
                   <p className="text-sm text-gray-600">{template.category}</p>
-                  <button className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg">
+                  <button 
+                    className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg"
+                    aria-label={`Usar plantilla ${template.name}`}
+                  >
                     Usar plantilla
                   </button>
                 </div>
@@ -384,6 +536,18 @@ const DashboardMentalmentePage = () => {
           </div>
         </div>
       </main>
+
+      {/* Form Modal */}
+      {showForm && (
+        <HistoryForm
+          historyId={editingHistory || undefined}
+          onSuccess={() => {
+            setShowForm(false);
+            loadHistories();
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
     </div>
   );
 };
