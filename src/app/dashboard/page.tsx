@@ -258,8 +258,8 @@ const DashboardMentalmentePage = () => {
           {isProfileOpen && (
             <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
               <div className="p-4 border-b border-gray-200">
-                <p className="font-semibold">Dra. Laura Méndez</p>
-                <p className="text-sm text-gray-600">laura@mentalmente.com</p>
+                <p className="font-semibold">Dr. Deiner Bello</p>
+                <p className="text-sm text-gray-600">deiner2005@outlook.com</p>
               </div>
               <div className="py-2">
                 <button 
