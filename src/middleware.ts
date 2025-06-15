@@ -13,7 +13,7 @@ export function middleware(req: NextRequest) {
 
   // Redirigir a login si no está autenticado y accede a rutas protegidas
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL('/login', req.nextUrl));
+    return NextResponse.redirect(new URL('/', req.nextUrl));
   }
 
   return NextResponse.next();
@@ -21,7 +21,7 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
+    // '/dashboard/:path*',
     '/login'
   ]
 }; 
