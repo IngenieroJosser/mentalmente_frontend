@@ -6,11 +6,6 @@ import { UserCircle, Lock, ShieldCheck, HeartHandshake, Scale, Leaf, Star, Eye, 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from 'next/image';
-<<<<<<< HEAD
-=======
-import { useCanvasAnimation } from '@/hooks/useCanvasAnimation';
-import { motion } from 'framer-motion';
->>>>>>> 22c720a (Conectando el login al backend)
 
 export default function MentalmenteLogin() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -89,15 +84,32 @@ export default function MentalmenteLogin() {
     };
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate authentication
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Success notification
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error en el inicio de sesión');
+      }
+
+      // Guardar token en localStorage
+      localStorage.setItem('authToken', data.token);
+
+      // Mostrar notificación de éxito
       toast.success('¡Bienvenido a Mentalmente! Redirigiendo a su espacio seguro...', {
         position: "top-right",
         autoClose: 2000,
@@ -108,7 +120,16 @@ export default function MentalmenteLogin() {
         theme: "colored",
         onClose: () => router.push('/dashboard')
       });
-    }, 1500);
+      
+    } catch (error: any) {
+      toast.error(error.message || 'Error en el inicio de sesión', {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -133,18 +154,13 @@ export default function MentalmenteLogin() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-[#0d1f33] to-[#07182a]">
       {/* Animated background */}
-=======
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-white">
->>>>>>> 22c720a (Conectando el login al backend)
       <canvas 
         ref={canvasRef}
         className="absolute inset-0 w-full h-full opacity-10"
       />
       
-<<<<<<< HEAD
       {/* Soft gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0d1f33]/90 to-[#07182a]/90" />
       
@@ -154,22 +170,10 @@ export default function MentalmenteLogin() {
       </div>
       <div className="absolute bottom-20 right-20 opacity-10">
         <BrainCircuit className="h-32 w-32 text-[#c77914]" strokeWidth={1} />
-=======
-      {/* Elimina el overlay degradado para fondo blanco puro */}
-      {/* <div className="absolute inset-0 bg-white/70" /> */}
-      
-      {/* Elementos decorativos fijos */}
-      <div className="absolute top-10 left-10 opacity-15">
-        <Scale className="h-24 w-24 text-amber-400" strokeWidth={1} />
-      </div>
-      <div className="absolute bottom-10 right-10 opacity-15">
-        <Star className="h-24 w-24 text-amber-400" strokeWidth={1} />
->>>>>>> 22c720a (Conectando el login al backend)
       </div>
       
       <ToastContainer position="top-right" />
       
-<<<<<<< HEAD
       <div className="relative z-10 w-full max-w-5xl flex flex-col lg:flex-row rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm bg-white/5 border border-white/10">
         {/* Left panel - Welcome and illustration */}
         <div className="w-full lg:w-2/5 bg-gradient-to-br from-[#19334c] to-[#12263d] p-8 md:p-10 flex flex-col justify-between">
@@ -178,7 +182,7 @@ export default function MentalmenteLogin() {
               <div className="bg-gradient-to-br from-[#c77914] to-[#d98a2c] p-1 rounded-full mb-6">
                 <div className="bg-[#19334c] p-3 rounded-full flex items-center justify-center border border-[#c77914]/30">
                   <div className="relative w-20 h-20">
-                    <div className="rounded-xl w-full h-full flex items-center justify-center text-gray-500">
+                    <div className="rounded-xl w-full h-full flex items-center justify-center">
                       <Image
                       src="/img/logo.png"
                       alt="Mentalmente Logo"
@@ -190,28 +194,6 @@ export default function MentalmenteLogin() {
                     />
                     </div>
                   </div>
-=======
-      <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-200">
-        {/* Panel izquierdo - Bienvenida e ilustración */}
-        <div className="w-full md:w-2/5 bg-gradient-to-br from-blue-600 to-blue-800 p-8 md:p-10 flex flex-col justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center justify-center mb-8">
-              <div className="bg-white/10 p-3 rounded-xl flex items-center justify-center border border-amber-400/30">
-                <div className="relative w-24 h-24">
-                  <Image
-                    src="/img/logo.png"
-                    alt="Logo de Mentalmente"
-                    layout="fill"
-                    objectFit="contain"
-                    quality={100}
-                    priority
-                    className="rounded-lg"
-                  />
->>>>>>> 22c720a (Conectando el login al backend)
                 </div>
               </div>
               
@@ -226,88 +208,52 @@ export default function MentalmenteLogin() {
             <h2 className="text-xl md:text-2xl font-bold text-white mt-10 mb-6 text-center">
               Su espacio seguro para el bienestar mental
             </h2>
-<<<<<<< HEAD
             
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c77914]/20 to-[#d98a2c]/20 flex items-center justify-center flex-shrink-0">
                   <HeartHandshake className="h-6 w-6 text-[#c77914]" />
-=======
-            <p className="text-blue-100 mb-8 text-center md:text-left">
-              Transformando vidas a través del cuidado especializado con altos estándares de calidad y ética profesional.
-            </p>
-            
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-amber-400/20 flex items-center justify-center">
-                  <HeartHandshake className="h-5 w-5 md:h-6 md:w-6 text-amber-400" />
->>>>>>> 22c720a (Conectando el login al backend)
                 </div>
                 <div>
                   <p className="text-white font-medium">Atención personalizada</p>
-                  <p className="text-blue-100 text-sm">Individual, parejas, familiar y grupal</p>
+                  <p className="text-[#a0b1c5] text-sm">Individual, parejas, familiar y grupal</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-4">
-<<<<<<< HEAD
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c77914]/20 to-[#d98a2c]/20 flex items-center justify-center flex-shrink-0">
                   <Scale className="h-6 w-6 text-[#c77914]" />
-=======
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-amber-400/20 flex items-center justify-center">
-                  <Scale className="h-5 w-5 md:h-6 md:w-6 text-amber-400" />
->>>>>>> 22c720a (Conectando el login al backend)
                 </div>
                 <div>
                   <p className="text-white font-medium">Ética profesional</p>
-                  <p className="text-blue-100 text-sm">Cumplimos con los más altos estándares</p>
+                  <p className="text-[#a0b1c5] text-sm">Cumplimos con los más altos estándares</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-4">
-<<<<<<< HEAD
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c77914]/20 to-[#d98a2c]/20 flex items-center justify-center flex-shrink-0">
                   <Leaf className="h-6 w-6 text-[#c77914]" />
-=======
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-amber-400/20 flex items-center justify-center">
-                  <Leaf className="h-5 w-5 md:h-6 md:w-6 text-amber-400" />
->>>>>>> 22c720a (Conectando el login al backend)
                 </div>
                 <div>
                   <p className="text-white font-medium">Crecimiento personal</p>
-                  <p className="text-blue-100 text-sm">Ayudamos a desarrollar tu mejor versión</p>
+                  <p className="text-[#a0b1c5] text-sm">Ayudamos a desarrollar tu mejor versión</p>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
           
-<<<<<<< HEAD
           <div className="mt-8 bg-[#12263d]/50 p-4 rounded-xl border border-[#c77914]/20">
             <div className="flex items-start">
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-3 flex-shrink-0 mt-1">
                 <ShieldCheck className="h-5 w-5 text-[#c77914]" />
               </div>
               <p className="text-sm text-[#a0b1c5]">
-=======
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-8"
-          >
-            <div className="flex items-center">
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
-                <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-amber-400" />
-              </div>
-              <p className="text-xs text-blue-100">
->>>>>>> 22c720a (Conectando el login al backend)
                 Tus datos están protegidos con los más altos estándares de confidencialidad y ética profesional
               </p>
             </div>
-          </motion.div>
+          </div>
         </div>
         
-<<<<<<< HEAD
         {/* Right panel - Login form */}
         <div className="w-full lg:w-3/5 bg-white p-6 md:p-10">
           <div className="text-center mb-8">
@@ -325,42 +271,12 @@ export default function MentalmenteLogin() {
             <div className="relative">
               <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-transform duration-300 ${activeField === 'email' ? 'text-[#c77914] translate-y-1' : 'text-gray-400'}`}>
                 <UserCircle className="h-5 w-5" />
-=======
-        {/* Panel derecho - Formulario de login */}
-        <div className="w-full md:w-3/5 bg-white p-6 md:p-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-8 md:mb-10"
-          >
-            <div className="flex justify-center mb-4">
-              <div className="bg-blue-600 p-2 rounded-full">
-                <Lock className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 uppercase">Inicio de sesión</h2>
-            <p className="text-gray-500 mt-2">Accede a tu espacio profesional seguro</p>
-          </motion.div>
-          
-          <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
-            {/* Campo Email */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="relative"
-            >
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <UserCircle className="h-5 w-5 text-amber-500" />
->>>>>>> 22c720a (Conectando el login al backend)
               </div>
               <input
                 type="email"
                 required
                 value={credentials.email}
                 onChange={(e) => setCredentials({...credentials, email: e.target.value})}
-<<<<<<< HEAD
                 onFocus={() => setActiveField('email')}
                 onBlur={() => setActiveField('')}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white"
@@ -374,23 +290,6 @@ export default function MentalmenteLogin() {
             <div className="relative">
               <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-transform duration-300 ${activeField === 'password' ? 'text-[#c77914] translate-y-1' : 'text-gray-400'}`}>
                 <Lock className="h-5 w-5" />
-=======
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 outline-none transition-all placeholder:text-black"
-                placeholder="correo@mentalmente.com"
-                autoComplete="username"
-              />
-            </motion.div>
-            
-            {/* Campo Contraseña con visibilidad */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="relative"
-            >
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-amber-500" />
->>>>>>> 22c720a (Conectando el login al backend)
               </div>
               <input
                 ref={passwordRef}
@@ -398,24 +297,16 @@ export default function MentalmenteLogin() {
                 required
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-<<<<<<< HEAD
                 onFocus={() => setActiveField('password')}
                 onBlur={() => setActiveField('')}
                 className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white"
-=======
-                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 outline-none transition-all placeholder:text-black"
->>>>>>> 22c720a (Conectando el login al backend)
                 placeholder="••••••••"
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-<<<<<<< HEAD
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#c77914] transition-colors"
-=======
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-amber-500 transition-colors"
->>>>>>> 22c720a (Conectando el login al backend)
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
                 {showPassword ? (
@@ -424,7 +315,6 @@ export default function MentalmenteLogin() {
                   <Eye className="h-5 w-5" />
                 )}
               </button>
-<<<<<<< HEAD
               <div className={`absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#c77914] to-[#d98a2c] transition-all duration-500 ${activeField === 'password' ? 'w-full' : ''}`}></div>
             </div>
             
@@ -451,40 +341,16 @@ export default function MentalmenteLogin() {
                     Recordar mi sesión
                   </label>
                 </div>
-=======
-            </motion.div>
-            
-            {/* Opciones adicionales */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="flex items-center justify-between"
-            >
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
-                  Recordar mi sesión
-                </label>
->>>>>>> 22c720a (Conectando el login al backend)
               </div>
               <button 
                 type="button"
                 onClick={handleForgotPassword}
-                className="text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                className="text-sm font-medium text-[#c77914] hover:text-[#a56611] transition-colors"
               >
                 ¿Olvidaste tu contraseña?
               </button>
-            </motion.div>
+            </div>
             
-<<<<<<< HEAD
             {/* Login button */}
             <div className="mt-6">
               <button
@@ -494,20 +360,6 @@ export default function MentalmenteLogin() {
                   isLoading 
                     ? 'bg-[#c77914]/80' 
                     : 'bg-gradient-to-r from-[#c77914] to-[#d98a2c] hover:from-[#a56611] hover:to-[#c77914] hover:shadow-lg'
-=======
-            {/* Botón de Login */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mt-6 md:mt-8"
-            >
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full py-3 md:py-4 px-6 rounded-xl font-medium text-white flex items-center justify-center transition-all duration-300 transform ${
-                  isLoading ? 'bg-blue-600/80' : 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:scale-[1.02] shadow-lg'
->>>>>>> 22c720a (Conectando el login al backend)
                 }`}
               >
                 {isLoading ? (
@@ -528,10 +380,9 @@ export default function MentalmenteLogin() {
                 {/* Button hover effect */}
                 <span className="absolute inset-0 bg-white opacity-0 hover:opacity-10 transition-opacity duration-300"></span>
               </button>
-            </motion.div>
+            </div>
           </form>
           
-<<<<<<< HEAD
           {/* Request access */}
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
             <p className="text-[#6b7280]">
@@ -539,47 +390,20 @@ export default function MentalmenteLogin() {
               <button 
                 onClick={handleRequestAccess}
                 className="font-medium text-[#c77914] hover:text-[#a56611] transition-colors flex items-center justify-center mx-auto group"
-=======
-          {/* Solicitar acceso */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-8 pt-5 border-t border-gray-100 text-center"
-          >
-            <p className="text-gray-500">
-              ¿Primera vez en Mentalmente?{' '}
-              <button 
-                onClick={handleRequestAccess}
-                className="font-medium text-amber-600 hover:text-amber-700 transition-colors flex items-center justify-center mx-auto"
->>>>>>> 22c720a (Conectando el login al backend)
               >
                 Solicita tu acceso profesional
                 <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </p>
-          </motion.div>
+          </div>
           
-<<<<<<< HEAD
           {/* Quality seal */}
           <div className="mt-6 flex items-center justify-center">
             <div className="flex items-center bg-gradient-to-r from-[#f9fafb] to-[#f0f5ff] px-4 py-2 rounded-full border border-[#e5e7eb] shadow-sm">
               <ShieldCheck className="h-4 w-4 text-[#c77914] mr-2" />
               <span className="text-xs text-[#6b7280]">Sistema certificado con estándares de calidad</span>
-=======
-          {/* Sello de calidad */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="mt-6 flex items-center justify-center"
-          >
-            <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
-              <ShieldCheck className="h-4 w-4 text-amber-500 mr-2" />
-              <span className="text-xs text-gray-500">Sistema certificado con estándares de calidad</span>
->>>>>>> 22c720a (Conectando el login al backend)
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
       
@@ -592,18 +416,9 @@ export default function MentalmenteLogin() {
       </div>
       
       {/* Footer */}
-<<<<<<< HEAD
       <div className="absolute bottom-4 left-0 right-0 text-center text-xs text-[#a0b1c5]/70 z-10 px-4">
-=======
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="absolute bottom-4 left-0 right-0 text-center text-xs text-gray-500 z-10 px-4"
-      >
->>>>>>> 22c720a (Conectando el login al backend)
         © {new Date().getFullYear()} Mentalmente. Todos los derechos reservados. Ética · Calidad · Confidencialidad
-      </motion.div>
+      </div>
     </div>
   );
 }

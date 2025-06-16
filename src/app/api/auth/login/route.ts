@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { User } from '@prisma/client';
@@ -52,23 +51,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }
-=======
-import { NextResponse } from 'next/server';
-import { AuthController } from '@/controllers/auth/auth.controller';
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { email, password } = body;
-
-    const user = await AuthController.login({ email, password });
-
-    return NextResponse.json(user);
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Error interno del servidor' },
-      { status: error.message ? 400 : 500 }
->>>>>>> 22c720a (Conectando el login al backend)
     );
   }
 }
