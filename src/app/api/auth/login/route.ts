@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    // Validar datos de entrada
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Correo y contraseña son requeridos' },
@@ -15,12 +13,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Buscar usuario por correo
     const user = await prisma.user.findUnique({
       where: { correo: email }
     });
 
-    // Verificar si el usuario existe
     if (!user) {
       return NextResponse.json(
         { error: 'Credenciales inválidas' },
@@ -28,7 +24,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verificar contraseña (comparación segura)
     const passwordMatch = await bcrypt.compare(password, user.contrasena);
     
     if (!passwordMatch) {
@@ -38,8 +33,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Crear objeto de usuario sin contraseña
-    const { contrasena, ...userWithoutPassword } = user;
+    // Usar alias para evitar error de variable no utilizada
+    const { contrasena: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       message: 'Inicio de sesión exitoso',

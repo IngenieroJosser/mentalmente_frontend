@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { User } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,13 +10,10 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
-
-    // En una implementación real, aquí validarías el token JWT
-    // Para este ejemplo, simplemente devolvemos el usuario del localStorage
     
     return NextResponse.json({
       message: 'Sesión válida',
-      user: JSON.parse(token) // Simulamos el token como el objeto de usuario
+      user: JSON.parse(token)
     }, { status: 200 });
 
   } catch (error) {

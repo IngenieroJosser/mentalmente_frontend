@@ -1,4 +1,4 @@
-import { MedicalRecord, User } from '@prisma/client';
+import { MedicalRecord } from '@prisma/client';
 
 export type FloatingElement = {
   type: string;
@@ -32,4 +32,10 @@ export interface HistoryFormProps {
   historyId?: number;
   onSuccess: () => void;
   onCancel: () => void;
+}
+
+export interface UserData {
+  id: number;
+  email: string;
+  name: string;
 }
