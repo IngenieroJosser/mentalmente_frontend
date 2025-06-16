@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { LoginCredentials } from '@/types/auth';
 import { comparePasswords } from '@/utils/auth';
 import { useRouter } from 'next/router';
