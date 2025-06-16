@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 
+// Roles permitidos para validación
+const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
+
 /**
  * @swagger
  * /api/auth/register:
  *   post:
  *     summary: Registrar un nuevo usuario
- *     description: Crea una nueva cuenta de usuario en el sistema
+ *     description: Crea una nueva cuenta de usuario en el sistema con validaciones de seguridad
  *     tags:
  *       - Auth
  *     requestBody:
@@ -19,6 +22,7 @@ import prisma from '@/lib/prisma';
  *             properties:
  *               usuario:
  *                 type: string
+ *                 minLength: 3
  *                 example: "Josss"
  *               correo:
  *                 type: string
@@ -27,12 +31,14 @@ import prisma from '@/lib/prisma';
  *               contrasena:
  *                 type: string
  *                 format: password
- *                 example: "cordobarivasjoss"
+ *                 minLength: 6
+ *                 example: "passwordSegura123"
  *               genero:
  *                 type: string
  *                 example: "Masculino"
  *               role:
  *                 type: string
+ *                 enum: [Psicologo, Administrador, Paciente] 
  *                 example: "Psicologo"
  *             required:
  *               - usuario
@@ -67,7 +73,13 @@ import prisma from '@/lib/prisma';
  *                       type: string
  *                       format: date-time
  *       400:
- *         description: Error en la solicitud
+ *         description: |
+ *           Error en la solicitud. Posibles causas:
+ *           - Campos requeridos faltantes
+ *           - Formato de correo inválido
+ *           - Contraseña menor a 6 caracteres
+ *           - Rol no válido
+ *           - Correo ya registrado
  *         content:
  *           application/json:
  *             schema:
@@ -83,7 +95,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { usuario, correo, contrasena, genero, role } = body;
 
-    // Validación básica
+    // Validación básica de campos requeridos
     if (!usuario || !correo || !contrasena || !genero || !role) {
       return NextResponse.json(
         { error: 'Todos los campos son requeridos' },
@@ -96,6 +108,22 @@ export async function POST(req: NextRequest) {
     if (!emailRegex.test(correo)) {
       return NextResponse.json(
         { error: 'Formato de correo inválido' },
+        { status: 400 }
+      );
+    }
+
+    // Validar longitud de contraseña
+    if (contrasena.length < 6) {
+      return NextResponse.json(
+        { error: 'La contraseña debe tener al menos 6 caracteres' },
+        { status: 400 }
+      );
+    }
+
+    // Validar rol permitido
+    if (!ALLOWED_ROLES.includes(role)) {
+      return NextResponse.json(
+        { error: 'Rol de usuario inválido. Valores permitidos: ' + ALLOWED_ROLES.join(', ') },
         { status: 400 }
       );
     }

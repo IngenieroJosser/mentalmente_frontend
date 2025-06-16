@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  // output   = "../src/generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,8 +14,8 @@ model User {
   correo                              String                    @unique
   genero                              String        
   contrasena                          String        
-  createdAt                           DateTime                  @default(now())
   role                                String
+  createdAt                           DateTime                  @default(now())
 
   // Relación con las historias clínicas
   medicalRecords                      MedicalRecord[]
