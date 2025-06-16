@@ -39,3 +39,18 @@ export interface UserData {
   email: string;
   name: string;
 }
+
+export interface User {
+  id: number;
+  nombre: string;
+  correo: string;
+  role: string;
+}
+
+export interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  login: (token: string, user: User) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+}

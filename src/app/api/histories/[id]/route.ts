@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json(record)
-  } catch (error) {
+  } catch (_error) { // Usar _error para ignorar la advertencia de ESLint
     return NextResponse.json(
       { error: 'Error al obtener la historia clínica' },
       { status: 500 }
@@ -40,7 +40,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     })
 
     return NextResponse.json(updatedRecord)
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Error al actualizar la historia clínica' },
       { status: 500 }
@@ -57,7 +57,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     return NextResponse.json(
       { message: 'Historia clínica eliminada correctamente' }
     )
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Error al eliminar la historia clínica' },
       { status: 500 }

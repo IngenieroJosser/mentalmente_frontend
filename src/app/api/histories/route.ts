@@ -53,27 +53,62 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// export async function POST(req: Request) {
+//   try {
+//     const data: Omit<MedicalRecord, 'id' | 'createdAt' | 'updatedAt'> = await req.json();
+
+//     // Validación mínima
+//     const { patientName, identificationNumber, userId } = data;
+//     if (!patientName || !identificationNumber || !userId) {
+//       return NextResponse.json(
+//         { error: 'Faltan campos obligatorios: nombre, identificación o usuario.' },
+//         { status: 400 }
+//       );
+//     }
+
+//     const newRecord = await prisma.medicalRecord.create({
+//       data: {
+//         ...data,
+//         recordNumber: `HC-${Date.now()}`,
+//       },
+//     });
+
+//     return NextResponse.json(newRecord, { status: 201 });
+//   } catch (error) {
+//     console.error('Error en POST /api/histories:', error);
+//     return NextResponse.json(
+//       { error: 'Error al crear la historia clínica' },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
 export async function POST(req: Request) {
   try {
-    const data: Omit<MedicalRecord, 'id' | 'createdAt' | 'updatedAt'> = await req.json();
+    const data = await req.json();
 
-    // Validación mínima
-    const { patientName, identificationNumber, userId } = data;
-    if (!patientName || !identificationNumber || !userId) {
-      return NextResponse.json(
-        { error: 'Faltan campos obligatorios: nombre, identificación o usuario.' },
-        { status: 400 }
-      );
+    // Validar datos
+    if (!data.patientName || !data.identificationNumber || !data.userId) {
+      return new Response(JSON.stringify({ error: 'Datos incompletos' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const newRecord = await prisma.medicalRecord.create({
       data: {
         ...data,
+        user: { connect: { id: data.userId } }, // Conectar con usuario
         recordNumber: `HC-${Date.now()}`,
       },
+      include: { user: true } // Incluir datos del usuario
     });
 
-    return NextResponse.json(newRecord, { status: 201 });
+    return new Response(JSON.stringify(newRecord), {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     console.error('Error en POST /api/histories:', error);
     return NextResponse.json(

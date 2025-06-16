@@ -1,93 +1,45 @@
-'use client';
+'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface User {
-  id: number;
-  nombre: string;
-  correo: string;
-  rol: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  loading: boolean;
-}
+import { AuthContextType, User } from '@/lib/type';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        
-        if (token) {
-          const response = await fetch('/api/auth/session', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          
-          const data = await response.json();
-          
-          if (response.ok) {
-            setUser(data.user);
-          } else {
-            localStorage.removeItem('authToken');
-          }
-        }
-      } catch (error) {
-        console.error('Error verificando sesión:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
+    const storedToken = localStorage.getItem('authToken');
+    const storedUser = localStorage.getItem('user');
+    
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Error en el inicio de sesión');
-    }
-
-    localStorage.setItem('authToken', data.token);
-    setUser(data.user);
+  const login = (newToken: string, newUser: User) => {
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('authToken', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    setToken(null);
     setUser(null);
-    router.push('/login');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    router.push('/');
   };
 
+  const isAuthenticated = !!token;
+
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      logout,
-      isAuthenticated: !!user,
-      loading
-    }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
@@ -95,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth debe usarse dentro de un AuthProvider');
   }
   return context;

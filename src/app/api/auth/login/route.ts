@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
+    // Validación básica
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Correo y contraseña son requeridos' },
@@ -13,8 +14,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Buscar usuario incluyendo la relación con el profesional
     const user = await prisma.user.findUnique({
-      where: { correo: email }
+      where: { correo: email },
+      include: {
+        // profesional: true
+      }
     });
 
     if (!user) {
@@ -24,6 +29,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Verificar contraseña
     const passwordMatch = await bcrypt.compare(password, user.contrasena);
     
     if (!passwordMatch) {
@@ -33,12 +39,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Usar alias para evitar error de variable no utilizada
-    const { contrasena: _, ...userWithoutPassword } = user;
+    // Preparar datos de usuario para el frontend
+    const userData = {
+      id: user.id,
+      nombre: user.usuario,
+      correo: user.correo,
+      genero: user.genero,
+      rol: user.role,
+      // especialidad: user.usuario?.especialidad || null,
+    };
 
     return NextResponse.json({
       message: 'Inicio de sesión exitoso',
-      user: userWithoutPassword
+      token: 'token_simulado_para_jwt', // Reemplazar con JWT real
+      user: userData
     }, { status: 200 });
 
   } catch (error) {

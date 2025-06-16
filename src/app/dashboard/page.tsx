@@ -25,6 +25,8 @@ import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
 import { fetchHistories, deleteHistory, MedicalRecordWithUser } from '@/services/historyService';
 import HistoryForm from '@/components/HistoryForm';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const DashboardMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('histories');
@@ -41,6 +43,15 @@ const DashboardMentalmentePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingHistory, setEditingHistory] = useState<number | null>(null);
   const limit = 9;
+  const { user, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+
+  // Redirigir si no está autenticado
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
 
   const loadHistories = async () => {
     setIsLoading(true);
@@ -57,8 +68,10 @@ const DashboardMentalmentePage = () => {
   };
 
   useEffect(() => {
-    loadHistories();
-  }, [currentPage, searchTerm]);
+    if (isAuthenticated) {
+      loadHistories();
+    }
+  }, [currentPage, searchTerm, isAuthenticated]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -84,6 +97,15 @@ const DashboardMentalmentePage = () => {
       year: 'numeric'
     });
   };
+
+  // Mostrar spinner mientras se verifica autenticación
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -119,6 +141,7 @@ const DashboardMentalmentePage = () => {
                   { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
                   { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
                   { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
+                  { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
                 ].map((item) => (
                   <li key={item.id}>
                     <button
@@ -174,6 +197,7 @@ const DashboardMentalmentePage = () => {
               { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
               { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
               { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
+              { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
             ].map((item) => (
               <li key={item.id}>
                 <button
@@ -183,6 +207,7 @@ const DashboardMentalmentePage = () => {
                       ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                       : 'hover:bg-[#152a40]'
                   }`}
+                  aria-label={item.label}
                 >
                   {item.icon}
                   <span>{item.label}</span>
@@ -196,11 +221,12 @@ const DashboardMentalmentePage = () => {
           <button 
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center space-x-3 w-full text-left p-3 bg-[#0f2439] rounded-lg"
+            aria-label="Perfil de usuario"
           >
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
             <div className="flex-1">
-              <p className="font-medium text-sm">Dra. Laura Méndez</p>
-              <p className="text-xs text-[#a0b1c5]">Psicóloga Clínica</p>
+              <p className="font-medium text-sm">{user?.nombre || 'Usuario'}</p>
+              <p className="text-xs text-[#a0b1c5]">{user?.role || 'Rol no asignado'}</p>
             </div>
             <ChevronDown size={16} />
           </button>
@@ -250,7 +276,9 @@ const DashboardMentalmentePage = () => {
               aria-label="Perfil de usuario"
             >
               <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-              <span className="hidden md:inline text-sm font-medium">Dra. Méndez</span>
+              <span className="hidden md:inline text-sm font-medium">
+                {user?.nombre ? user.nombre.split(' ')[0] : 'Usuario'}
+              </span>
             </button>
           </div>
           
@@ -258,8 +286,8 @@ const DashboardMentalmentePage = () => {
           {isProfileOpen && (
             <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
               <div className="p-4 border-b border-gray-200">
-                <p className="font-semibold">Dr. Deiner Bello</p>
-                <p className="text-sm text-gray-600">deiner2005@outlook.com</p>
+                <p className="font-semibold">{user?.nombre || 'Usuario'}</p>
+                <p className="text-sm text-gray-600">{user?.correo || ''}</p>
               </div>
               <div className="py-2">
                 <button 
@@ -269,6 +297,7 @@ const DashboardMentalmentePage = () => {
                   <Settings size={16} className="mr-2 text-gray-600" /> Configuración
                 </button>
                 <button 
+                  onClick={() => logout()}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
                   aria-label="Cerrar sesión"
                 >
@@ -360,6 +389,17 @@ const DashboardMentalmentePage = () => {
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+            </div>
+          ) : clinicalHistories.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500">No se encontraron historias clínicas</p>
+              <button 
+                onClick={() => setShowForm(true)}
+                className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
+              >
+                <PlusCircle size={16} className="mr-2" />
+                Crear primera historia
+              </button>
             </div>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -477,32 +517,34 @@ const DashboardMentalmentePage = () => {
           )}
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-6">
-            <div className="text-sm text-gray-600">
-              Mostrando {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalRecords)} de {totalRecords} registros
+          {clinicalHistories.length > 0 && (
+            <div className="flex justify-between items-center mt-6">
+              <div className="text-sm text-gray-600">
+                Mostrando {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalRecords)} de {totalRecords} registros
+              </div>
+              <div className="flex space-x-2">
+                <button 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  aria-label="Página anterior"
+                >
+                  Anterior
+                </button>
+                <span className="px-3 py-1 bg-white border rounded">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button 
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  aria-label="Página siguiente"
+                >
+                  Siguiente
+                </button>
+              </div>
             </div>
-            <div className="flex space-x-2">
-              <button 
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(p => p - 1)}
-                className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
-                aria-label="Página anterior"
-              >
-                Anterior
-              </button>
-              <span className="px-3 py-1 bg-white border rounded">
-                Página {currentPage} de {totalPages}
-              </span>
-              <button 
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(p => p + 1)}
-                className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
-                aria-label="Página siguiente"
-              >
-                Siguiente
-              </button>
-            </div>
-          </div>
+          )}
 
           {/* Templates Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">

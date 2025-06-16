@@ -4,8 +4,10 @@ import { createHistory, updateHistory, getHistoryById } from '@/services/history
 import { MedicalRecord } from '@prisma/client';
 import { format } from 'date-fns';
 import { HistoryFormProps } from '@/lib/type';
+import { useAuth } from '@/context/AuthContext';
 
 const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<Partial<MedicalRecord>>({
     patientName: '',
     identificationType: 'Cédula',
@@ -71,7 +73,6 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   const [isLoading, setIsLoading] = useState(false);
   const [isFormLoading, setIsFormLoading] = useState(false);
 
-  // Cargar datos si es edición
   useEffect(() => {
     if (historyId) {
       const loadHistory = async () => {
@@ -120,10 +121,10 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
       } else {
         await createHistory({
           ...formData,
-          userId: 1, // TODO: Reemplazar con ID de usuario real
+          userId: user?.id || 1,  // Usar el ID del usuario autenticado
         } as any);
       }
-      onSuccess();
+      onSuccess(); // Cerrar formulario y recargar historias
     } catch (error) {
       console.error('Error guardando historia:', error);
     } finally {
@@ -131,7 +132,6 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     }
   };
 
-  // Función para formatear fecha a YYYY-MM-DD (formato de input date)
   const formatDateForInput = (date: Date | null | undefined) => {
     if (!date) return '';
     try {

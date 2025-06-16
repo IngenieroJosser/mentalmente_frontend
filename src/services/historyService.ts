@@ -18,18 +18,14 @@ export const fetchHistories = async (
   return response.json()
 }
 
-export const createHistory = async (
-  historyData: Omit<MedicalRecord, 'id' | 'createdAt' | 'updatedAt' | 'recordNumber'>
-): Promise<MedicalRecord> => {
-  const response = await fetch(API_URL, {
+export const createHistory = async (data: MedicalRecord) => {
+  const response = await fetch('/api/histories', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(historyData),
-  })
-  return response.json()
-}
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
 
 export const updateHistory = async (
   id: number,
