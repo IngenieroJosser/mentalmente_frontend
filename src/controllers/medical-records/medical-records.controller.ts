@@ -34,7 +34,7 @@ export class MedicalRecordsController {
     }
   }
 
-  static async getById(id: string) {
+  static async getById(id: number) {
     try {
       const medicalRecord = await prisma.medicalRecord.findUnique({
         where: { id }
