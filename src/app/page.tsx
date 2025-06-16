@@ -85,52 +85,52 @@ export default function MentalmenteLogin() {
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password
-        })
-      });
+  e.preventDefault();
+  setIsLoading(true);
+  
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: credentials.email,
+        password: credentials.password
+      })
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Error en el inicio de sesión');
-      }
-
-      // Guardar token en localStorage
-      localStorage.setItem('authToken', data.token);
-
-      // Mostrar notificación de éxito
-      toast.success('¡Bienvenido a Mentalmente! Redirigiendo a su espacio seguro...', {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-        onClose: () => router.push('/dashboard')
-      });
-      
-    } catch (error: any) {
-      toast.error(error.message || 'Error en el inicio de sesión', {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored"
-      });
-    } finally {
-      setIsLoading(false);
+    if (!response.ok) {
+      throw new Error(data.error || 'Error en el inicio de sesión');
     }
-  };
+
+    // Guardar token en localStorage
+    localStorage.setItem('authToken', data.token);
+
+    // Mostrar notificación de éxito
+    toast.success('¡Bienvenido a Mentalmente! Redirigiendo a su espacio seguro...', {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+      onClose: () => router.push('/dashboard')
+    });
+    
+  } catch (error: any) {
+    toast.error(error.message || 'Error en el inicio de sesión', {
+      position: "top-right",
+      autoClose: 3000,
+      theme: "colored"
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleForgotPassword = () => {
     toast.info('Se ha enviado un enlace de recuperación a tu correo electrónico', {
