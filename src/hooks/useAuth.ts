@@ -6,7 +6,7 @@ export default function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async () => { 
       try {
         const userData = localStorage.getItem('currentUser');
         
