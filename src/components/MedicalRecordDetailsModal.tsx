@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { format } from 'date-fns';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaPrint, FaUser, FaUsers, FaUserMd, FaHistory, FaBrain, FaHeartbeat, FaChevronDown, FaChevronUp, FaSearch } from 'react-icons/fa';
 import { useReactToPrint } from 'react-to-print';
 import PrintableHistory from './PrintableHistory';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
@@ -12,8 +12,9 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   onClose 
 }) => {
   const printableRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Función de impresión corregida
   const handlePrintMedicalRecord = useReactToPrint({
     content: () => printableRef.current,
     documentTitle: `Historia_Clinica_${record.recordNumber}`,
@@ -26,402 +27,364 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     return format(new Date(date), 'dd/MM/yyyy');
   };
 
+  const toggleSection = (section: string) => {
+    setActiveSection(activeSection === section ? null : section);
+  };
+
+  const filteredSections = [
+    {
+      id: 'basic',
+      title: "Información Básica",
+      icon: <FaUser />,
+      content: (
+        <>
+          <InfoRow label="Nombre del paciente" value={record.patientName} />
+          <InfoRow label="Identificación" value={`${record.identificationType}: ${record.identificationNumber}`} />
+          <InfoRow label="Fecha de nacimiento" value={formatDate(record.birthDate)} />
+          <InfoRow label="Edad" value={record.age || 'No especificada'} />
+          <InfoRow label="Escolaridad" value={record.educationLevel || 'No especificada'} />
+          <InfoRow label="Ocupación" value={record.occupation || 'No especificada'} />
+          <InfoRow label="Lugar de nacimiento" value={record.birthPlace || 'No especificado'} />
+          <InfoRow label="Nacionalidad" value={record.nationality || 'No especificada'} />
+          <InfoRow label="Religión" value={record.religion || 'No especificada'} />
+          <InfoRow label="Dirección" value={record.address || 'No especificada'} />
+          <InfoRow label="Barrio" value={record.neighborhood || 'No especificado'} />
+          <InfoRow label="Ciudad" value={record.city || 'No especificada'} />
+          <InfoRow label="Departamento" value={record.state || 'No especificado'} />
+        </>
+      )
+    },
+    {
+      id: 'contact',
+      title: "Contacto y EPS",
+      icon: <FaUser />,
+      content: (
+        <>
+          <InfoRow label="Fecha de ingreso" value={formatDate(record.admissionDate)} />
+          <InfoRow label="Teléfono fijo" value={record.phone || 'No especificado'} />
+          <InfoRow label="Celular" value={record.cellPhone || 'No especificado'} />
+          <InfoRow label="Email" value={record.email || 'No especificado'} />
+          <InfoRow label="EPS" value={record.eps || 'No especificada'} />
+          <InfoRow label="¿Es beneficiario?" value={record.isBeneficiary ? 'Sí' : 'No'} />
+          <InfoRow label="Remitido por" value={record.referredBy || 'No especificado'} />
+        </>
+      )
+    },
+    {
+      id: 'guardians',
+      title: "Responsables",
+      icon: <FaUsers />,
+      content: (
+        <>
+          <div className="mb-4">
+            <h4 className="font-semibold text-gray-700 mb-2 flex items-center">
+              <FaUser className="mr-2 text-[#c77914]" /> Responsable 1
+            </h4>
+            <InfoRow label="Nombre" value={record.guardian1Name || 'No especificado'} />
+            <InfoRow label="Parentesco" value={record.guardian1Relationship || 'No especificado'} />
+            <InfoRow label="Teléfono" value={record.guardian1Phone || 'No especificado'} />
+            <InfoRow label="Ocupación" value={record.guardian1Occupation || 'No especificada'} />
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-2 flex items-center">
+              <FaUser className="mr-2 text-[#c77914]" /> Responsable 2
+            </h4>
+            <InfoRow label="Nombre" value={record.guardian2Name || 'No especificado'} />
+            <InfoRow label="Parentesco" value={record.guardian2Relationship || 'No especificado'} />
+            <InfoRow label="Teléfono" value={record.guardian2Phone || 'No especificado'} />
+            <InfoRow label="Ocupación" value={record.guardian2Occupation || 'No especificada'} />
+          </div>
+        </>
+      )
+    },
+    {
+      id: 'professional',
+      title: "Profesional",
+      icon: <FaUserMd />,
+      content: (
+        <>
+          <InfoRow label="Atendido por" value={record.attendedBy || 'No especificado'} />
+          <InfoRow label="Tarjeta profesional" value={record.licenseNumber || 'No especificado'} />
+        </>
+      )
+    },
+    {
+      id: 'personal',
+      title: "Antecedentes Personales",
+      icon: <FaHistory />,
+      content: (
+        <>
+          <TextBlock label="Patológicos" value={record.personalPathological} />
+          <TextBlock label="Quirúrgicos" value={record.personalSurgical} />
+          <TextBlock label="Psicopatológicos" value={record.personalPsychopathological} />
+          <TextBlock label="Historia de trauma o abuso" value={record.traumaHistory} />
+          <TextBlock label="Estado del sueño" value={record.sleepStatus} />
+          <TextBlock label="Consumo de SPA" value={record.substanceUse} />
+          <TextBlock label="Otros" value={record.personalOther} />
+        </>
+      )
+    },
+    {
+      id: 'family',
+      title: "Antecedentes Familiares",
+      icon: <FaUsers />,
+      content: (
+        <>
+          <TextBlock label="Patológicos" value={record.familyPathological} />
+          <TextBlock label="Quirúrgicos" value={record.familySurgical} />
+          <TextBlock label="Psicopatológicos" value={record.familyPsychopathological} />
+          <TextBlock label="Traumáticos" value={record.familyTraumatic} />
+          <TextBlock label="Consumo de SPA" value={record.familySubstanceUse} />
+          <TextBlock label="Otros" value={record.familyOther} />
+        </>
+      )
+    },
+    {
+      id: 'development',
+      title: "Desarrollo",
+      icon: <FaBrain />,
+      content: (
+        <>
+          <TextBlock label="Embarazo" value={record.pregnancyInfo} />
+          <TextBlock label="Parto" value={record.deliveryInfo} />
+          <TextBlock 
+            label="Desarrollo psicomotor" 
+            value={record.psychomotorDevelopment} 
+            sublabel="(sentarse, caminar, hablar, control de esfínteres)"
+          />
+          <TextBlock label="Dinámica familiar" value={record.familyDynamics} />
+        </>
+      )
+    },
+    {
+      id: 'clinical',
+      title: "Información Clínica",
+      icon: <FaHeartbeat />,
+      content: (
+        <>
+          <TextBlock label="Motivo de consulta" value={record.consultationReason} />
+          <TextBlock 
+            label="Historia del problema" 
+            value={record.problemHistory} 
+            sublabel="(duración, evolución, frecuencia)"
+          />
+          <TextBlock label="Expectativas de terapia" value={record.therapyExpectations} />
+          <TextBlock label="Examen Mental" value={record.mentalExam} />
+          <TextBlock 
+            label="Evaluación psicológica" 
+            value={record.psychologicalAssessment} 
+            sublabel="(estado de ánimo, ansiedad, estrés, funcionamiento cognitivo)"
+          />
+          <TextBlock label="Diagnóstico (DSM5-CIE 10)" value={record.diagnosis} />
+          <TextBlock label="Objetivos terapéuticos" value={record.therapeuticGoals} />
+          <TextBlock label="Plan Terapéutico" value={record.treatmentPlan} />
+          <TextBlock label="Derivación/Remisión" value={record.referralInfo} />
+          <TextBlock label="Recomendaciones" value={record.recommendations} />
+        </>
+      )
+    },
+    ...(record.evolution ? [{
+      id: 'evolution',
+      title: "Evolución",
+      icon: <FaHistory />,
+      content: (
+        <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+          <p className="text-gray-700 whitespace-pre-line">
+            {record.evolution}
+          </p>
+        </div>
+      )
+    }] : [])
+  ].filter(section => 
+    section.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    searchTerm === ''
+  );
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h2 className="text-2xl font-bold text-[#19334c]">
-            Detalles de Historia Clínica
-          </h2>
-          <div className="flex items-center space-x-4">
-            <button 
-  aria-label='Imprimir'
-  onClick={handlePrintMedicalRecord}
-  className="flex items-center gap-2 bg-[#19334c] text-white px-4 py-2 rounded-lg hover:bg-[#c77914] transition-colors"
->
-  <FaPrint /> Imprimir
-</button>
-              <PrintableHistory record={record} />
+    <div className="fixed inset-0 bg-[#19334c]/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col shadow-2xl border border-[#c77914] transform transition-all duration-300 scale-[0.98] hover:scale-100">
+        {/* Encabezado Premium */}
+        <div className="bg-gradient-to-r from-[#19334c] to-[#0c1a29] p-5 flex justify-between items-center border-b border-[#c77914] relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#c77914] via-[#d99d4e] to-[#c77914]"></div>
+          
+          <div>
+            <div className="flex items-center mb-2">
+              <div className="bg-[#c77914] p-2 rounded-lg mr-3">
+                <FaUserMd className="text-white text-xl" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white tracking-tight">
+                  Historia Clínica Premium
+                </h2>
+                <p className="text-[#c77914] font-light text-sm">
+                  {record.patientName} | N° {record.recordNumber}
+                </p>
+              </div>
             </div>
+          </div>
+          
+          <div className="flex space-x-3">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Buscar sección..."
+                className="bg-[#ffffff]/10 text-white placeholder-[#ffffff]/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#c77914] transition-all pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffffff]/50" />
+            </div>
+            
             <button 
-              aria-label='Cerrar modal'
-              onClick={onClose}
-              className="hover:text-[#c77914] transition-colors"
+              onClick={handlePrintMedicalRecord}
+              className="flex items-center gap-2 bg-[#c77914] text-white px-4 py-2 rounded-lg hover:bg-[#b36d12] transition-all font-medium shadow-md hover:shadow-lg"
             >
-              <FaTimes size={24} />
+              <FaPrint /> Exportar
+            </button>
+            <button 
+              onClick={onClose}
+              className="bg-[#ffffff]/20 hover:bg-[#ffffff]/30 p-3 rounded-full transition-colors"
+            >
+              <FaTimes className="text-white" />
             </button>
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Sección de información básica */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Información Básica</h3>
-            </div>
-            <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">Nombre del paciente</label>
-                <p className="mt-1 text-sm text-gray-900">{record.patientName}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Tipo de identificación</label>
-                <p className="mt-1 text-sm text-gray-900">{record.identificationType}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Número de identificación</label>
-                <p className="mt-1 text-sm text-gray-900">{record.identificationNumber}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Fecha de nacimiento</label>
-                <p className="mt-1 text-sm text-gray-900">{formatDate(record.birthDate)}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Edad</label>
-                <p className="mt-1 text-sm text-gray-900">{record.age || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Escolaridad</label>
-                <p className="mt-1 text-sm text-gray-900">{record.educationLevel || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Ocupación</label>
-                <p className="mt-1 text-sm text-gray-900">{record.occupation || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Lugar de nacimiento</label>
-                <p className="mt-1 text-sm text-gray-900">{record.birthPlace || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Nacionalidad</label>
-                <p className="mt-1 text-sm text-gray-900">{record.nationality || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Religión</label>
-                <p className="mt-1 text-sm text-gray-900">{record.religion || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Dirección de residencia</label>
-                <p className="mt-1 text-sm text-gray-900">{record.address || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Barrio</label>
-                <p className="mt-1 text-sm text-gray-900">{record.neighborhood || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Ciudad</label>
-                <p className="mt-1 text-sm text-gray-900">{record.city || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Departamento</label>
-                <p className="mt-1 text-sm text-gray-900">{record.state || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Fecha de ingreso</label>
-                <p className="mt-1 text-sm text-gray-900">{formatDate(record.admissionDate)}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Teléfono fijo</label>
-                <p className="mt-1 text-sm text-gray-900">{record.phone || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Celular</label>
-                <p className="mt-1 text-sm text-gray-900">{record.cellPhone || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Email</label>
-                <p className="mt-1 text-sm text-gray-900">{record.email || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">EPS</label>
-                <p className="mt-1 text-sm text-gray-900">{record.eps || 'No especificada'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">¿Es beneficiario?</label>
-                <p className="mt-1 text-sm text-gray-900">{record.isBeneficiary ? 'Sí' : 'No'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Remitido por</label>
-                <p className="mt-1 text-sm text-gray-900">{record.referredBy || 'No especificado'}</p>
-              </div>
-            </div>
+        {/* Contenido principal con scroll */}
+        <div className="overflow-y-auto flex-1 p-5 bg-gradient-to-br from-white to-[#f9f9f9]">
+          <div className="grid grid-cols-1 gap-4">
+            {filteredSections.map(section => (
+              <PremiumSectionCard 
+                key={section.id}
+                icon={section.icon}
+                title={section.title}
+                isOpen={activeSection === section.id}
+                onToggle={() => toggleSection(section.id)}
+              >
+                {section.content}
+              </PremiumSectionCard>
+            ))}
           </div>
-
-          {/* Responsables */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Responsables</h3>
-            </div>
-            <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium mb-2">Responsable 1</h4>
-                <p><span className="font-medium">Nombre:</span> {record.guardian1Name || 'No especificado'}</p>
-                <p><span className="font-medium">Parentesco:</span> {record.guardian1Relationship || 'No especificado'}</p>
-                <p><span className="font-medium">Teléfono:</span> {record.guardian1Phone || 'No especificado'}</p>
-                <p><span className="font-medium">Ocupación:</span> {record.guardian1Occupation || 'No especificada'}</p>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2">Responsable 2</h4>
-                <p><span className="font-medium">Nombre:</span> {record.guardian2Name || 'No especificado'}</p>
-                <p><span className="font-medium">Parentesco:</span> {record.guardian2Relationship || 'No especificado'}</p>
-                <p><span className="font-medium">Teléfono:</span> {record.guardian2Phone || 'No especificado'}</p>
-                <p><span className="font-medium">Ocupación:</span> {record.guardian2Occupation || 'No especificada'}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Profesional */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Profesional</h3>
-            </div>
-            <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">Atendido por</label>
-                <p className="mt-1 text-sm text-gray-900">{record.attendedBy || 'No especificado'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Número de tarjeta profesional</label>
-                <p className="mt-1 text-sm text-gray-900">{record.licenseNumber || 'No especificado'}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Antecedentes personales */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Antecedentes Personales</h3>
-            </div>
-            <div className="p-4 bg-white space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Patológicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.personalPathological || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Quirúrgicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.personalSurgical || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Psicopatológicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.personalPsychopathological || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Historia de trauma o abuso</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.traumaHistory || 'No especificada'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Estado del sueño</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.sleepStatus || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Consumo de sustancias psicoactivas</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.substanceUse || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Otros</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.personalOther || 'No especificados'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Antecedentes familiares */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Antecedentes Familiares</h3>
-            </div>
-            <div className="p-4 bg-white space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Patológicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familyPathological || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Quirúrgicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familySurgical || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Psicopatológicos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familyPsychopathological || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Traumáticos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familyTraumatic || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Consumo de sustancias psicoactivas</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familySubstanceUse || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Otros</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familyOther || 'No especificados'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Desarrollo */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Desarrollo</h3>
-            </div>
-            <div className="p-4 bg-white space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Embarazo</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.pregnancyInfo || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Parto</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.deliveryInfo || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.psychomotorDevelopment || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Descripción de la dinámica familiar</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.familyDynamics || 'No especificada'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Información clínica */}
-          <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-            <div className="bg-[#19334c] p-4">
-              <h3 className="font-semibold text-lg text-white">Información Clínica</h3>
-            </div>
-            <div className="p-4 bg-white space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Motivo de consulta</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.consultationReason || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Historia del problema (duración, evolución, frecuencia)</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.problemHistory || 'No especificada'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Expectativas del paciente respecto a la terapia</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.therapyExpectations || 'No especificadas'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Examen Mental</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.mentalExam || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Evaluación psicológica (estado de ánimo, niveles de ansiedad y estrés, habilidades de afrontamiento, funcionamiento cognitivo, emocional, conductual y social)</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.psychologicalAssessment || 'No especificada'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">IDX O DX (DSM5-CIE 10)</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.diagnosis || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Objetivos terapéuticos</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.therapeuticGoals || 'No especificados'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Plan Terapéutico</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.treatmentPlan || 'No especificado'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Derivación Y/O Remisión</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.referralInfo || 'No especificada'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Recomendaciones</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                  {record.recommendations || 'No especificadas'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Sección de evolución */}
-          {record.evolution && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4">
-                <h3 className="font-semibold text-lg text-white">Evolución</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <p className="text-sm text-gray-900 whitespace-pre-line">
-                  {record.evolution}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 bg-[#19334c] text-white font-medium rounded-lg hover:bg-[#c77914] transition-colors"
-          >
-            Cerrar
-          </button>
+        {/* Resumen profesional */}
+        <div className="bg-[#f8f9fa] border-t border-[#eaeaea] p-4">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-600">
+              <p>Profesional: <span className="font-medium text-[#19334c]">{record.attendedBy || 'No especificado'}</span></p>
+              <p>Última actualización: <span className="font-medium text-[#19334c]">{formatDate(record.admissionDate)}</span></p>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="text-sm text-[#19334c] hover:text-[#c77914] transition-colors"
+              >
+                Volver arriba
+              </button>
+              <button
+                onClick={onClose}
+                className="px-5 py-2.5 bg-[#19334c] text-white font-medium rounded-lg hover:bg-[#0c1a29] transition-colors shadow-md"
+              >
+                Cerrar Historial
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Componente para impresión (oculto) */}
+        {/* Componente oculto para impresión */}
         <div className="hidden">
-         <div 
-          ref={printableRef} 
-          className="absolute left-full top-0 hidden"
-        >
-          <PrintableHistory record={record} />
+          <div ref={printableRef}>
+            <PrintableHistory record={record} />
+          </div>
         </div>
+        
+        {/* Marca de agua premium */}
+        <div className="absolute bottom-4 right-4 opacity-10 pointer-events-none">
+          <svg width="80" height="80" viewBox="0 0 100 100" className="text-[#c77914]">
+            <path d="M50 15 A35 35 0 1 0 50 85 A35 35 0 1 0 50 15 Z" fill="currentColor" />
+            <path d="M50 30 A20 20 0 1 1 50 70 A20 20 0 1 1 50 30 Z" fill="#19334c" />
+            <path d="M55 55 L70 40 L60 35 L50 45 L40 35 L30 40 L45 55 L35 60 L50 70 L65 60 Z" fill="currentColor" />
+          </svg>
         </div>
       </div>
     </div>
   );
 };
+
+// Componente premium para secciones
+const PremiumSectionCard = ({ 
+  icon, 
+  title, 
+  isOpen, 
+  onToggle, 
+  children 
+}: { 
+  icon: React.ReactNode; 
+  title: string; 
+  isOpen: boolean; 
+  onToggle: () => void;
+  children: React.ReactNode;
+}) => (
+  <div className={`bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 transition-all duration-300 ${isOpen ? 'ring-2 ring-[#c77914]/30' : ''}`}>
+    <button 
+      onClick={onToggle}
+      className="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition-colors"
+    >
+      <div className="flex items-center">
+        <div className="bg-[#19334c] p-2 rounded-lg mr-3">
+          <span className="text-[#c77914]">{icon}</span>
+        </div>
+        <h3 className="font-semibold text-lg text-[#19334c]">{title}</h3>
+      </div>
+      <div className="text-[#c77914]">
+        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+      </div>
+    </button>
+    
+    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className="p-4 space-y-4 border-t border-gray-100">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+// Componente para filas de información
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex flex-wrap py-2 border-b border-gray-100 last:border-0 group">
+    <span className="w-2/5 text-sm font-medium text-[#19334c]">{label}</span>
+    <span className="w-3/5 text-sm text-gray-700 group-hover:text-[#19334c] transition-colors">
+      {value}
+    </span>
+  </div>
+);
+
+// Componente para bloques de texto
+const TextBlock = ({ 
+  label, 
+  value, 
+  sublabel 
+}: { 
+  label: string; 
+  value?: string; 
+  sublabel?: string;
+}) => (
+  <div className="mb-4 last:mb-0">
+    <div className="flex items-center mb-2">
+      <div className="w-1 h-5 bg-[#c77914] mr-2 rounded-full"></div>
+      <h4 className="font-medium text-[#19334c]">{label}</h4>
+    </div>
+    
+    {sublabel && <p className="text-xs text-[#c77914] mb-2 ml-3">{sublabel}</p>}
+    
+    <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 ml-3">
+      <p className="text-gray-700 whitespace-pre-line text-sm">
+        {value || 'No especificado'}
+      </p>
+    </div>
+  </div>
+);
 
 export default MedicalRecordDetailsModal;
