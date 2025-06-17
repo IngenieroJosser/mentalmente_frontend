@@ -27,6 +27,7 @@ import { deleteHistory, MedicalRecordWithUser } from '@/services/historyService'
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 
 const DashboardMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('histories');
@@ -42,6 +43,8 @@ const DashboardMentalmentePage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [editingHistory, setEditingHistory] = useState<number | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<MedicalRecordWithUser | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const limit = 9;
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
@@ -103,12 +106,20 @@ const DashboardMentalmentePage = () => {
   const handleDelete = async (id: number) => {
     if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
       try {
-        await deleteHistory(id);
-        loadHistories();
+        await fetch(`/api/medical-records?id=${id}`, {
+          method: 'DELETE',
+        });
+        loadHistories(); // Actualiza la lista después de eliminar
       } catch (error) {
         console.error('Error eliminando historia:', error);
+        alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
       }
     }
+  };
+
+  const handleViewDetails = (record: MedicalRecordWithUser) => {
+    setSelectedRecord(record);
+    setShowDetailsModal(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -454,6 +465,7 @@ const DashboardMentalmentePage = () => {
                     
                     <div className="flex justify-between mt-4">
                       <button 
+                        onClick={() => handleViewDetails(history)}
                         className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg"
                         aria-label="Ver detalles"
                       >
@@ -506,6 +518,13 @@ const DashboardMentalmentePage = () => {
                       <td className="py-4 px-4 text-sm">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
+                          <button 
+                            onClick={() => handleViewDetails(history)}
+                            className="p-1.5 text-gray-500 hover:text-[#19334c]" 
+                            aria-label="Ver detalles"
+                          >
+                            <FileText size={16} />
+                          </button>
                           <button 
                             onClick={() => {
                               setEditingHistory(history.id);
@@ -610,6 +629,14 @@ const DashboardMentalmentePage = () => {
             loadHistories();
           }}
           onCancel={() => setShowForm(false)}
+        />
+      )}
+
+      {/* Details Modal */}
+      {showDetailsModal && selectedRecord && (
+        <MedicalRecordDetailsModal 
+          record={selectedRecord} 
+          onClose={() => setShowDetailsModal(false)} 
         />
       )}
     </div>

@@ -628,13 +628,15 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
     
-    // Eliminar solo campos protegidos si existen
+    // Remove protected fields and user data
     const updateData = { ...body };
     delete updateData.id;
     delete updateData.createdAt;
     delete updateData.updatedAt;
+    delete updateData.userId;
+    // delete updateData.user; // Remove the user object
     
-    // Convertir fechas si es necesario
+    // Convert dates if needed
     if (updateData.birthDate) {
       updateData.birthDate = new Date(updateData.birthDate);
     }
@@ -652,13 +654,117 @@ export async function PUT(req: NextRequest) {
   } catch (error) {
     console.error('Error actualizando historia clínica:', error);
     
-    // Mensaje más detallado para depuración
     const errorMessage = error instanceof Error 
       ? error.message 
       : 'Error interno del servidor';
     
     return NextResponse.json(
-      { error: errorMessage, details: error },
+      { error: errorMessage },
+      { status: 500 }
+    );
+  }
+}
+
+
+/**
+ * @swagger
+ * /api/medical-records:
+ *   delete:
+ *     summary: Elimina una historia clínica
+ *     description: Elimina una historia clínica específica por su ID.
+ *     tags: [Medical Records]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la historia clínica a eliminar
+ *     responses:
+ *       200:
+ *         description: Historia clínica eliminada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Historia clínica eliminada exitosamente"
+ *       400:
+ *         description: Falta el parámetro ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID de historia clínica es requerido"
+ *       404:
+ *         description: Historia clínica no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Historia clínica no encontrada"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error interno del servidor"
+ */
+
+/**
+ * Elimina una historia clínica por ID
+ * @param req Solicitud HTTP con el parámetro 'id' en la query
+ * @returns Respuesta JSON confirmando la eliminación o mensaje de error
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de historia clínica es requerido' },
+        { status: 400 }
+      );
+    }
+
+    // Verifica si la historia existe antes de eliminar
+    const record = await prisma.medicalRecord.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!record) {
+      return NextResponse.json(
+        { error: 'Historia clínica no encontrada' },
+        { status: 404 }
+      );
+    }
+
+    // Elimina la historia clínica
+    await prisma.medicalRecord.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return NextResponse.json(
+      { message: 'Historia clínica eliminada exitosamente' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error eliminando historia clínica:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }

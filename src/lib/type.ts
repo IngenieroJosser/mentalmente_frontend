@@ -60,3 +60,7 @@ export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | '
   admissionDate?: Date | null;
   userId?: number;
 };
+
+export interface MedicalRecordsTableProps {
+  records: MedicalRecord[];
+}

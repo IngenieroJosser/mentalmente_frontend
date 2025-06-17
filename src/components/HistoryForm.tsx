@@ -1,18 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { createHistory, updateHistory, getHistoryById } from '@/services/historyService';
-import { MedicalRecord } from '@prisma/client';
 import { format } from 'date-fns';
 import { HistoryFormProps } from '@/lib/type';
 import { useAuth } from '@/context/AuthContext';
 import { FaUser, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaHospital, FaNotesMedical, FaClipboardList, FaFlask, FaStethoscope, FaFileMedical, FaSave, FaTimes } from 'react-icons/fa';
-
-// Define un nuevo tipo para el formulario
-type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
-  birthDate?: Date | null;
-  admissionDate?: Date | null;
-  userId?: number;
-};
+import { MedicalRecordFormData } from '@/lib/type';
 
 const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
   const { user } = useAuth();
@@ -124,33 +117,48 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) return;
+    if (!user) {
+      alert('No se ha identificado al usuario. Por favor inicie sesión.');
+      return;
+    }
 
     setIsLoading(true);
     
-    // Crear objeto para enviar con tipos correctos
     const dataToSend: any = {
       ...formData,
-      userId: user.id,
+      ...(!historyId && { userId: user.id }),
       age: formData.age ? Number(formData.age) : null,
       birthDate: formData.birthDate?.toISOString(),
       admissionDate: formData.admissionDate?.toISOString(),
+      recordNumber: formData.recordNumber || `HC-${Date.now()}`,
     };
 
     try {
       if (historyId) {
-        // Elimina el id del objeto si existe
-        const { id, ...updateData } = dataToSend;
+        const { id, userId, createdAt, updatedAt, user, ...updateData } = dataToSend;
+        
+        if (!id) {
+          throw new Error('ID de historia clínica no válido');
+        }
+
         await updateHistory(historyId, updateData);
+        alert('Historia clínica actualizada exitosamente');
       } else {
+        if (!dataToSend.patientName || !dataToSend.identificationNumber) {
+          throw new Error('Nombre del paciente y número de identificación son requeridos');
+        }
+
         await createHistory(dataToSend);
+        alert('Historia clínica creada exitosamente');
       }
+      
       onSuccess();
     } catch (error) {
       console.error('Error guardando historia:', error);
-      
-      // Mostrar error al usuario
-      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Ocurrió un error al guardar la historia clínica';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -185,6 +193,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
             {historyId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
           </h2>
           <button 
+            aria-label='Editar o crear historia clinica'
             onClick={onCancel}
             className="text-gray-500 hover:text-[#c77914] transition-colors"
           >
@@ -235,6 +244,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Nombre completo *
                     </label>
                     <input
+                      aria-label='Nombre del paciente'
                       type="text"
                       name="patientName"
                       value={formData.patientName || ''}
@@ -249,6 +259,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Tipo de identificación *
                     </label>
                     <select
+                      aria-label='Tipo de identificación'
                       name="identificationType"
                       value={formData.identificationType || ''}
                       onChange={handleChange}
@@ -267,6 +278,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Número de identificación *
                     </label>
                     <input
+                      aria-label='Número de identificación'
                       type="text"
                       name="identificationNumber"
                       value={formData.identificationNumber || ''}
@@ -281,6 +293,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Fecha de nacimiento
                     </label>
                     <input
+                      aria-label='Fecha de nacimiento'
                       type="date"
                       value={formatDateForInput(formData.birthDate)}
                       onChange={(e) => handleDateChange('birthDate', e.target.value)}
@@ -290,6 +303,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Edad</label>
                     <input
+                      aria-label='Edad'
                       type="number"
                       name="age"
                       value={formData.age || ''}
@@ -300,6 +314,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Número de registro *</label>
                     <input
+                      aria-label='Número de registro'
                       type="text"
                       name="recordNumber"
                       value={formData.recordNumber || ''}
@@ -311,6 +326,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Nivel educativo</label>
                     <input
+                      aria-label='Nivel educativo'
                       type="text"
                       name="educationLevel"
                       value={formData.educationLevel || ''}
@@ -321,6 +337,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Ocupación</label>
                     <input
+                      aria-label='Ocupación'
                       type="text"
                       name="occupation"
                       value={formData.occupation || ''}
@@ -331,6 +348,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Lugar de nacimiento</label>
                     <input
+                      aria-label='Lugar de nacimiento'
                       type="text"
                       name="birthPlace"
                       value={formData.birthPlace || ''}
@@ -341,6 +359,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Nacionalidad</label>
                     <input
+                      aria-label='Nacionalidad'
                       type="text"
                       name="nationality"
                       value={formData.nationality || ''}
@@ -351,6 +370,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Religión</label>
                     <input
+                      aria-label='Religión'
                       type="text"
                       name="religion"
                       value={formData.religion || ''}
@@ -361,6 +381,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Dirección</label>
                     <input
+                      aria-label='Dirección'
                       type="text"
                       name="address"
                       value={formData.address || ''}
@@ -371,6 +392,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Barrio</label>
                     <input
+                      aria-label='Barrio'
                       type="text"
                       name="neighborhood"
                       value={formData.neighborhood || ''}
@@ -381,6 +403,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Ciudad</label>
                     <input
+                      aria-label='Ciudad'
                       type="text"
                       name="city"
                       value={formData.city || ''}
@@ -391,6 +414,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Departamento</label>
                     <input
+                      aria-label='Departamento'
                       type="text"
                       name="state"
                       value={formData.state || ''}
@@ -401,6 +425,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Fecha de ingreso</label>
                     <input
+                      aria-label='Fecha de ingreso'
                       type="date"
                       value={formatDateForInput(formData.admissionDate)}
                       onChange={(e) => handleDateChange('admissionDate', e.target.value)}
@@ -413,6 +438,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Teléfono fijo
                     </label>
                     <input
+                      aria-label='Teléfono fijo'
                       type="text"
                       name="phone"
                       value={formData.phone || ''}
@@ -426,6 +452,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Celular
                     </label>
                     <input
+                      aria-label='Celular'
                       type="text"
                       name="cellPhone"
                       value={formData.cellPhone || ''}
@@ -439,6 +466,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       Email
                     </label>
                     <input
+                      aria-label='Email'
                       type="email"
                       name="email"
                       value={formData.email || ''}
@@ -452,6 +480,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       EPS
                     </label>
                     <input
+                      aria-label='EPS'
                       type="text"
                       name="eps"
                       value={formData.eps || ''}
@@ -461,6 +490,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   </div>
                   <div className="flex items-center">
                     <input
+                      aria-label='Es beneficario?'
                       type="checkbox"
                       name="isBeneficiary"
                       checked={formData.isBeneficiary || false}
@@ -472,6 +502,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Referido por</label>
                     <input
+                      aria-label='Referido por'
                       type="text"
                       name="referredBy"
                       value={formData.referredBy || ''}
@@ -499,6 +530,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Nombre completo</label>
                         <input
+                          aria-label='Nombre del responsable'
                           type="text"
                           name="guardian1Name"
                           value={formData.guardian1Name || ''}
@@ -509,6 +541,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Parentesco</label>
                         <input
+                          aria-label='Parentesco'
                           type="text"
                           name="guardian1Relationship"
                           value={formData.guardian1Relationship || ''}
@@ -522,6 +555,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           Teléfono
                         </label>
                         <input
+                          aria-label='Teléfono del responsable'
                           type="text"
                           name="guardian1Phone"
                           value={formData.guardian1Phone || ''}
@@ -532,6 +566,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Ocupación</label>
                         <input
+                          aria-label='Ocupación del responsable'
                           type="text"
                           name="guardian1Occupation"
                           value={formData.guardian1Occupation || ''}
@@ -548,6 +583,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Nombre completo</label>
                         <input
+                          aria-label='Nombre completo del responsable'
                           type="text"
                           name="guardian2Name"
                           value={formData.guardian2Name || ''}
@@ -558,6 +594,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Parentesco</label>
                         <input
+                          aria-label='Parentesco del responsable'
                           type="text"
                           name="guardian2Relationship"
                           value={formData.guardian2Relationship || ''}
@@ -571,6 +608,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           Teléfono
                         </label>
                         <input
+                          aria-label='Teléfono del responsable'
                           type="text"
                           name="guardian2Phone"
                           value={formData.guardian2Phone || ''}
@@ -581,6 +619,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       <div>
                         <label className="block text-sm font-medium mb-1">Ocupación</label>
                         <input
+                          aria-label='Ocupación del segundo acompañante'
                           type="text"
                           name="guardian2Occupation"
                           value={formData.guardian2Occupation || ''}
@@ -607,6 +646,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Nombre del profesional</label>
                     <input
+                      aria-label='Nombre del profesional'
                       type="text"
                       name="attendedBy"
                       value={formData.attendedBy || ''}
@@ -617,6 +657,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Número de licencia</label>
                     <input
+                      aria-label='Número de licencia del profesional'
                       type="text"
                       name="licenseNumber"
                       value={formData.licenseNumber || ''}
@@ -641,6 +682,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Patológicos</label>
                     <textarea
+                      aria-label='Patológias del paciente'
                       name="personalPathological"
                       value={formData.personalPathological || ''}
                       onChange={handleChange}
@@ -651,6 +693,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Quirúrgicos</label>
                     <textarea
+                      aria-label='Quirúrgicos'
                       name="personalSurgical"
                       value={formData.personalSurgical || ''}
                       onChange={handleChange}
@@ -661,6 +704,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Psicopatológicos</label>
                     <textarea
+                      aria-label='Psicopatológicos'
                       name="personalPsychopathological"
                       value={formData.personalPsychopathological || ''}
                       onChange={handleChange}
@@ -671,6 +715,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Historia traumática</label>
                     <textarea
+                      aria-label='Historias traumaticas'
                       name="traumaHistory"
                       value={formData.traumaHistory || ''}
                       onChange={handleChange}
@@ -681,6 +726,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Estado del sueño</label>
                     <textarea
+                      aria-label='Estado del sueño'
                       name="sleepStatus"
                       value={formData.sleepStatus || ''}
                       onChange={handleChange}
@@ -691,6 +737,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Uso de sustancias</label>
                     <textarea
+                      aria-label='Uso de sustancias'
                       name="substanceUse"
                       value={formData.substanceUse || ''}
                       onChange={handleChange}
@@ -701,6 +748,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Otros</label>
                     <textarea
+                      aria-label='Otros'
                       name="personalOther"
                       value={formData.personalOther || ''}
                       onChange={handleChange}
@@ -725,6 +773,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Patológicos</label>
                     <textarea
+                      aria-label='Patológicos'
                       name="familyPathological"
                       value={formData.familyPathological || ''}
                       onChange={handleChange}
@@ -735,6 +784,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Quirúrgicos</label>
                     <textarea
+                      aria-label='Quirúrgicos'
                       name="familySurgical"
                       value={formData.familySurgical || ''}
                       onChange={handleChange}
@@ -745,6 +795,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Psicopatológicos</label>
                     <textarea
+                      aria-label='Psicopatológicos'
                       name="familyPsychopathological"
                       value={formData.familyPsychopathological || ''}
                       onChange={handleChange}
@@ -755,6 +806,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Traumáticos</label>
                     <textarea
+                      aria-label='Traumáticos'
                       name="familyTraumatic"
                       value={formData.familyTraumatic || ''}
                       onChange={handleChange}
@@ -765,6 +817,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Uso de sustancias</label>
                     <textarea
+                      aria-label='Uso de sustancias'
                       name="familySubstanceUse"
                       value={formData.familySubstanceUse || ''}
                       onChange={handleChange}
@@ -775,6 +828,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Otros</label>
                     <textarea
+                      aria-label='Otros'
                       name="familyOther"
                       value={formData.familyOther || ''}
                       onChange={handleChange}
@@ -799,6 +853,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Embarazo</label>
                     <textarea
+                      aria-label='Embarazo'
                       name="pregnancyInfo"
                       value={formData.pregnancyInfo || ''}
                       onChange={handleChange}
@@ -809,6 +864,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Parto</label>
                     <textarea
+                      aria-label='Parto'
                       name="deliveryInfo"
                       value={formData.deliveryInfo || ''}
                       onChange={handleChange}
@@ -819,6 +875,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Desarrollo psicomotor</label>
                     <textarea
+                      aria-label='Desarrollo psicomotor'
                       name="psychomotorDevelopment"
                       value={formData.psychomotorDevelopment || ''}
                       onChange={handleChange}
@@ -829,6 +886,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Dinámica familiar</label>
                     <textarea
+                      aria-label='Dinámica familiar'
                       name="familyDynamics"
                       value={formData.familyDynamics || ''}
                       onChange={handleChange}
@@ -853,6 +911,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Motivo de consulta</label>
                     <textarea
+                      aria-label='Motivo de consulta'
                       name="consultationReason"
                       value={formData.consultationReason || ''}
                       onChange={handleChange}
@@ -863,6 +922,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Historia del problema</label>
                     <textarea
+                      aria-label='Historia del problema'
                       name="problemHistory"
                       value={formData.problemHistory || ''}
                       onChange={handleChange}
@@ -873,6 +933,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Expectativas de terapia</label>
                     <textarea
+                      aria-label='Expectativas de terapia'
                       name="therapyExpectations"
                       value={formData.therapyExpectations || ''}
                       onChange={handleChange}
@@ -883,6 +944,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Examen mental</label>
                     <textarea
+                      aria-label='Examen mental'
                       name="mentalExam"
                       value={formData.mentalExam || ''}
                       onChange={handleChange}
@@ -893,6 +955,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Evaluación psicológica</label>
                     <textarea
+                      aria-label='Evaluación psicológica'
                       name="psychologicalAssessment"
                       value={formData.psychologicalAssessment || ''}
                       onChange={handleChange}
@@ -903,6 +966,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Diagnóstico</label>
                     <textarea
+                      aria-label='Diagnóstico'
                       name="diagnosis"
                       value={formData.diagnosis || ''}
                       onChange={handleChange}
@@ -913,6 +977,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Objetivos terapéuticos</label>
                     <textarea
+                      aria-label='Objetivos terapéuticos'
                       name="therapeuticGoals"
                       value={formData.therapeuticGoals || ''}
                       onChange={handleChange}
@@ -923,6 +988,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Plan de tratamiento</label>
                     <textarea
+                      aria-label='Plan de tratamiento'
                       name="treatmentPlan"
                       value={formData.treatmentPlan || ''}
                       onChange={handleChange}
@@ -933,6 +999,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Información de referencia</label>
                     <textarea
+                      aria-label='Información de referencia'
                       name="referralInfo"
                       value={formData.referralInfo || ''}
                       onChange={handleChange}
@@ -943,6 +1010,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   <div>
                     <label className="block text-sm font-medium mb-1">Recomendaciones</label>
                     <textarea
+                      aria-label='Recomendaciones'
                       name="recommendations"
                       value={formData.recommendations || ''}
                       onChange={handleChange}
@@ -965,6 +1033,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
               <div className="p-4 bg-white">
                 <div>
                   <textarea
+                    aria-label='Evolución'
                     name="evolution"
                     value={formData.evolution || ''}
                     onChange={handleChange}

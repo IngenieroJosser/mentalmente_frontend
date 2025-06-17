@@ -37,7 +37,7 @@ const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
  *           type: string
  *           format: password
  *           minLength: 6
- *           example: "passwordSegura123"
+ *           example: "cordobarivasjoss"
  *           description: Contraseña con al menos 6 caracteres
  *         genero:
  *           type: string
