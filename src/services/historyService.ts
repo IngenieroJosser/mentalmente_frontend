@@ -72,6 +72,15 @@ export const getHistoryById = async (id: number) => {
 };
 
 // Definir el tipo extendido
-export type MedicalRecordWithUser = MedicalRecord & {
-  user?: Pick<User, 'usuario'> | null;
+// services/historyService.ts
+export type MedicalRecordWithUser = {
+  id: number;
+  patientName: string;
+  // ... otras propiedades ...
+  updatedAt: Date;
+  user: {
+    id: number;
+    usuario: string;
+    correo: string;
+  } | null;
 };

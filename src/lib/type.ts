@@ -64,3 +64,18 @@ export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | '
 export interface MedicalRecordsTableProps {
   records: MedicalRecord[];
 }
+
+export interface MedicalRecordDetailsModalProps {
+  record: MedicalRecordWithUser;
+  onClose: () => void;
+}
+
+export interface PrintableHistoryProps {
+  record: MedicalRecordWithUser;
+}
+
+export type MedicalRecordWithUser_ = MedicalRecord & {
+  user: {
+    usuario: string;
+  } | null;
+};
