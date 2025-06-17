@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { format } from 'date-fns';
-import { FaTimes, FaPrint } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 import { useReactToPrint } from 'react-to-print';
 import PrintableHistory from './PrintableHistory';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
@@ -13,20 +13,12 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 }) => {
   const printableRef = useRef<HTMLDivElement>(null);
 
+  // Función de impresión corregida
   const handlePrintMedicalRecord = useReactToPrint({
     content: () => printableRef.current,
     documentTitle: `Historia_Clinica_${record.recordNumber}`,
-    onBeforeGetContent: () => {
-      if (printableRef.current) {
-        printableRef.current.classList.remove('hidden');
-      }
-      return Promise.resolve();
-    },
-    onAfterPrint: () => {
-      if (printableRef.current) {
-        printableRef.current.classList.add('hidden');
-      }
-    }
+    onBeforeGetContent: () => Promise.resolve(),
+    onAfterPrint: () => {}
   } as any);
 
   const formatDate = (date: Date | null) => {
@@ -43,12 +35,14 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           </h2>
           <div className="flex items-center space-x-4">
             <button 
-              onClick={handlePrintMedicalRecord}
-              className="p-2 bg-[#19334c] text-white rounded-lg hover:bg-[#c77914] transition-colors"
-              aria-label="Imprimir historia clínica"
-            >
-              <FaPrint size={20} />
-            </button>
+  aria-label='Imprimir'
+  onClick={handlePrintMedicalRecord}
+  className="flex items-center gap-2 bg-[#19334c] text-white px-4 py-2 rounded-lg hover:bg-[#c77914] transition-colors"
+>
+  <FaPrint /> Imprimir
+</button>
+              <PrintableHistory record={record} />
+            </div>
             <button 
               aria-label='Cerrar modal'
               onClick={onClose}
