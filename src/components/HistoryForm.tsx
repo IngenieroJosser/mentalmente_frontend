@@ -7,9 +7,16 @@ import { HistoryFormProps } from '@/lib/type';
 import { useAuth } from '@/context/AuthContext';
 import { FaUser, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaHospital, FaNotesMedical, FaClipboardList, FaFlask, FaStethoscope, FaFileMedical, FaSave, FaTimes } from 'react-icons/fa';
 
+// Define un nuevo tipo para el formulario
+type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
+  birthDate?: Date | null;
+  admissionDate?: Date | null;
+  userId?: number;
+};
+
 const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
   const { user } = useAuth();
-  const [formData, setFormData] = useState<Partial<MedicalRecord>>({
+  const [formData, setFormData] = useState<MedicalRecordFormData>({
     patientName: '',
     identificationType: 'Cédula',
     identificationNumber: '',
@@ -69,6 +76,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     referralInfo: '',
     recommendations: '',
     evolution: '',
+    recordNumber: `HC-${Date.now()}`,
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -116,27 +124,33 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      console.error('Usuario no autenticado');
-      return;
-    }
+    if (!user) return;
 
     setIsLoading(true);
-    try {
-      const dataToSend = {
-        ...formData,
-        userId: user.id,
-        recordNumber: formData.recordNumber || `HC-${Date.now()}`
-      };
+    
+    // Crear objeto para enviar con tipos correctos
+    const dataToSend: any = {
+      ...formData,
+      userId: user.id,
+      age: formData.age ? Number(formData.age) : null,
+      birthDate: formData.birthDate?.toISOString(),
+      admissionDate: formData.admissionDate?.toISOString(),
+    };
 
+    try {
       if (historyId) {
-        await updateHistory(historyId, dataToSend);
+        // Elimina el id del objeto si existe
+        const { id, ...updateData } = dataToSend;
+        await updateHistory(historyId, updateData);
       } else {
-        await createHistory(dataToSend as any);
+        await createHistory(dataToSend);
       }
       onSuccess();
     } catch (error) {
       console.error('Error guardando historia:', error);
+      
+      // Mostrar error al usuario
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     } finally {
       setIsLoading(false);
     }
@@ -216,7 +230,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
               <div className="p-4 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaUser className="mr-2 text-[#c77914]" />
                       Nombre completo *
                     </label>
@@ -230,7 +244,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaIdCard className="mr-2 text-[#c77914]" />
                       Tipo de identificación *
                     </label>
@@ -248,7 +262,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaIdCard className="mr-2 text-[#c77914]" />
                       Número de identificación *
                     </label>
@@ -262,7 +276,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaCalendarAlt className="mr-2 text-[#c77914]" />
                       Fecha de nacimiento
                     </label>
@@ -394,7 +408,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaPhone className="mr-2 text-[#c77914]" />
                       Teléfono fijo
                     </label>
@@ -407,7 +421,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaPhone className="mr-2 text-[#c77914]" />
                       Celular
                     </label>
@@ -420,7 +434,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaEnvelope className="mr-2 text-[#c77914]" />
                       Email
                     </label>
@@ -433,7 +447,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 flex items-center">
+                    <label className="flex items-center text-sm font-medium mb-1">
                       <FaHospital className="mr-2 text-[#c77914]" />
                       EPS
                     </label>
@@ -503,7 +517,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-1 flex items-center">
+                        <label className="flex items-center text-sm font-medium mb-1">
                           <FaPhone className="mr-2 text-[#c77914]" />
                           Teléfono
                         </label>
@@ -552,7 +566,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-1 flex items-center">
+                        <label className="flex items-center text-sm font-medium mb-1">
                           <FaPhone className="mr-2 text-[#c77914]" />
                           Teléfono
                         </label>

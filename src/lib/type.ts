@@ -54,3 +54,9 @@ export interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
 }
+
+export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
+  birthDate?: Date | null;
+  admissionDate?: Date | null;
+  userId?: number;
+};

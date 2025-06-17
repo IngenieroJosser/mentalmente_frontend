@@ -18,8 +18,8 @@ export const fetchHistories = async (
   return response.json()
 }
 
-export const createHistory = async (data: MedicalRecord) => {
-  const response = await fetch(API_URL, {
+export const createHistory = async (data: any) => {
+  const response = await fetch('/api/medical-records', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(data)
@@ -33,19 +33,30 @@ export const createHistory = async (data: MedicalRecord) => {
   return response.json();
 };
 
-export const updateHistory = async (id: number, historyData: Partial<MedicalRecord>) => {
-  const response = await fetch(`/api/medical-records?id=${id}`, {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(historyData)
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Error al actualizar historia');
+export const updateHistory = async (id: number, historyData: any) => {
+  try {
+    const response = await fetch(`/api/medical-records?id=${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(historyData)
+    });
+    
+    const responseData = await response.json();
+    
+    if (!response.ok) {
+      // Extraer mensaje de error detallado del backend
+      const errorMessage = responseData.error || 
+                           responseData.message || 
+                           'Error al actualizar historia';
+      throw new Error(errorMessage);
+    }
+    
+    return responseData;
+    
+  } catch (error) {
+    console.error('Error en updateHistory:', error);
+    throw error;
   }
-  
-  return response.json();
 };
 
 export const deleteHistory = async (id: number): Promise<void> => {
@@ -54,10 +65,11 @@ export const deleteHistory = async (id: number): Promise<void> => {
   })
 }
 
-export const getHistoryById = async (id: number): Promise<MedicalRecord> => {
-  const response = await fetch(`${API_URL}/${id}`)
-  return response.json()
-}
+export const getHistoryById = async (id: number) => {
+  const response = await fetch(`/api/medical-records/${id}`);
+  if (!response.ok) throw new Error('Error cargando historia');
+  return response.json();
+};
 
 // Definir el tipo extendido
 export type MedicalRecordWithUser = MedicalRecord & {

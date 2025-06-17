@@ -628,17 +628,37 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
     
+    // Eliminar solo campos protegidos si existen
+    const updateData = { ...body };
+    delete updateData.id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    
+    // Convertir fechas si es necesario
+    if (updateData.birthDate) {
+      updateData.birthDate = new Date(updateData.birthDate);
+    }
+    if (updateData.admissionDate) {
+      updateData.admissionDate = new Date(updateData.admissionDate);
+    }
+    
     const updatedRecord = await prisma.medicalRecord.update({
       where: { id: parseInt(id) },
-      data: body
+      data: updateData
     });
 
     return NextResponse.json(updatedRecord);
     
   } catch (error) {
     console.error('Error actualizando historia clínica:', error);
+    
+    // Mensaje más detallado para depuración
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Error interno del servidor';
+    
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: errorMessage, details: error },
       { status: 500 }
     );
   }
