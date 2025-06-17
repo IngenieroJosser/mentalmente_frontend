@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
-import { deleteHistory, MedicalRecordWithUser } from '@/services/historyService';
+import { MedicalRecordWithUser } from '@/services/historyService';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';

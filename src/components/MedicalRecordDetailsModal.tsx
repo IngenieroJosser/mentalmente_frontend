@@ -25,7 +25,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({ r
           <button 
             aria-label='Detalles de la historia clinica'
             onClick={onClose}
-            className="text-gray-500 hover:text-[#c77914] transition-colors"
+            className="hover:text-[#c77914] transition-colors"
           >
             <FaTimes size={24} />
           </button>
@@ -39,27 +39,27 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({ r
             </div>
             <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Nombre del paciente</label>
+                <label className="block text-sm font-medium">Nombre del paciente</label>
                 <p className="mt-1 text-sm text-gray-900">{record.patientName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Número de identificación</label>
+                <label className="block text-sm font-medium">Número de identificación</label>
                 <p className="mt-1 text-sm text-gray-900">{record.identificationNumber}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Fecha de nacimiento</label>
+                <label className="block text-sm font-medium">Fecha de nacimiento</label>
                 <p className="mt-1 text-sm text-gray-900">{formatDate(record.birthDate)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Edad</label>
+                <label className="block text-sm font-medium">Edad</label>
                 <p className="mt-1 text-sm text-gray-900">{record.age || 'No especificada'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">EPS</label>
+                <label className="block text-sm font-medium">EPS</label>
                 <p className="mt-1 text-sm text-gray-900">{record.eps || 'No especificada'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Fecha de ingreso</label>
+                <label className="block text-sm font-medium">Fecha de ingreso</label>
                 <p className="mt-1 text-sm text-gray-900">{formatDate(record.admissionDate)}</p>
               </div>
             </div>
@@ -72,13 +72,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({ r
             </div>
             <div className="p-4 bg-white space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Patológicos</label>
+                <label className="block text-sm font-medium">Patológicos</label>
                 <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
                   {record.personalPathological || 'No especificados'}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Quirúrgicos</label>
+                <label className="block text-sm font-medium">Quirúrgicos</label>
                 <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
                   {record.personalSurgical || 'No especificados'}
                 </p>
@@ -93,13 +93,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({ r
             </div>
             <div className="p-4 bg-white space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Diagnóstico</label>
+                <label className="block text-sm font-medium">Diagnóstico</label>
                 <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
                   {record.diagnosis || 'No especificado'}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Plan de tratamiento</label>
+                <label className="block text-sm font-medium">Plan de tratamiento</label>
                 <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">
                   {record.treatmentPlan || 'No especificado'}
                 </p>
