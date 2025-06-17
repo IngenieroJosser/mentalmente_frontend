@@ -1,6 +1,6 @@
 import { MedicalRecord, User } from '@prisma/client'
 
-const API_URL = '/api/histories'
+const API_URL = '/api/medical-records';
 
 export const fetchHistories = async (
   page: number = 1,
@@ -19,27 +19,34 @@ export const fetchHistories = async (
 }
 
 export const createHistory = async (data: MedicalRecord) => {
-  const response = await fetch('/api/histories', {
+  const response = await fetch(API_URL, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(data)
   });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Error al crear historia');
+  }
+  
   return response.json();
 };
 
-export const updateHistory = async (
-  id: number,
-  historyData: Partial<MedicalRecord>
-): Promise<MedicalRecord> => {
-  const response = await fetch(`${API_URL}/${id}`, {
+export const updateHistory = async (id: number, historyData: Partial<MedicalRecord>) => {
+  const response = await fetch(`/api/medical-records?id=${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(historyData),
-  })
-  return response.json()
-}
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(historyData)
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Error al actualizar historia');
+  }
+  
+  return response.json();
+};
 
 export const deleteHistory = async (id: number): Promise<void> => {
   await fetch(`${API_URL}/${id}`, {

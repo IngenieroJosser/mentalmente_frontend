@@ -593,9 +593,50 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(medicalRecords);
+    // Devolver en el formato esperado por el frontend
+    return NextResponse.json({
+      data: medicalRecords,
+      total: medicalRecords.length,
+      page: 1,
+      totalPages: 1
+    });
+    
   } catch (error) {
     console.error('Error al obtener las historias clinicas:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Actualiza la historias clínicas registradas
+ * @returns Respuesta JSON actualizando la historia clínica
+ */
+export async function PUT(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de historia clínica es requerido' },
+        { status: 400 }
+      );
+    }
+
+    const body = await req.json();
+    
+    const updatedRecord = await prisma.medicalRecord.update({
+      where: { id: parseInt(id) },
+      data: body
+    });
+
+    return NextResponse.json(updatedRecord);
+    
+  } catch (error) {
+    console.error('Error actualizando historia clínica:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

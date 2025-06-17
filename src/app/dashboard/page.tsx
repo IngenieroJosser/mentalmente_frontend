@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
-import { fetchHistories, deleteHistory, MedicalRecordWithUser } from '@/services/historyService';
+import { deleteHistory, MedicalRecordWithUser } from '@/services/historyService';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -53,6 +53,27 @@ const DashboardMentalmentePage = () => {
     }
   }, [isAuthenticated, router]);
 
+  const fetchHistories = async (
+    page: number = 1,
+    limit: number = 10,
+    search: string = ''
+  ): Promise<{
+    data: MedicalRecordWithUser[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> => {
+    const response = await fetch(
+      `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`
+    );
+    
+    if (!response.ok) {
+      throw new Error('Error al cargar historias clínicas');
+    }
+    
+    return response.json();
+  };
+
   const loadHistories = async () => {
     setIsLoading(true);
     try {
@@ -62,6 +83,7 @@ const DashboardMentalmentePage = () => {
       setTotalPages(result.totalPages);
     } catch (error) {
       console.error('Error cargando historias:', error);
+      setClinicalHistories([]);
     } finally {
       setIsLoading(false);
     }
