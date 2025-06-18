@@ -30,3 +30,27 @@ body {
   background-color: rgba(199, 121, 20,.2);
   color: #c77914;
 }
+
+/*  la impresión en PDF de la historia clinica */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .print-container {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    box-sizing: border-box;
+  }
+  
+  .page-break {
+    page-break-before: always;
+    margin-top: 40px;
+  }
+  
+  table, .flex {
+    break-inside: avoid;
+  }
+}
