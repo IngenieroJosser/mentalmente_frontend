@@ -5,9 +5,6 @@ import { format } from 'date-fns';
 import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
-import { PDFDocument } from 'pdf-lib'; // Importación simplificada
-import * as fontkit from '@pdf-lib/fontkit';
-import { rgb } from 'pdf-lib'; // Importación adicional necesaria
 
 const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   record,
@@ -20,137 +17,71 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
-      // Solución para el error de registerFontkit
-      (PDFDocument as any).registerFontkit(fontkit);
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record),
+      });
   
-      // Cargar plantilla PDF
-      const templateUrl = '/files/Historia%20Clinica%20Psicologia%20MentalMente%202025.pdf';
-      const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
+      // Clonar la respuesta para múltiples lecturas
+      const responseClone = response.clone();
       
-      // Cargar documento PDF
-      const pdfDoc = await PDFDocument.load(existingPdfBytes);
-      const pages = pdfDoc.getPages();
-      const firstPage = pages[0];
-      const secondPage = pages[1];
-      const thirdPage = pages[2];
+      // Verificar el tipo de contenido
+      const contentType = response.headers.get('content-type') || '';
       
-      // Cargar fuente personalizada
-      const fontUrl = '/fonts/NotoSans-Regular.ttf';
-      const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
-      const font = await pdfDoc.embedFont(fontBytes);
-      
-      const fontSize = 10;
-      
-      // Función para dibujar texto
-      const drawText = (page: any, text: string, x: number, y: number) => {
-        if (!text) return;
-        page.drawText(text, {
-          x,
-          y,
-          size: fontSize,
-          font,
-          color: rgb(0, 0, 0)
-        });
-      };
-      
-      // Página 1 - Información Personal
-      drawText(firstPage, record.patientName || '', 125, 698);
-      if (record.identificationType === 'RC') {
-        drawText(firstPage, 'X', 210, 682);
-      } else if (record.identificationType === 'TI') {
-        drawText(firstPage, 'X', 245, 682);
-      } else if (record.identificationType === 'CC') {
-        drawText(firstPage, 'X', 280, 682);
-      }
-      drawText(firstPage, record.identificationNumber || '', 330, 682);
-      drawText(firstPage, record.age?.toString() || '', 415, 682);
-      drawText(firstPage, formatDate(record.birthDate) || '', 125, 667);
-      drawText(firstPage, record.educationLevel || '', 330, 667);
-      drawText(firstPage, record.occupation || '', 125, 652);
-      drawText(firstPage, record.birthPlace || '', 330, 652);
-      drawText(firstPage, record.nationality || '', 125, 637);
-      drawText(firstPage, record.religion || '', 330, 637);
-      drawText(firstPage, record.address || '', 125, 622);
-      drawText(firstPage, record.neighborhood || '', 125, 607);
-      drawText(firstPage, record.city || '', 200, 607);
-      drawText(firstPage, record.state || '', 275, 607);
-      drawText(firstPage, formatDate(record.admissionDate) || '', 125, 592);
-      drawText(firstPage, record.cellPhone || '', 125, 577);
-      drawText(firstPage, record.phone || '', 200, 577);
-      drawText(firstPage, record.email || '', 125, 562);
-      drawText(firstPage, record.eps || '', 125, 547);
-      if (record.isBeneficiary) {
-        drawText(firstPage, 'X', 220, 532);
+      if (response.ok && contentType.includes('application/pdf')) {
+        // Procesar como PDF
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Historia_Clinica_${record.identificationNumber}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Limpieza
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
       } else {
-        drawText(firstPage, 'X', 165, 532);
+        // Manejar error
+        let errorMessage = 'Error desconocido al generar PDF';
+        
+        try {
+          // Intentar obtener el mensaje de error
+          const errorData = await responseClone.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+          
+          // Mensajes específicos para errores comunes
+          if (errorData.error?.includes('no encontrado')) {
+            errorMessage = 'Archivo de plantilla o fuente no encontrado. Contacte al administrador.';
+          }
+        } catch (jsonError) {
+          // Si falla el parseo JSON, usar el texto plano
+          try {
+            const text = await responseClone.text();
+            errorMessage = text;
+          } catch (textError) {
+            errorMessage = `Error ${response.status}: ${response.statusText}`;
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
-      drawText(firstPage, record.referredBy || '', 125, 517);
       
-      // Responsables
-      drawText(firstPage, record.guardian1Name || '', 125, 487);
-      drawText(firstPage, record.guardian1Relationship || '', 330, 487);
-      drawText(firstPage, record.guardian1Phone || '', 415, 487);
-      drawText(firstPage, record.guardian1Occupation || '', 125, 472);
+    } catch (error: any) {
+      console.error('Error en generación de PDF:', error);
       
-      drawText(firstPage, record.guardian2Name || '', 125, 452);
-      drawText(firstPage, record.guardian2Relationship || '', 330, 452);
-      drawText(firstPage, record.guardian2Phone || '', 415, 452);
-      drawText(firstPage, record.guardian2Occupation || '', 125, 437);
+      // Mensaje más amigable para el usuario
+      const userMessage = error.message.includes('no encontrado')
+        ? "Archivos de plantilla faltantes. Contacte al administrador."
+        : error.message.includes('Unexpected token')
+          ? "Respuesta inválida del servidor"
+          : `Error: ${error.message}`;
       
-      // Profesional
-      drawText(firstPage, record.attendedBy || '', 125, 407);
-      drawText(firstPage, record.licenseNumber || '', 330, 407);
-      
-      // Antecedentes
-      drawText(firstPage, record.personalPathological || '', 125, 377);
-      drawText(firstPage, record.personalSurgical || '', 125, 362);
-      drawText(firstPage, record.personalPsychopathological || '', 125, 347);
-      drawText(firstPage, record.traumaHistory || '', 125, 332);
-      drawText(firstPage, record.sleepStatus || '', 125, 317);
-      drawText(firstPage, record.substanceUse || '', 125, 302);
-      drawText(firstPage, record.personalOther || '', 125, 287);
-      
-      drawText(firstPage, record.familyPathological || '', 125, 257);
-      drawText(firstPage, record.familySurgical || '', 125, 242);
-      drawText(firstPage, record.familyPsychopathological || '', 125, 227);
-      drawText(firstPage, record.familyTraumatic || '', 125, 212);
-      drawText(firstPage, record.familySubstanceUse || '', 125, 197);
-      drawText(firstPage, record.familyOther || '', 125, 182);
-      
-      drawText(firstPage, record.pregnancyInfo || '', 125, 152);
-      drawText(firstPage, record.deliveryInfo || '', 125, 137);
-      drawText(firstPage, record.psychomotorDevelopment || '', 125, 122);
-      drawText(firstPage, record.familyDynamics || '', 125, 107);
-      
-      // Página 2 - Información Clínica
-      drawText(secondPage, record.consultationReason || '', 50, 698);
-      drawText(secondPage, record.problemHistory || '', 50, 668);
-      drawText(secondPage, record.therapyExpectations || '', 50, 638);
-      drawText(secondPage, record.mentalExam || '', 50, 608);
-      drawText(secondPage, record.psychologicalAssessment || '', 50, 578);
-      drawText(secondPage, record.diagnosis || '', 50, 548);
-      drawText(secondPage, record.therapeuticGoals || '', 50, 518);
-      drawText(secondPage, record.treatmentPlan || '', 50, 488);
-      drawText(secondPage, record.referralInfo || '', 50, 458);
-      drawText(secondPage, record.recommendations || '', 50, 428);
-      
-      // Página 3 - Evolución
-      drawText(thirdPage, record.patientName || '', 50, 698);
-      drawText(thirdPage, record.recordNumber || '', 200, 698);
-      drawText(thirdPage, record.evolution || '', 50, 668);
-  
-      // Guardar y descargar el PDF
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `Historia_Clinica_${record.identificationNumber}.pdf`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-      
-    } catch (error) {
-      console.error('Error al generar el PDF:', error);
-      // Opcional: mostrar notificación de error al usuario
+      alert(`❌ Error al generar el PDF:\n\n${userMessage}\n\nDetalles en consola.`);
     } finally {
       setIsGenerating(false);
     }
@@ -184,7 +115,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     <div className="mb-4">
       <div className="text-sm font-medium text-[#19334c]/80 mb-1">{label}</div>
       <div className="bg-[#f8f9fc] p-3 rounded-lg border border-[#e0e7ff] text-[#19334c] min-h-[60px] whitespace-pre-wrap">
-        {value || <span className="text-gray-400 italic">Sin información</span>}
+        {value || (
+          <span className="text-gray-400 italic">
+            {label.includes('Recomendaciones') ? 'Sin recomendaciones' : 
+             label.includes('Evolución') ? 'Sin registro de evolución' : 
+             'Sin información especificada'}
+          </span>
+        )}
       </div>
     </div>
   );
