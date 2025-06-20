@@ -106,14 +106,33 @@ export default function MentalmenteLogin() {
       // Guardar token y datos de usuario
       login(data.token, data.user);
 
-      toast.success('¡Bienvenido a Mentalmente! Redirigiendo...', {
-        onClose: () => router.push('/dashboard')
+      // Redireccionar según el rol del usuario
+      const redirectPath = getRedirectPathByRole(data.user.role);
+      
+      toast.success(`¡Bienvenido/a ${data.user.usuario} a Mentalmente!`, {
+        onClose: () => router.push(redirectPath)
       });
       
     } catch (error: any) {
       toast.error(error.message || 'Error en el inicio de sesión');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Función para determinar la ruta de redirección según el rol
+  const getRedirectPathByRole = (role: string) => {
+    const normalizedRole = role.toUpperCase();
+    
+    switch(normalizedRole) {
+      case 'PSYCHOLOGIST':
+        return '/psychologist-dashboard';
+      case 'MANAGEMENT':
+        return '/management-dashboard';
+      case 'USER':
+        return '/reception-dashboard';
+      default:
+        return '/';
     }
   };
 
@@ -264,7 +283,7 @@ export default function MentalmenteLogin() {
                 onChange={(e) => setCredentials({...credentials, email: e.target.value})}
                 onFocus={() => setActiveField('email')}
                 onBlur={() => setActiveField('')}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white text-gray-800 placeholder-gray-500"
                 placeholder="correo@mentalmente.com"
                 autoComplete="username"
               />
@@ -284,7 +303,7 @@ export default function MentalmenteLogin() {
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
                 onFocus={() => setActiveField('password')}
                 onBlur={() => setActiveField('')}
-                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white"
+                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all bg-white text-gray-800 placeholder-gray-500"
                 placeholder="••••••••"
                 autoComplete="current-password"
               />

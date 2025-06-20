@@ -29,7 +29,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 
-const DashboardMentalmentePage = () => {
+const DashboardManagementMentalmentePage = () => {
   const [activeTab, setActiveTab] = useState('histories');
   const [viewMode, setViewMode] = useState('grid');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -49,6 +49,20 @@ const DashboardMentalmentePage = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
 
+  // Función para traducir roles
+  const translateRole = (role: string) => {
+    switch(role.toUpperCase()) {
+      case 'MANAGEMENT':
+        return 'Gestión';
+      case 'PSYCHOLOGIST':
+        return 'Psicólogo/a';
+      case 'USER':
+        return 'Recepción';
+      default:
+        return role;
+    }
+  };
+
   // Redirigir si no está autenticado
   useEffect(() => {
     if (!isAuthenticated) {
@@ -67,9 +81,9 @@ const DashboardMentalmentePage = () => {
     totalPages: number;
   }> => {
     const response = await fetch(
-      `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`
+      `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario`
     );
-    
+
     if (!response.ok) {
       throw new Error('Error al cargar historias clínicas');
     }
@@ -258,8 +272,10 @@ const DashboardMentalmentePage = () => {
           >
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
             <div className="flex-1">
-              <p className="font-medium text-sm">{user?.nombre || 'Usuario'}</p>
-              <p className="text-xs text-[#a0b1c5]">{user?.role || 'Rol no asignado'}</p>
+              <p className="font-medium text-sm">{user?.usuario || 'Usuario'}</p>
+              <p className="text-xs text-[#a0b1c5]">
+                {translateRole(user?.role || '')}
+              </p>
             </div>
             <ChevronDown size={16} />
           </button>
@@ -278,7 +294,7 @@ const DashboardMentalmentePage = () => {
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas</h1>
+            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas - Psicólogo</h1>
           </div>
           
           <div className="relative flex-1 max-w-xl mx-4">
@@ -286,7 +302,7 @@ const DashboardMentalmentePage = () => {
             <input
               type="text"
               placeholder="Buscar historias, pacientes, plantillas..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white" // Añadido text-gray-800 y bg-white
               value={searchTerm}
               onChange={handleSearch}
               aria-label="Buscar historias clínicas"
@@ -310,7 +326,7 @@ const DashboardMentalmentePage = () => {
             >
               <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
               <span className="hidden md:inline text-sm font-medium">
-                {user?.nombre ? user.nombre.split(' ')[0] : 'Usuario'}
+                {user?.usuario ? user.usuario.split(' ')[0] : 'Usuario'}
               </span>
             </button>
           </div>
@@ -319,8 +335,10 @@ const DashboardMentalmentePage = () => {
           {isProfileOpen && (
             <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
               <div className="p-4 border-b border-gray-200">
-                <p className="font-semibold">{user?.nombre || 'Usuario'}</p>
-                <p className="text-sm text-gray-600">{user?.correo || ''}</p>
+                <p className="font-semibold">{user?.usuario || 'Usuario'}</p>
+                <p className="text-sm text-gray-600">
+                  {translateRole(user?.role || '')}
+                </p>
               </div>
               <div className="py-2">
                 <button 
@@ -346,7 +364,7 @@ const DashboardMentalmentePage = () => {
           {/* Header and Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas</h1>
+              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Psicólogo</h1>
               <p className="text-gray-600">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -443,7 +461,7 @@ const DashboardMentalmentePage = () => {
                       <div>
                         <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
                         <div className="mt-2 text-sm text-gray-600">
-                          <span className="font-medium">Terapeuta:</span> {history.user?.usuario || 'Dra. Laura Méndez'}
+                          <span className="font-medium">Atendido por:</span> {history.user?.usuario || 'Sin asignar'}
                         </div>
                       </div>
                       <div className="relative">
@@ -513,7 +531,7 @@ const DashboardMentalmentePage = () => {
                         <div className="font-medium text-[#19334c]">{history.patientName}</div>
                       </td>
                       <td className="py-4 px-4 text-sm">
-                        {history.user?.usuario || 'Dra. Laura Méndez'}
+                        {history.user?.usuario || 'Sin asignar'}
                       </td>
                       <td className="py-4 px-4 text-sm">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
@@ -605,7 +623,7 @@ const DashboardMentalmentePage = () => {
                   <div className="bg-[#19334c]/10 p-3 rounded-lg mb-3 inline-block">
                     <FileText size={24} className="text-[#19334c]" />
                   </div>
-                  <h3 className="font-medium mb-1">{template.name}</h3>
+                  <h3 className="font-bold mb-1 text-lg text-gray-600">{template.name}</h3>
                   <p className="text-sm text-gray-600">{template.category}</p>
                   <button 
                     className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg"
@@ -643,4 +661,4 @@ const DashboardMentalmentePage = () => {
   );
 };
 
-export default DashboardMentalmentePage;
+export default DashboardManagementMentalmentePage;

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 
 // Roles permitidos para validación
-const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
+const ALLOWED_ROLES = ['USER', 'MANAGEMENT', 'PSYCHOLOGIST'];
 
 /**
  * @swagger
@@ -46,8 +46,8 @@ const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
  *           description: Género del usuario
  *         role:
  *           type: string
- *           enum: [Psicologo, Administrador, Paciente]
- *           example: "Psicologo"
+ *           enum: [PSYCHOLOGIST, MANAGEMENT, USER]
+ *           example: "PSYCHOLOGIST"
  *           description: Rol del usuario en el sistema
  * 
  *     RegisterSuccessResponse:
@@ -73,7 +73,7 @@ const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
  *               example: "Masculino"
  *             role:
  *               type: string
- *               example: "Psicologo"
+ *               example: "PSYCHOLOGIST"
  *             createdAt:
  *               type: string
  *               format: date-time
@@ -128,7 +128,7 @@ const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
  *                   error: "La contraseña debe tener al menos 6 caracteres"
  *               rol_invalido:
  *                 value:
- *                   error: "Rol de usuario inválido. Valores permitidos: Psicologo, Administrador, Paciente"
+ *                   error: "Rol de usuario inválido. Valores permitidos: PSYCHOLOGIST, MANAGEMENT, USER"
  *               correo_existente:
  *                 value:
  *                   error: "El correo ya está registrado"
@@ -139,6 +139,7 @@ const ALLOWED_ROLES = ['Psicologo', 'Administrador', 'Paciente'];
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -148,6 +149,17 @@ export async function POST(req: NextRequest) {
     if (!usuario || !correo || !contrasena || !genero || !role) {
       return NextResponse.json(
         { error: 'Todos los campos son requeridos' },
+        { status: 400 }
+      );
+    }
+
+    // Validar rol permitido
+    const upperRole = role.toUpperCase();
+    if (!ALLOWED_ROLES.includes(upperRole)) {
+      return NextResponse.json(
+        { 
+          error: `Rol inválido. Valores permitidos: ${ALLOWED_ROLES.join(', ')}` 
+        },
         { status: 400 }
       );
     }
@@ -169,25 +181,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validar rol permitido
-    if (!ALLOWED_ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: 'Rol de usuario inválido. Valores permitidos: ' + ALLOWED_ROLES.join(', ') },
-        { status: 400 }
-      );
-    }
-
-    // Verificar si el usuario ya existe
-    const existingUser = await prisma.user.findUnique({
+    // Verificar si el usuario ya existe por correo
+    const existingUserByEmail = await prisma.user.findUnique({
       where: { correo },
     });
 
-    if (existingUser) {
+    if (existingUserByEmail) {
       return NextResponse.json(
         { error: 'El correo ya está registrado' },
         { status: 400 }
       );
-    }
+    }   
 
     // Hash de la contraseña
     const hashedPassword = await bcrypt.hash(contrasena, 10);
@@ -199,7 +203,7 @@ export async function POST(req: NextRequest) {
         correo,
         genero,
         contrasena: hashedPassword,
-        role,
+        role: upperRole,
       },
     });
 
@@ -216,8 +220,31 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.error('Error en el registro:', error);
+    
+    // Manejar errores específicos de Prisma
+    let errorMessage = 'Error interno del servidor';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Manejar errores de restricción única
+      if (error.message.includes('Unique constraint')) {
+        if (error.message.includes('correo')) {
+          return NextResponse.json(
+            { error: 'El correo electrónico ya está registrado' },
+            { status: 400 }
+          );
+        }
+        if (error.message.includes('usuario')) {
+          return NextResponse.json(
+            { error: 'El nombre de usuario ya está en uso' },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

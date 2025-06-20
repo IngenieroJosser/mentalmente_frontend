@@ -574,12 +574,129 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Obtiene todas las historias clínicas registradas
- * @returns Respuesta JSON con listado de historias clínicas
+ * @swagger
+ * /api/medical-records:
+ *   get:
+ *     summary: Obtiene historias clínicas con paginación y búsqueda
+ *     description: Retorna un listado paginado de historias clínicas con capacidad de búsqueda multifiltro
+ *     tags: [Medical Records]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Número de página actual
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Cantidad de resultados por página
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *           example: "María"
+ *         description: Término de búsqueda multifiltro
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *           example: "patientName,cedula,user.usuario"
+ *         description: Campos donde buscar (separados por coma)
+ *     responses:
+ *       200:
+ *         description: Lista paginada de historias clínicas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/MedicalRecord'
+ *                 total:
+ *                   type: integer
+ *                   example: 25
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 3
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error interno del servidor"
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const fields = searchParams.get('fields') || 'patientName,identificationNumber,user.usuario';
+
+    // Calcular el offset para la paginación
+    const offset = (page - 1) * limit;
+
+    // Construir el objeto where para la búsqueda
+    let where: any = {};
+
+    if (search) {
+      // Separar los campos por los que se va a buscar
+      const searchFields = fields.split(',');
+
+      // Crear condiciones OR para cada campo
+      where.OR = searchFields.map(field => {
+        // Mapear 'cedula' a 'identificationNumber' para compatibilidad
+        if (field === 'cedula') {
+          field = 'identificationNumber';
+        }
+
+        // Si el campo incluye un punto (como 'user.usuario'), se trata de una relación
+        if (field.includes('.')) {
+          const [relation, relatedField] = field.split('.');
+          return {
+            [relation]: {
+              [relatedField]: {
+                contains: search,
+                mode: 'insensitive'
+              }
+            }
+          };
+        } else {
+          return {
+            [field]: {
+              contains: search,
+              mode: 'insensitive'
+            }
+          };
+        }
+      });
+    }
+
+    // Obtener el total de registros para la paginación
+    const total = await prisma.medicalRecord.count({
+      where
+    });
+
+    // Calcular el total de páginas
+    const totalPages = Math.ceil(total / limit);
+
+    // Obtener los registros paginados
     const medicalRecords = await prisma.medicalRecord.findMany({
+      where,
+      skip: offset,
+      take: limit,
       include: {
         user: {
           select: {
@@ -596,9 +713,9 @@ export async function GET() {
     // Devolver en el formato esperado por el frontend
     return NextResponse.json({
       data: medicalRecords,
-      total: medicalRecords.length,
-      page: 1,
-      totalPages: 1
+      total,
+      page,
+      totalPages
     });
     
   } catch (error) {

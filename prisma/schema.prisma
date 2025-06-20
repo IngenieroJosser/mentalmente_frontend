@@ -14,11 +14,18 @@ model User {
   correo                              String                    @unique
   genero                              String        
   contrasena                          String        
-  role                                String
+  role                                Role                      @default(PSYCHOLOGIST)
   createdAt                           DateTime                  @default(now())
+  updatedAt                           DateTime?                 @updatedAt
 
   // Relación con las historias clínicas
   medicalRecords                      MedicalRecord[]
+}
+
+enum Role {
+  MANAGEMENT
+  USER
+  PSYCHOLOGIST
 }
 
 model MedicalRecord {
