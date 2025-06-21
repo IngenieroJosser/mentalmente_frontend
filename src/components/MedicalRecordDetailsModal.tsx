@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { format } from 'date-fns';
-import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope, FaHeartbeat, FaUsers, FaChartLine, FaFileMedicalAlt } from 'react-icons/fa';
+import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope, FaHeartbeat, FaUsers, FaChartLine, FaFileMedicalAlt, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
 
@@ -12,10 +12,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const [pdfStatus, setPdfStatus] = useState<{success: boolean; message: string} | null>(null);
   const printableRef = useRef<HTMLDivElement>(null);
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
+    setPdfStatus(null);
+    
     try {
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -23,9 +26,6 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         body: JSON.stringify(record),
       });
   
-      // Clonar la respuesta para múltiples lecturas
-      const responseClone = response.clone();
-      
       // Verificar el tipo de contenido
       const contentType = response.headers.get('content-type') || '';
       
@@ -45,13 +45,18 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         }, 100);
+        
+        setPdfStatus({
+          success: true,
+          message: 'PDF generado con éxito'
+        });
       } else {
         // Manejar error
         let errorMessage = 'Error desconocido al generar PDF';
         
         try {
           // Intentar obtener el mensaje de error
-          const errorData = await responseClone.json();
+          const errorData = await response.clone().json();
           errorMessage = errorData.error || errorData.message || errorMessage;
           
           // Mensajes específicos para errores comunes
@@ -61,7 +66,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         } catch (jsonError) {
           // Si falla el parseo JSON, usar el texto plano
           try {
-            const text = await responseClone.text();
+            const text = await response.text();
             errorMessage = text;
           } catch (textError) {
             errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -74,14 +79,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     } catch (error: any) {
       console.error('Error en generación de PDF:', error);
       
-      // Mensaje más amigable para el usuario
-      const userMessage = error.message.includes('no encontrado')
-        ? "Archivos de plantilla faltantes. Contacte al administrador."
-        : error.message.includes('Unexpected token')
-          ? "Respuesta inválida del servidor"
-          : `Error: ${error.message}`;
-      
-      alert(`❌ Error al generar el PDF:\n\n${userMessage}\n\nDetalles en consola.`);
+      setPdfStatus({
+        success: false,
+        message: `Error al generar PDF: ${error.message}`
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -135,8 +136,6 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     { id: 'clinical', label: 'Clínica', icon: <FaStethoscope /> },
     { id: 'evolution', label: 'Evolución', icon: <FaHistory /> },
     { id: 'professionals', label: 'Profesionales', icon: <FaUsers /> },
-    // { id: 'health', label: 'Salud', icon: <FaHeartbeat /> },
-    // { id: 'analysis', label: 'Análisis', icon: <FaChartLine /> }
   ];
 
   return (
@@ -218,6 +217,22 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
               </div>
             </div>
           </div>
+          
+          {/* Estado de generación de PDF */}
+          {pdfStatus && (
+            <div className={`mt-4 p-3 rounded-lg flex items-center ${
+              pdfStatus.success 
+                ? 'bg-green-100 border border-green-300 text-green-700' 
+                : 'bg-red-100 border border-red-300 text-red-700'
+            }`}>
+              {pdfStatus.success ? (
+                <FaCheckCircle className="mr-2 text-green-600" />
+              ) : (
+                <FaExclamationTriangle className="mr-2 text-red-600" />
+              )}
+              <span>{pdfStatus.message}</span>
+            </div>
+          )}
         </div>
 
         {/* Pestañas de navegación premium */}

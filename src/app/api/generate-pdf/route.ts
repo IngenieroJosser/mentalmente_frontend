@@ -1,3 +1,4 @@
+// src/app/api/generate-pdf/route.ts
 import { NextResponse } from 'next/server';
 import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
     const firstPage = pages[0];
     const secondPage = pages[1];
     const thirdPage = pages[2];
+    const form = pdfDoc.getForm();
 
     // Cargar fuente
     const font = await pdfDoc.embedFont(fontBytes);
@@ -84,11 +86,8 @@ export async function POST(request: Request) {
       if (!text || text.trim() === '') return;
       
       try {
-        // Ajustar texto para valores cortos
-        const adjustedText = text.length < 10 ? text + ' '.repeat(10 - text.length) : text;
-        
         // Dibujar texto con ajuste de línea automático
-        page.drawText(adjustedText, {
+        page.drawText(text, {
           x,
           y,
           size: fontSize,
@@ -135,16 +134,28 @@ export async function POST(request: Request) {
     };
 
     // === PÁGINA 1: INFORMACIÓN PERSONAL ===
-    // Ajuste de coordenadas para alinear con las líneas
+    // Sección: Datos del paciente
     drawText(firstPage, record.patientName || '', 125, 698);
     
-    // Tipo de identificación
+    // Tipo de identificación (usando checkboxes)
     if (record.identificationType === 'RC') {
-      drawText(firstPage, 'X', 210, 682);
+      try {
+        form.getCheckBox('TipoIdentificacion_RC').check();
+      } catch (e) {
+        drawText(firstPage, 'X', 210, 682);
+      }
     } else if (record.identificationType === 'TI') {
-      drawText(firstPage, 'X', 245, 682);
+      try {
+        form.getCheckBox('TipoIdentificacion_TI').check();
+      } catch (e) {
+        drawText(firstPage, 'X', 245, 682);
+      }
     } else if (record.identificationType === 'CC') {
-      drawText(firstPage, 'X', 280, 682);
+      try {
+        form.getCheckBox('TipoIdentificacion_CC').check();
+      } catch (e) {
+        drawText(firstPage, 'X', 280, 682);
+      }
     }
     
     drawText(firstPage, record.identificationNumber || '', 330, 682);
@@ -165,11 +176,19 @@ export async function POST(request: Request) {
     drawText(firstPage, record.email || '', 125, 562);
     drawText(firstPage, record.eps || '', 125, 547);
     
-    // Estado EPS
+    // Estado EPS (usando checkboxes)
     if (record.isBeneficiary) {
-      drawText(firstPage, 'X', 220, 532);
+      try {
+        form.getCheckBox('Beneficiario_Si').check();
+      } catch (e) {
+        drawText(firstPage, 'X', 220, 532);
+      }
     } else {
-      drawText(firstPage, 'X', 165, 532);
+      try {
+        form.getCheckBox('Beneficiario_No').check();
+      } catch (e) {
+        drawText(firstPage, 'X', 165, 532);
+      }
     }
     
     drawText(firstPage, record.referredBy || '', 125, 517);
@@ -189,7 +208,7 @@ export async function POST(request: Request) {
     drawText(firstPage, record.attendedBy || '', 125, 407);
     drawText(firstPage, record.licenseNumber || '', 330, 407);
     
-    // Antecedentes personales - Añadido maxWidth para ajuste automático
+    // Antecedentes personales (texto largo)
     drawText(firstPage, record.personalPathological || '', 125, 377, 300);
     drawText(firstPage, record.personalSurgical || '', 125, 362, 300);
     drawText(firstPage, record.personalPsychopathological || '', 125, 347, 300);
@@ -198,7 +217,7 @@ export async function POST(request: Request) {
     drawText(firstPage, record.substanceUse || '', 125, 302, 300);
     drawText(firstPage, record.personalOther || '', 125, 287, 300);
     
-    // Antecedentes familiares
+    // Antecedentes familiares (texto largo)
     drawText(firstPage, record.familyPathological || '', 125, 257, 300);
     drawText(firstPage, record.familySurgical || '', 125, 242, 300);
     drawText(firstPage, record.familyPsychopathological || '', 125, 227, 300);
@@ -206,14 +225,13 @@ export async function POST(request: Request) {
     drawText(firstPage, record.familySubstanceUse || '', 125, 197, 300);
     drawText(firstPage, record.familyOther || '', 125, 182, 300);
     
-    // Desarrollo
+    // Desarrollo (texto largo)
     drawText(firstPage, record.pregnancyInfo || '', 125, 152, 300);
     drawText(firstPage, record.deliveryInfo || '', 125, 137, 300);
     drawText(firstPage, record.psychomotorDevelopment || '', 125, 122, 300);
     drawText(firstPage, record.familyDynamics || '', 125, 107, 300);
     
     // === PÁGINA 2: INFORMACIÓN CLÍNICA ===
-    // Añadido maxWidth y lineHeight para texto extenso
     drawText(secondPage, record.consultationReason || '', 50, 698, 500);
     drawText(secondPage, record.problemHistory || '', 50, 668, 500);
     drawText(secondPage, record.therapyExpectations || '', 50, 638, 500);
@@ -228,7 +246,6 @@ export async function POST(request: Request) {
     // === PÁGINA 3: EVOLUCIÓN ===
     drawText(thirdPage, record.patientName || '', 50, 698);
     drawText(thirdPage, record.recordNumber || '', 200, 698);
-    // Texto de evolución con ajuste automático de líneas
     drawText(thirdPage, record.evolution || '', 50, 668, 500, fontSize * 1.5);
 
     // Generar PDF
