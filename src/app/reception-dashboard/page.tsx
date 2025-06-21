@@ -26,11 +26,10 @@ import { templates, filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 
 const DashboardReceptionMentalmentePage = () => {
-  const [activeTab, setActiveTab] = useState('histories');
   const [viewMode, setViewMode] = useState('grid');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -48,6 +47,32 @@ const DashboardReceptionMentalmentePage = () => {
   const limit = 9;
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Definición de items del menú
+  const menuItems = [
+    { 
+      id: 'patients', 
+      icon: <User size={18} />, 
+      label: 'Pacientes', 
+      href: '/reception-dashboard/patient' 
+    },
+    { 
+      id: 'calendar', 
+      icon: <Calendar size={18} />, 
+      label: 'Calendario', 
+      href: '/reception-dashboard/calendar' 
+    },
+    { 
+      id: 'reports', 
+      icon: <BarChart2 size={18} />, 
+      label: 'Reportes', 
+      href: '/reception-dashboard/report' 
+    },
+  ];
+
+  // Determinar la sección activa basada en la ruta actual
+  const activeSection = menuItems.find(item => pathname.includes(item.id))?.id || '';
 
   // Función para traducir roles
   const translateRole = (role: string) => {
@@ -117,20 +142,6 @@ const DashboardReceptionMentalmentePage = () => {
     setCurrentPage(1);
   };
 
-  // const handleDelete = async (id: number) => {
-  //   if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
-  //     try {
-  //       await fetch(`/api/user-dash?id=${id}`, {
-  //         method: 'DELETE',
-  //       });
-  //       loadHistories(); // Actualiza la lista después de eliminar
-  //     } catch (error) {
-  //       console.error('Error eliminando historia:', error);
-  //       alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
-  //     }
-  //   }
-  // };
-
   const handleViewDetails = (record: MedicalRecordWithUser) => {
     setSelectedRecord(record);
     setShowDetailsModal(true);
@@ -180,21 +191,15 @@ const DashboardReceptionMentalmentePage = () => {
             
             <nav className="py-5">
               <ul>
-                {[
-                  // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-                  { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-                  { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-                  { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-                  { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-                  { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-                  { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-                  { id: 'registro', icon: <User size={18} />, label: 'Registro' },
-                ].map((item) => (
+                {menuItems.map((item) => (
                   <li key={item.id}>
                     <button
-                      onClick={() => { setActiveTab(item.id); setIsMenuOpen(false); }}
+                      onClick={() => { 
+                        router.push(item.href);
+                        setIsMenuOpen(false);
+                      }}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        activeTab === item.id
+                        activeSection === item.id
                           ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                           : 'hover:bg-[#152a40]'
                       }`}
@@ -237,21 +242,12 @@ const DashboardReceptionMentalmentePage = () => {
         
         <nav className="flex-1 py-5">
           <ul>
-            {[
-              // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-              { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-              { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-              { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-              { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-              { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-              { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-              { id: 'registro', icon: <User size={18} />, label: 'Registro' },
-            ].map((item) => (
+            {menuItems.map((item) => (
               <li key={item.id}>
                 <button
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => router.push(item.href)}
                   className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                    activeTab === item.id
+                    activeSection === item.id
                       ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                       : 'hover:bg-[#152a40]'
                   }`}
@@ -404,9 +400,8 @@ const DashboardReceptionMentalmentePage = () => {
                 {filters.map(filter => (
                   <button
                     key={filter.id}
-                    onClick={() => setActiveTab(filter.id)}
                     className={`px-3 py-1.5 rounded-full text-sm ${
-                      activeTab === filter.id
+                      filter.id === activeSection
                         ? 'bg-[#19334c] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -501,13 +496,6 @@ const DashboardReceptionMentalmentePage = () => {
                         >
                           <Edit size={14} className="mr-1" /> Editar
                         </button>
-                        {/* <button 
-                          // onClick={() => handleDelete(history.id)}
-                          className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
-                          aria-label="Eliminar historia"
-                        >
-                          <Trash2 size={14} className="mr-1" />
-                        </button> */}
                       </div>
                     </div>
                   </div>
@@ -554,13 +542,6 @@ const DashboardReceptionMentalmentePage = () => {
                           >
                             <Edit size={16} />
                           </button>
-                          {/* <button 
-                            onClick={() => handleDelete(history.id)}
-                            className="p-1.5 text-gray-500 hover:text-red-500" 
-                            aria-label="Eliminar historia"
-                          >
-                            <Trash2 size={16} />
-                          </button> */}
                           <button 
                             className="p-1.5 text-gray-500 hover:text-[#19334c]" 
                             aria-label="Imprimir historia"

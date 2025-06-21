@@ -174,13 +174,13 @@ const DashboardPsychologistMentalmentePage = () => {
   // Definir menú según roles
   const menuItems = [
     // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard' },
-    { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard' },
+    // { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard' },
     { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/templates' },
     { id: 'patients', icon: <User size={18} />, label: 'Pacientes', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard/patient' },
     { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/calendar' },
     { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/report' },
-    { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/setting' },
-    { id: 'registro', icon: <Settings size={18} />, label: 'Registro', roles: ['MANAGEMENT', 'USER'], path: '/psychologist-dashboard/register' },
+    // { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/setting' },
+    // { id: 'registro', icon: <Settings size={18} />, label: 'Registro', roles: ['MANAGEMENT', 'USER'], path: '/psychologist-dashboard/register' },
   ];
 
   return (
@@ -361,7 +361,7 @@ const DashboardPsychologistMentalmentePage = () => {
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-[#19334c]"
                     aria-label="Configuración"
                   >
-                    <Settings size={16} className="mr-2 text-[#19334c]" /> Configuración
+                    {/* <Settings size={16} className="mr-2 text-[#19334c]" /> Configuración */}
                   </button>
                 )}
                 <button 

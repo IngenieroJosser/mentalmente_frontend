@@ -1,8 +1,8 @@
-interface TemplatesDashboardManagmentProps {
+interface TemplatesDashboardPsychologistProps {
   
 }
 
-const TemplatesDashboardManagment: React.FC<TemplatesDashboardManagmentProps> = ({  }) => {
+const TemplatesDashboardPsychologist: React.FC<TemplatesDashboardPsychologistProps> = ({  }) => {
   return (
     <div>
       Plantillas
@@ -10,4 +10,4 @@ const TemplatesDashboardManagment: React.FC<TemplatesDashboardManagmentProps> = 
   );
 };
 
-export default TemplatesDashboardManagment;
+export default TemplatesDashboardPsychologist;

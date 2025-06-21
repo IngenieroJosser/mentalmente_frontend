@@ -414,7 +414,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * @swagger
- * /api/medical-records:
+ * /api/reception-dash:
  *   post:
  *     summary: Crea una nueva historia clínica
  *     description: Registra una historia clínica completa con todos los datos médicos del paciente
@@ -454,18 +454,159 @@ import { NextRequest, NextResponse } from 'next/server';
  *                   example: "Error interno del servidor"
  * 
  *   get:
- *     summary: Obtiene todas las historias clínicas
- *     description: Retorna un listado completo de historias clínicas con información básica del terapeuta asociado
+ *     summary: Obtiene historias clínicas con paginación y búsqueda
+ *     description: Retorna un listado paginado de historias clínicas con capacidad de búsqueda multifiltro
  *     tags: [Medical Records]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Número de página actual
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Cantidad de resultados por página
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *           example: "María"
+ *         description: Término de búsqueda multifiltro
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *           example: "patientName,cedula,user.usuario"
+ *         description: Campos donde buscar (separados por coma)
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *           example: 5
+ *         description: ID del usuario (psicólogo) para filtrar por terapeuta
  *     responses:
  *       200:
- *         description: Lista de historias clínicas
+ *         description: Lista paginada de historias clínicas
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/MedicalRecord'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/MedicalRecord'
+ *                 total:
+ *                   type: integer
+ *                   example: 25
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 3
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error interno del servidor"
+ * 
+ *   put:
+ *     summary: Actualiza una historia clínica
+ *     description: Actualiza una historia clínica existente por su ID
+ *     tags: [Medical Records]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la historia clínica a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/MedicalRecordInput'
+ *     responses:
+ *       200:
+ *         description: Historia clínica actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MedicalRecord'
+ *       400:
+ *         description: Falta el parámetro ID o campos inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID de historia clínica es requerido"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error interno del servidor"
+ * 
+ *   delete:
+ *     summary: Elimina una historia clínica
+ *     description: Elimina una historia clínica específica por su ID
+ *     tags: [Medical Records]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la historia clínica a eliminar
+ *     responses:
+ *       200:
+ *         description: Historia clínica eliminada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Historia clínica eliminada exitosamente"
+ *       400:
+ *         description: Falta el parámetro ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID de historia clínica es requerido"
+ *       404:
+ *         description: Historia clínica no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Historia clínica no encontrada"
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -574,68 +715,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * @swagger
- * /api/medical-records:
- *   get:
- *     summary: Obtiene historias clínicas con paginación y búsqueda
- *     description: Retorna un listado paginado de historias clínicas con capacidad de búsqueda multifiltro
- *     tags: [Medical Records]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           example: 1
- *         description: Número de página actual
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           example: 10
- *         description: Cantidad de resultados por página
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *           example: "María"
- *         description: Término de búsqueda multifiltro
- *       - in: query
- *         name: fields
- *         schema:
- *           type: string
- *           example: "patientName,cedula,user.usuario"
- *         description: Campos donde buscar (separados por coma)
- *     responses:
- *       200:
- *         description: Lista paginada de historias clínicas
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/MedicalRecord'
- *                 total:
- *                   type: integer
- *                   example: 25
- *                 page:
- *                   type: integer
- *                   example: 1
- *                 totalPages:
- *                   type: integer
- *                   example: 3
- *       500:
- *         description: Error interno del servidor
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Error interno del servidor"
+ * Obtiene historias clínicas con paginación y búsqueda
  */
 export async function GET(req: NextRequest) {
   try {
@@ -644,6 +724,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
     const fields = searchParams.get('fields') || 'patientName,identificationNumber,user.usuario';
+    const userId = searchParams.get('userId');
 
     // Calcular el offset para la paginación
     const offset = (page - 1) * limit;
@@ -682,6 +763,11 @@ export async function GET(req: NextRequest) {
           };
         }
       });
+    }
+
+    // Filtrar por usuario (psicólogo) si se proporciona
+    if (userId) {
+      where.userId = parseInt(userId);
     }
 
     // Obtener el total de registros para la paginación
@@ -728,8 +814,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * Actualiza la historias clínicas registradas
- * @returns Respuesta JSON actualizando la historia clínica
+ * Actualiza una historia clínica existente
  */
 export async function PUT(req: NextRequest) {
   try {
@@ -745,40 +830,21 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
     
-    // Lista de campos permitidos para actualización
-    const allowedFields = [
-      'patientName', 'identificationType', 'identificationNumber', 'birthDate',
-      'age', 'educationLevel', 'occupation', 'birthPlace', 'nationality',
-      'religion', 'address', 'neighborhood', 'city', 'state', 'admissionDate',
-      'phone', 'cellPhone', 'email', 'eps', 'isBeneficiary', 'referredBy',
-      'guardian1Name', 'guardian1Relationship', 'guardian1Phone', 'guardian1Occupation',
-      'guardian2Name', 'guardian2Relationship', 'guardian2Phone', 'guardian2Occupation',
-      'attendedBy', 'licenseNumber', 'personalPathological', 'personalSurgical',
-      'personalPsychopathological', 'traumaHistory', 'sleepStatus', 'substanceUse',
-      'personalOther', 'familyPathological', 'familySurgical', 'familyPsychopathological',
-      'familyTraumatic', 'familySubstanceUse', 'familyOther', 'pregnancyInfo',
-      'deliveryInfo', 'psychomotorDevelopment', 'familyDynamics', 'consultationReason',
-      'problemHistory', 'therapyExpectations', 'mentalExam', 'psychologicalAssessment',
-      'diagnosis', 'therapeuticGoals', 'treatmentPlan', 'referralInfo',
-      'recommendations', 'evolution'
-    ];
-
-    // Filtrar solo campos permitidos
-    const updateData: any = {};
-    for (const key of allowedFields) {
-      if (body[key] !== undefined) {
-        updateData[key] = body[key];
-      }
-    }
-
-    // Convertir fechas
+    // Remove protected fields and user data
+    const updateData = { ...body };
+    delete updateData.id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.userId;
+    
+    // Convert dates if needed
     if (updateData.birthDate) {
       updateData.birthDate = new Date(updateData.birthDate);
     }
     if (updateData.admissionDate) {
       updateData.admissionDate = new Date(updateData.admissionDate);
     }
-
+    
     const updatedRecord = await prisma.medicalRecord.update({
       where: { id: parseInt(id) },
       data: updateData
@@ -800,68 +866,8 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-
-/**
- * @swagger
- * /api/medical-records:
- *   delete:
- *     summary: Elimina una historia clínica
- *     description: Elimina una historia clínica específica por su ID.
- *     tags: [Medical Records]
- *     parameters:
- *       - in: query
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID de la historia clínica a eliminar
- *     responses:
- *       200:
- *         description: Historia clínica eliminada exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Historia clínica eliminada exitosamente"
- *       400:
- *         description: Falta el parámetro ID
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "ID de historia clínica es requerido"
- *       404:
- *         description: Historia clínica no encontrada
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Historia clínica no encontrada"
- *       500:
- *         description: Error interno del servidor
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Error interno del servidor"
- */
-
 /**
  * Elimina una historia clínica por ID
- * @param req Solicitud HTTP con el parámetro 'id' en la query
- * @returns Respuesta JSON confirmando la eliminación o mensaje de error
  */
 export async function DELETE(req: NextRequest) {
   try {

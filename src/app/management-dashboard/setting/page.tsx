@@ -1,8 +1,8 @@
-interface SettingDashboardManagmentProps {
+interface SettingDashboardPsychologistProps {
   
 }
 
-const SettingDashboardManagment: React.FC<SettingDashboardManagmentProps> = ({  }) => {
+const SettingDashboardPsychologist: React.FC<SettingDashboardPsychologistProps> = ({  }) => {
   return (
     <div>
       Configuración
@@ -10,4 +10,4 @@ const SettingDashboardManagment: React.FC<SettingDashboardManagmentProps> = ({  
   );
 };
 
-export default SettingDashboardManagment;
+export default SettingDashboardPsychologist;

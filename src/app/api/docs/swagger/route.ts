@@ -24,6 +24,8 @@ export async function GET(req: NextRequest) {
     apis: [
       './src/app/api/medical-records/route.ts',
       './src/app/api/auth/register/route.ts',
+      './src/app/api/psychologist-dash/patient/route.ts',
+      './src/app/api/auth/all-user/route.ts',
     ],
   };
 

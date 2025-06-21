@@ -249,3 +249,114 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        usuario: true,
+        correo: true,
+        genero: true,
+        role: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return NextResponse.json({ data: users });
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de usuario es requerido' },
+        { status: 400 }
+      );
+    }
+
+    const body = await req.json();
+    const { usuario, correo, genero, role, contrasena } = body;
+
+    // Validaciones básicas
+    if (!usuario || !correo || !genero || !role) {
+      return NextResponse.json(
+        { error: 'Todos los campos son requeridos' },
+        { status: 400 }
+      );
+    }
+
+    const updateData: any = {
+      usuario,
+      correo,
+      genero,
+      role: role.toUpperCase()
+    };
+
+    // Si se proporcionó una nueva contraseña
+    if (contrasena && contrasena.length >= 6) {
+      const hashedPassword = await bcrypt.hash(contrasena, 10);
+      updateData.contrasena = hashedPassword;
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: updateData,
+      select: {
+        id: true,
+        usuario: true,
+        correo: true,
+        genero: true,
+        role: true,
+        createdAt: true
+      }
+    });
+
+    return NextResponse.json({ user: updatedUser });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de usuario es requerido' },
+        { status: 400 }
+      );
+    }
+
+    await prisma.user.delete({
+      where: { id: parseInt(id) }
+    });
+
+    return NextResponse.json({ message: 'Usuario eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
