@@ -4,7 +4,7 @@ import { createHistory, updateHistory, getHistoryById } from '@/services/history
 import { format } from 'date-fns';
 import { HistoryFormProps } from '@/lib/type';
 import { useAuth } from '@/context/AuthContext';
-import { FaUser, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaHospital, FaNotesMedical, FaClipboardList, FaFlask, FaStethoscope, FaFileMedical, FaSave, FaTimes } from 'react-icons/fa';
+import { FaUser, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaHospital, FaNotesMedical, FaClipboardList, FaFlask, FaStethoscope, FaFileMedical, FaSave, FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { MedicalRecordFormData } from '@/lib/type';
 
 const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
@@ -75,6 +75,22 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   const [isLoading, setIsLoading] = useState(false);
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [activeSection, setActiveSection] = useState('personal');
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Función para conversión segura de fechas
+  const safeDateConversion = (dateValue: any): Date | null => {
+    try {
+      if (!dateValue) return null;
+      if (dateValue instanceof Date) return dateValue;
+      const parsedDate = new Date(dateValue);
+      // Verificar si la fecha es válida
+      if (isNaN(parsedDate.getTime())) return null;
+      return parsedDate;
+    } catch (error) {
+      console.error('Error convirtiendo fecha:', dateValue, error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (historyId) {
@@ -82,13 +98,15 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
         setIsFormLoading(true);
         try {
           const history = await getHistoryById(historyId);
-          if (history.birthDate) {
-            history.birthDate = new Date(history.birthDate);
-          }
-          if (history.admissionDate) {
-            history.admissionDate = new Date(history.admissionDate);
-          }
-          setFormData(history);
+          
+          // Convertir las fechas de manera segura
+          const convertedHistory: MedicalRecordFormData = {
+            ...history,
+            birthDate: safeDateConversion(history.birthDate) || new Date(),
+            admissionDate: safeDateConversion(history.admissionDate) || new Date(),
+          };
+          
+          setFormData(convertedHistory);
         } catch (error) {
           console.error('Error cargando historia:', error);
         } finally {
@@ -108,10 +126,57 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+    
+    // Limpiar error cuando se modifica el campo
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  // Función especial para el campo de evolución
+  const handleEvolutionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, evolution: e.target.value }));
+  };
+
+  // Prevenir el envío automático con Enter
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      // Insertar un salto de línea en lugar de enviar
+      const target = e.currentTarget;
+      const start = target.selectionStart;
+      const end = target.selectionEnd;
+      const value = target.value;
+      
+      target.value = value.substring(0, start) + "\n" + value.substring(end);
+      target.selectionStart = target.selectionEnd = start + 1;
+      
+      // Actualizar el estado
+      setFormData(prev => ({ ...prev, evolution: target.value }));
+    }
   };
 
   const handleDateChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value ? new Date(value) : null }));
+    const newDate = value ? new Date(value) : new Date();
+    setFormData(prev => ({ ...prev, [name]: newDate }));
+  };
+
+  const validateSection = (section: string) => {
+    const errors: Record<string, string> = {};
+    
+    if (section === 'personal') {
+      if (!formData.patientName) errors.patientName = 'Nombre completo es requerido';
+      if (!formData.identificationType) errors.identificationType = 'Tipo de identificación es requerido';
+      if (!formData.identificationNumber) errors.identificationNumber = 'Número de identificación es requerido';
+      if (!formData.recordNumber) errors.recordNumber = 'Número de registro es requerido';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,12 +189,13 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     setIsLoading(true);
     
+    // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
     const dataToSend: any = {
       ...formData,
       ...(!historyId && { userId: user.id }),
       age: formData.age ? Number(formData.age) : null,
-      birthDate: formData.birthDate?.toISOString(),
-      admissionDate: formData.admissionDate?.toISOString(),
+      birthDate: formData.birthDate instanceof Date ? formData.birthDate.toISOString() : null,
+      admissionDate: formData.admissionDate instanceof Date ? formData.admissionDate.toISOString() : null,
       recordNumber: formData.recordNumber || `HC-${Date.now()}`,
     };
 
@@ -165,7 +231,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   };
 
   const formatDateForInput = (date: Date | null | undefined) => {
-    if (!date) return '';
+    // Si no es una instancia de Date, devolver cadena vacía
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '';
     try {
       return format(date, 'yyyy-MM-dd');
     } catch (error) {
@@ -175,29 +242,116 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   };
 
   const sectionItems = [
-    { id: 'personal', label: 'Personal', icon: <FaUser /> },
+    { id: 'personal', label: 'Información Personal', icon: <FaUser /> },
     { id: 'guardians', label: 'Responsables', icon: <FaIdCard /> },
     { id: 'professional', label: 'Profesional', icon: <FaStethoscope /> },
-    { id: 'personalHistory', label: 'Antecedentes', icon: <FaNotesMedical /> },
-    { id: 'familyHistory', label: 'Familiares', icon: <FaClipboardList /> },
+    { id: 'personalHistory', label: 'Antecedentes Personales', icon: <FaNotesMedical /> },
+    { id: 'familyHistory', label: 'Antecedentes Familiares', icon: <FaClipboardList /> },
     { id: 'development', label: 'Desarrollo', icon: <FaFlask /> },
-    { id: 'clinical', label: 'Clínica', icon: <FaFileMedical /> },
+    { id: 'clinical', label: 'Información Clínica', icon: <FaFileMedical /> },
     { id: 'evolution', label: 'Evolución', icon: <FaHospital /> }
   ];
 
+  const currentSectionIndex = sectionItems.findIndex(item => item.id === activeSection);
+  const isFirstSection = currentSectionIndex === 0;
+  const isLastSection = currentSectionIndex === sectionItems.length - 1;
+
+  const navigateToSection = (direction: 'next' | 'prev') => {
+    if (direction === 'next') {
+      if (validateSection(activeSection)) {
+        const nextSection = sectionItems[currentSectionIndex + 1]?.id;
+        if (nextSection) {
+          setActiveSection(nextSection);
+        }
+      }
+    } else {
+      const prevSection = sectionItems[currentSectionIndex - 1]?.id;
+      if (prevSection) {
+        setActiveSection(prevSection);
+      }
+    }
+  };
+
+  const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
+    <div className="flex items-center mb-6">
+      <div className="bg-gradient-to-r from-[#19334c] to-[#2c5170] p-3 rounded-xl mr-3">
+        <div className="text-white text-xl">{icon}</div>
+      </div>
+      <h2 className="text-2xl font-bold text-[#19334c]">{title}</h2>
+    </div>
+  );
+
+  const renderField = (label: string, name: string, type: string = 'text', required: boolean = false) => (
+    <div className={`mb-5 ${type === 'checkbox' ? 'flex items-center' : ''}`}>
+      <label className={`block text-sm font-medium mb-1 ${type === 'checkbox' ? 'ml-2' : ''}`}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      
+      {type === 'textarea' ? (
+        <textarea
+          name={name}
+          value={formData[name as keyof MedicalRecordFormData] as string || ''}
+          onChange={handleChange}
+          rows={3}
+          className={`w-full px-4 py-3 border ${
+            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
+          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc]`}
+        />
+      ) : type === 'checkbox' ? (
+        <input
+          type="checkbox"
+          name={name}
+          checked={formData[name as keyof MedicalRecordFormData] as boolean || false}
+          onChange={handleChange}
+          className="h-5 w-5 text-[#c77914] rounded-lg focus:ring-[#c77914]"
+        />
+      ) : type === 'date' ? (
+        <input
+          type="date"
+          name={name}
+          value={formatDateForInput(formData[name as keyof MedicalRecordFormData] as Date | null)}
+          onChange={(e) => {
+            handleDateChange(name, e.target.value);
+          }}
+          className={`w-full px-4 py-3 border ${
+            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
+          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc]`}
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={formData[name as keyof MedicalRecordFormData] as string || ''}
+          onChange={handleChange}
+          className={`w-full px-4 py-3 border ${
+            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
+          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc]`}
+        />
+      )}
+      
+      {formErrors[name] && (
+        <p className="mt-1 text-sm text-red-500">{formErrors[name]}</p>
+      )}
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h2 className="text-2xl font-bold text-[#19334c]">
-            {historyId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
-          </h2>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-gradient-to-b from-white to-[#f8f9fc] rounded-3xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#e0e7ff]">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#e0e7ff]">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#19334c] to-[#c77914] bg-clip-text text-transparent">
+              {historyId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
+            </h1>
+            <p className="text-[#19334c]/80 mt-1">
+              {sectionItems[currentSectionIndex]?.label}
+            </p>
+          </div>
           <button 
-            aria-label='Editar o crear historia clinica'
             onClick={onCancel}
-            className="text-gray-500 hover:text-[#c77914] transition-colors"
+            className="p-2 rounded-full hover:bg-[#e0e7ff] transition-colors"
           >
-            <FaTimes size={24} />
+            <FaTimes className="text-[#19334c] text-xl" />
           </button>
         </div>
         
@@ -208,868 +362,295 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Navegación por secciones */}
-            <div className="bg-[#f8f9fa] p-3 rounded-lg mb-6">
-              <div className="flex flex-wrap gap-2">
-                {sectionItems.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveSection(item.id)}
-                    className={`flex items-center px-4 py-2 rounded-full transition-all ${
-                      activeSection === item.id
-                        ? 'bg-[#19334c] text-white shadow-md'
-                        : 'bg-white text-[#19334c] border border-[#19334c] hover:bg-[#19334c]/10'
-                    }`}
-                  >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.label}
-                  </button>
-                ))}
+            {/* Barra de progreso */}
+            <div className="mb-8">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-[#19334c]">
+                  Paso {currentSectionIndex + 1} de {sectionItems.length}
+                </span>
+                <span className="text-sm font-medium text-[#19334c]">
+                  {Math.round(((currentSectionIndex + 1) / sectionItems.length) * 100)}% completado
+                </span>
+              </div>
+              <div className="h-2 bg-[#e0e7ff] rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#19334c] to-[#2c5170]"
+                  style={{ width: `${((currentSectionIndex + 1) / sectionItems.length) * 100}%` }}
+                ></div>
               </div>
             </div>
 
             {/* Sección 1: Información personal */}
             {(activeSection === 'personal') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaUser className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Información Personal</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <SectionHeader icon={<FaUser />} title="Información Personal" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaUser className="mr-2 text-[#c77914]" />
-                      Nombre completo *
-                    </label>
-                    <input
-                      aria-label='Nombre del paciente'
-                      type="text"
-                      name="patientName"
-                      value={formData.patientName || ''}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
+                    {renderField("Nombre completo *", "patientName", "text", true)}
+                    {renderField("Tipo de identificación *", "identificationType", "select", true)}
+                    {renderField("Número de identificación *", "identificationNumber", "text", true)}
+                    {renderField("Fecha de nacimiento", "birthDate", "date")}
+                    {renderField("Edad", "age", "number")}
+                    {renderField("Número de registro *", "recordNumber", "text", true)}
+                    {renderField("Nivel educativo", "educationLevel", "text")}
                   </div>
+                  
                   <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaIdCard className="mr-2 text-[#c77914]" />
-                      Tipo de identificación *
-                    </label>
-                    <select
-                      aria-label='Tipo de identificación'
-                      name="identificationType"
-                      value={formData.identificationType || ''}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    >
-                      <option value="Cédula">Cédula</option>
-                      <option value="Tarjeta de identidad">Tarjeta de identidad</option>
-                      <option value="Pasaporte">Pasaporte</option>
-                      <option value="Registro civil">Registro civil</option>
-                    </select>
+                    {renderField("Ocupación", "occupation", "text")}
+                    {renderField("Lugar de nacimiento", "birthPlace", "text")}
+                    {renderField("Nacionalidad", "nationality", "text")}
+                    {renderField("Religión", "religion", "text")}
+                    {renderField("Dirección", "address", "text")}
+                    {renderField("Barrio", "neighborhood", "text")}
+                    {renderField("Ciudad", "city", "text")}
                   </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaIdCard className="mr-2 text-[#c77914]" />
-                      Número de identificación *
-                    </label>
-                    <input
-                      aria-label='Número de identificación'
-                      type="text"
-                      name="identificationNumber"
-                      value={formData.identificationNumber || ''}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaCalendarAlt className="mr-2 text-[#c77914]" />
-                      Fecha de nacimiento
-                    </label>
-                    <input
-                      aria-label='Fecha de nacimiento'
-                      type="date"
-                      value={formatDateForInput(formData.birthDate)}
-                      onChange={(e) => handleDateChange('birthDate', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Edad</label>
-                    <input
-                      aria-label='Edad'
-                      type="number"
-                      name="age"
-                      value={formData.age || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Número de registro *</label>
-                    <input
-                      aria-label='Número de registro'
-                      type="text"
-                      name="recordNumber"
-                      value={formData.recordNumber || ''}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nivel educativo</label>
-                    <input
-                      aria-label='Nivel educativo'
-                      type="text"
-                      name="educationLevel"
-                      value={formData.educationLevel || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Ocupación</label>
-                    <input
-                      aria-label='Ocupación'
-                      type="text"
-                      name="occupation"
-                      value={formData.occupation || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Lugar de nacimiento</label>
-                    <input
-                      aria-label='Lugar de nacimiento'
-                      type="text"
-                      name="birthPlace"
-                      value={formData.birthPlace || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nacionalidad</label>
-                    <input
-                      aria-label='Nacionalidad'
-                      type="text"
-                      name="nationality"
-                      value={formData.nationality || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Religión</label>
-                    <input
-                      aria-label='Religión'
-                      type="text"
-                      name="religion"
-                      value={formData.religion || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Dirección</label>
-                    <input
-                      aria-label='Dirección'
-                      type="text"
-                      name="address"
-                      value={formData.address || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Barrio</label>
-                    <input
-                      aria-label='Barrio'
-                      type="text"
-                      name="neighborhood"
-                      value={formData.neighborhood || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Ciudad</label>
-                    <input
-                      aria-label='Ciudad'
-                      type="text"
-                      name="city"
-                      value={formData.city || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Departamento</label>
-                    <input
-                      aria-label='Departamento'
-                      type="text"
-                      name="state"
-                      value={formData.state || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Fecha de ingreso</label>
-                    <input
-                      aria-label='Fecha de ingreso'
-                      type="date"
-                      value={formatDateForInput(formData.admissionDate)}
-                      onChange={(e) => handleDateChange('admissionDate', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaPhone className="mr-2 text-[#c77914]" />
-                      Teléfono fijo
-                    </label>
-                    <input
-                      aria-label='Teléfono fijo'
-                      type="text"
-                      name="phone"
-                      value={formData.phone || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaPhone className="mr-2 text-[#c77914]" />
-                      Celular
-                    </label>
-                    <input
-                      aria-label='Celular'
-                      type="text"
-                      name="cellPhone"
-                      value={formData.cellPhone || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaEnvelope className="mr-2 text-[#c77914]" />
-                      Email
-                    </label>
-                    <input
-                      aria-label='Email'
-                      type="email"
-                      name="email"
-                      value={formData.email || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium mb-1">
-                      <FaHospital className="mr-2 text-[#c77914]" />
-                      EPS
-                    </label>
-                    <input
-                      aria-label='EPS'
-                      type="text"
-                      name="eps"
-                      value={formData.eps || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      aria-label='Es beneficario?'
-                      type="checkbox"
-                      name="isBeneficiary"
-                      checked={formData.isBeneficiary || false}
-                      onChange={handleChange}
-                      className="rounded text-[#c77914] focus:ring-[#c77914]"
-                    />
-                    <label className="text-sm font-medium ml-2">¿Es beneficiario?</label>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Referido por</label>
-                    <input
-                      aria-label='Referido por'
-                      type="text"
-                      name="referredBy"
-                      value={formData.referredBy || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
+                  
+                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {renderField("Departamento", "state", "text")}
+                    {renderField("Fecha de ingreso", "admissionDate", "date")}
+                    {renderField("Teléfono fijo", "phone", "text")}
+                    {renderField("Celular", "cellPhone", "text")}
+                    {renderField("Email", "email", "email")}
+                    {renderField("EPS", "eps", "text")}
+                    <div className="flex items-center mt-6">
+                      <input
+                        type="checkbox"
+                        name="isBeneficiary"
+                        checked={formData.isBeneficiary || false}
+                        onChange={handleChange}
+                        className="h-5 w-5 text-[#c77914] rounded-lg focus:ring-[#c77914]"
+                      />
+                      <label className="text-sm font-medium ml-2">¿Es beneficiario?</label>
+                    </div>
+                    {renderField("Referido por", "referredBy", "text")}
                   </div>
                 </div>
               </div>
-            </div>
             )}
 
             {/* Sección 2: Responsables */}
             {(activeSection === 'guardians') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaIdCard className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Responsables</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#f9fafb] p-4 rounded-lg border border-[#e0e7ff]">
-                    <h4 className="font-medium text-md text-[#19334c] mb-4 border-b pb-2">Responsable 1</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Nombre completo</label>
-                        <input
-                          aria-label='Nombre del responsable'
-                          type="text"
-                          name="guardian1Name"
-                          value={formData.guardian1Name || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Parentesco</label>
-                        <input
-                          aria-label='Parentesco'
-                          type="text"
-                          name="guardian1Relationship"
-                          value={formData.guardian1Relationship || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="flex items-center text-sm font-medium mb-1">
-                          <FaPhone className="mr-2 text-[#c77914]" />
-                          Teléfono
-                        </label>
-                        <input
-                          aria-label='Teléfono del responsable'
-                          type="text"
-                          name="guardian1Phone"
-                          value={formData.guardian1Phone || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Ocupación</label>
-                        <input
-                          aria-label='Ocupación del responsable'
-                          type="text"
-                          name="guardian1Occupation"
-                          value={formData.guardian1Occupation || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                    </div>
+              <div>
+                <SectionHeader icon={<FaIdCard />} title="Responsables" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                    <h3 className="font-bold text-lg text-[#19334c] mb-5 border-b pb-3">Responsable 1</h3>
+                    {renderField("Nombre completo", "guardian1Name")}
+                    {renderField("Parentesco", "guardian1Relationship")}
+                    {renderField("Teléfono", "guardian1Phone")}
+                    {renderField("Ocupación", "guardian1Occupation")}
                   </div>
-
-                  <div className="bg-[#f9fafb] p-4 rounded-lg border border-[#e0e7ff]">
-                    <h4 className="font-medium text-md text-[#19334c] mb-4 border-b pb-2">Responsable 2</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Nombre completo</label>
-                        <input
-                          aria-label='Nombre completo del responsable'
-                          type="text"
-                          name="guardian2Name"
-                          value={formData.guardian2Name || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Parentesco</label>
-                        <input
-                          aria-label='Parentesco del responsable'
-                          type="text"
-                          name="guardian2Relationship"
-                          value={formData.guardian2Relationship || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="flex items-center text-sm font-medium mb-1">
-                          <FaPhone className="mr-2 text-[#c77914]" />
-                          Teléfono
-                        </label>
-                        <input
-                          aria-label='Teléfono del responsable'
-                          type="text"
-                          name="guardian2Phone"
-                          value={formData.guardian2Phone || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Ocupación</label>
-                        <input
-                          aria-label='Ocupación del segundo acompañante'
-                          type="text"
-                          name="guardian2Occupation"
-                          value={formData.guardian2Occupation || ''}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                        />
-                      </div>
-                    </div>
+                  
+                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                    <h3 className="font-bold text-lg text-[#19334c] mb-5 border-b pb-3">Responsable 2</h3>
+                    {renderField("Nombre completo", "guardian2Name")}
+                    {renderField("Parentesco", "guardian2Relationship")}
+                    {renderField("Teléfono", "guardian2Phone")}
+                    {renderField("Ocupación", "guardian2Occupation")}
                   </div>
                 </div>
               </div>
-            </div>
             )}
 
-            {/* Sección 3: Atendido por */}
+            {/* Sección 3: Profesional */}
             {(activeSection === 'professional') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaStethoscope className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Atendido por</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nombre del profesional</label>
-                    <input
-                      aria-label='Nombre del profesional'
-                      type="text"
-                      name="attendedBy"
-                      value={formData.attendedBy || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Número de licencia</label>
-                    <input
-                      aria-label='Número de licencia del profesional'
-                      type="text"
-                      name="licenseNumber"
-                      value={formData.licenseNumber || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
+              <div>
+                <SectionHeader icon={<FaStethoscope />} title="Profesional a Cargo" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {renderField("Nombre del profesional", "attendedBy")}
+                  {renderField("Número de licencia", "licenseNumber")}
+                  
+                  <div className="md:col-span-2 bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm mt-4">
+                    <h3 className="font-bold text-lg text-[#19334c] mb-4">Información Adicional</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Especialidad</label>
+                        <div className="px-4 py-3 border border-[#e0e7ff] rounded-xl bg-[#f8f9fc]">
+                          Psicología Clínica
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Años de experiencia</label>
+                        <div className="px-4 py-3 border border-[#e0e7ff] rounded-xl bg-[#f8f9fc]">
+                          8 años
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             )}
 
             {/* Sección 4: Antecedentes personales */}
             {(activeSection === 'personalHistory') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaNotesMedical className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Antecedentes personales</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Patológicos</label>
-                    <textarea
-                      aria-label='Patológias del paciente'
-                      name="personalPathological"
-                      value={formData.personalPathological || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Quirúrgicos</label>
-                    <textarea
-                      aria-label='Quirúrgicos'
-                      name="personalSurgical"
-                      value={formData.personalSurgical || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Psicopatológicos</label>
-                    <textarea
-                      aria-label='Psicopatológicos'
-                      name="personalPsychopathological"
-                      value={formData.personalPsychopathological || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Historia traumática</label>
-                    <textarea
-                      aria-label='Historias traumaticas'
-                      name="traumaHistory"
-                      value={formData.traumaHistory || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Estado del sueño</label>
-                    <textarea
-                      aria-label='Estado del sueño'
-                      name="sleepStatus"
-                      value={formData.sleepStatus || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Uso de sustancias</label>
-                    <textarea
-                      aria-label='Uso de sustancias'
-                      name="substanceUse"
-                      value={formData.substanceUse || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Otros</label>
-                    <textarea
-                      aria-label='Otros'
-                      name="personalOther"
-                      value={formData.personalOther || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
+              <div>
+                <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
+                
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Patológicos", "personalPathological", "textarea")}
+                  {renderField("Quirúrgicos", "personalSurgical", "textarea")}
+                  {renderField("Psicopatológicos", "personalPsychopathological", "textarea")}
+                  {renderField("Historia traumática", "traumaHistory", "textarea")}
+                  {renderField("Estado del sueño", "sleepStatus", "textarea")}
+                  {renderField("Uso de sustancias", "substanceUse", "textarea")}
+                  {renderField("Otros", "personalOther", "textarea")}
                 </div>
               </div>
-            </div>
             )}
 
             {/* Sección 5: Antecedentes familiares */}
             {(activeSection === 'familyHistory') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaClipboardList className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Antecedentes familiares</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Patológicos</label>
-                    <textarea
-                      aria-label='Patológicos'
-                      name="familyPathological"
-                      value={formData.familyPathological || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Quirúrgicos</label>
-                    <textarea
-                      aria-label='Quirúrgicos'
-                      name="familySurgical"
-                      value={formData.familySurgical || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Psicopatológicos</label>
-                    <textarea
-                      aria-label='Psicopatológicos'
-                      name="familyPsychopathological"
-                      value={formData.familyPsychopathological || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Traumáticos</label>
-                    <textarea
-                      aria-label='Traumáticos'
-                      name="familyTraumatic"
-                      value={formData.familyTraumatic || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Uso de sustancias</label>
-                    <textarea
-                      aria-label='Uso de sustancias'
-                      name="familySubstanceUse"
-                      value={formData.familySubstanceUse || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Otros</label>
-                    <textarea
-                      aria-label='Otros'
-                      name="familyOther"
-                      value={formData.familyOther || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
+              <div>
+                <SectionHeader icon={<FaClipboardList />} title="Antecedentes Familiares" />
+                
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Patológicos", "familyPathological", "textarea")}
+                  {renderField("Quirúrgicos", "familySurgical", "textarea")}
+                  {renderField("Psicopatológicos", "familyPsychopathological", "textarea")}
+                  {renderField("Traumáticos", "familyTraumatic", "textarea")}
+                  {renderField("Uso de sustancias", "familySubstanceUse", "textarea")}
+                  {renderField("Otros", "familyOther", "textarea")}
                 </div>
               </div>
-            </div>
             )}
 
-            {/* Sección 6: Datos del desarrollo */}
+            {/* Sección 6: Desarrollo */}
             {(activeSection === 'development') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaFlask className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Datos del desarrollo</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Embarazo</label>
-                    <textarea
-                      aria-label='Embarazo'
-                      name="pregnancyInfo"
-                      value={formData.pregnancyInfo || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Parto</label>
-                    <textarea
-                      aria-label='Parto'
-                      name="deliveryInfo"
-                      value={formData.deliveryInfo || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Desarrollo psicomotor</label>
-                    <textarea
-                      aria-label='Desarrollo psicomotor'
-                      name="psychomotorDevelopment"
-                      value={formData.psychomotorDevelopment || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Dinámica familiar</label>
-                    <textarea
-                      aria-label='Dinámica familiar'
-                      name="familyDynamics"
-                      value={formData.familyDynamics || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
+              <div>
+                <SectionHeader icon={<FaFlask />} title="Datos del Desarrollo" />
+                
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Embarazo", "pregnancyInfo", "textarea")}
+                  {renderField("Parto", "deliveryInfo", "textarea")}
+                  {renderField("Desarrollo psicomotor", "psychomotorDevelopment", "textarea")}
+                  {renderField("Dinámica familiar", "familyDynamics", "textarea")}
                 </div>
               </div>
-            </div>
             )}
 
             {/* Sección 7: Información clínica */}
             {(activeSection === 'clinical') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaFileMedical className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Información clínica</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Motivo de consulta</label>
-                    <textarea
-                      aria-label='Motivo de consulta'
-                      name="consultationReason"
-                      value={formData.consultationReason || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Historia del problema</label>
-                    <textarea
-                      aria-label='Historia del problema'
-                      name="problemHistory"
-                      value={formData.problemHistory || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Expectativas de terapia</label>
-                    <textarea
-                      aria-label='Expectativas de terapia'
-                      name="therapyExpectations"
-                      value={formData.therapyExpectations || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Examen mental</label>
-                    <textarea
-                      aria-label='Examen mental'
-                      name="mentalExam"
-                      value={formData.mentalExam || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Evaluación psicológica</label>
-                    <textarea
-                      aria-label='Evaluación psicológica'
-                      name="psychologicalAssessment"
-                      value={formData.psychologicalAssessment || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Diagnóstico</label>
-                    <textarea
-                      aria-label='Diagnóstico'
-                      name="diagnosis"
-                      value={formData.diagnosis || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Objetivos terapéuticos</label>
-                    <textarea
-                      aria-label='Objetivos terapéuticos'
-                      name="therapeuticGoals"
-                      value={formData.therapeuticGoals || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Plan de tratamiento</label>
-                    <textarea
-                      aria-label='Plan de tratamiento'
-                      name="treatmentPlan"
-                      value={formData.treatmentPlan || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Información de referencia</label>
-                    <textarea
-                      aria-label='Información de referencia'
-                      name="referralInfo"
-                      value={formData.referralInfo || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Recomendaciones</label>
-                    <textarea
-                      aria-label='Recomendaciones'
-                      name="recommendations"
-                      value={formData.recommendations || ''}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            )}
-
-            {/* Sección 8: Evolución */}
-            {(activeSection === 'evolution') && (
-            <div className="border border-[#e0e7ff] rounded-xl overflow-hidden">
-              <div className="bg-[#19334c] p-4 flex items-center">
-                <FaHospital className="text-white mr-2" />
-                <h3 className="font-semibold text-lg text-white">Evolución</h3>
-              </div>
-              <div className="p-4 bg-white">
-                <div>
-                  <textarea
-                    aria-label='Evolución'
-                    name="evolution"
-                    value={formData.evolution || ''}
-                    onChange={handleChange}
-                    rows={8}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/50"
-                  />
-                </div>
-              </div>
-            </div>
-            )}
-
-            {/* Botones de acción */}
-            <div className="flex justify-between mt-6">
               <div>
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="px-5 py-2.5 border border-[#19334c] text-[#19334c] font-medium rounded-lg hover:bg-gray-50 flex items-center"
-                >
-                  <FaTimes className="mr-2" />
-                  Cancelar
-                </button>
+                <SectionHeader icon={<FaFileMedical />} title="Información Clínica" />
+                
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Motivo de consulta", "consultationReason", "textarea")}
+                  {renderField("Historia del problema", "problemHistory", "textarea")}
+                  {renderField("Expectativas de terapia", "therapyExpectations", "textarea")}
+                  {renderField("Examen mental", "mentalExam", "textarea")}
+                  {renderField("Evaluación psicológica", "psychologicalAssessment", "textarea")}
+                  {renderField("Diagnóstico", "diagnosis", "textarea")}
+                  {renderField("Objetivos terapéuticos", "therapeuticGoals", "textarea")}
+                  {renderField("Plan de tratamiento", "treatmentPlan", "textarea")}
+                  {renderField("Información de referencia", "referralInfo", "textarea")}
+                  {renderField("Recomendaciones", "recommendations", "textarea")}
+                </div>
               </div>
-              <div className="flex space-x-3">
+            )}
+
+            {/* Sección 8: Evolución - con manejo especial */}
+            {(activeSection === 'evolution') && (
+              <div>
+                <SectionHeader icon={<FaHospital />} title="Evolución" />
+                
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Campo de evolución con manejo especial */}
+                  <div className="mb-5">
+                    <label className="block text-sm font-medium mb-1">
+                      Registros de evolución
+                    </label>
+                    <textarea
+                      name="evolution"
+                      value={formData.evolution || ''}
+                      onChange={handleEvolutionChange}
+                      onKeyDown={handleKeyDown}
+                      rows={8}
+                      className="w-full px-4 py-3 border border-[#e0e7ff] rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc]"
+                    />
+                    <p className="mt-1 text-sm text-gray-500">
+                      Presiona Shift + Enter para nueva línea, solo el botón Guardar envía el formulario
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                    <h3 className="font-bold text-lg text-[#19334c] mb-4">Resumen del Paciente</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                        <div className="text-sm text-[#19334c]/70">Sesiones completadas</div>
+                        <div className="text-2xl font-bold text-[#19334c]">12</div>
+                      </div>
+                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                        <div className="text-sm text-[#19334c]/70">Progreso</div>
+                        <div className="text-2xl font-bold text-[#19334c]">75%</div>
+                      </div>
+                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                        <div className="text-sm text-[#19334c]/70">Última sesión</div>
+                        <div className="text-lg font-bold text-[#19334c]">15/06/2023</div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm text-[#19334c]">Estado del tratamiento</span>
+                        <span className="text-sm font-medium text-[#19334c]">Activo</span>
+                      </div>
+                      <div className="h-2 bg-[#e0e7ff] rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#c77914] to-[#e0a449]" style={{ width: '75%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Navegación entre secciones */}
+            <div className="flex justify-between mt-10">
+              <button
+                type="button"
+                onClick={() => navigateToSection('prev')}
+                disabled={isFirstSection}
+                className={`flex items-center px-5 py-2.5 rounded-xl ${
+                  isFirstSection 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-white text-[#19334c] border border-[#e0e7ff] hover:bg-[#f8f9fc]'
+                }`}
+              >
+                <FaArrowLeft className="mr-2" />
+                Anterior
+              </button>
+              
+              {isLastSection ? (
                 <button
-                  type="submit"
+                  type="button" // Cambiado a type="button" para prevenir envío automático
+                  onClick={handleSubmit}
                   disabled={isLoading}
-                  className="px-5 py-2.5 bg-[#19334c] text-white font-medium rounded-lg hover:bg-[#c77914] transition-colors flex items-center disabled:bg-gray-400"
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg"
                 >
                   <FaSave className="mr-2" />
                   {isLoading ? 'Guardando...' : 'Guardar Historia'}
                 </button>
-              </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => navigateToSection('next')}
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg"
+                >
+                  Siguiente
+                  <FaArrowRight className="ml-2" />
+                </button>
+              )}
             </div>
           </form>
         )}
+        
+        {/* Pie de página */}
+        <div className="mt-8 pt-6 border-t border-[#e0e7ff] text-center text-sm text-[#19334c]/70">
+          <p>Mentalmente © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
+          <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos por la ley HIPAA</p>
+        </div>
       </div>
     </div>
   );

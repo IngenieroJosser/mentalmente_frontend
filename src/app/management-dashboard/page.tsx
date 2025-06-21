@@ -26,11 +26,10 @@ import { templates, filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 
 const DashboardManagementMentalmentePage = () => {
-  const [activeTab, setActiveTab] = useState('histories');
   const [viewMode, setViewMode] = useState('grid');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -48,6 +47,7 @@ const DashboardManagementMentalmentePage = () => {
   const limit = 9;
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   // Función para traducir roles
   const translateRole = (role: string) => {
@@ -136,13 +136,21 @@ const DashboardManagementMentalmentePage = () => {
     setShowDetailsModal(true);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-CO', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return dateString;
+      }
+      return date.toLocaleDateString('es-CO', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
   };
 
   // Mostrar spinner mientras se verifica autenticación
@@ -154,8 +162,20 @@ const DashboardManagementMentalmentePage = () => {
     );
   }
 
+  // Definir rutas para cada módulo
+  const menuItems = [
+    // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard', path: '/dashboard' },
+    { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', path: '/management-dashboard' },
+    { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', path: '/management-dashboard/templates' },
+    { id: 'patients', icon: <User size={18} />, label: 'Pacientes', path: '/management-dashboard/patient' },
+    { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', path: '/management-dashboard/calendar' },
+    { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', path: '/management-dashboard/report' },
+    { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', path: '/management-dashboard/setting' },
+    { id: 'registro', icon: <User size={18} />, label: 'Registro', path: '/management-dashboard/register' },
+  ];
+
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50" role="application">
       {/* Sidebar - Mobile */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-[rgba(0,0,0,0.2)] backdrop-blur-md" onClick={() => setIsMenuOpen(false)}>
@@ -180,21 +200,15 @@ const DashboardManagementMentalmentePage = () => {
             
             <nav className="py-5">
               <ul>
-                {[
-                  { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-                  { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-                  { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-                  { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-                  { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-                  { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-                  { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-                  { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
-                ].map((item) => (
+                {menuItems.map((item) => (
                   <li key={item.id}>
                     <button
-                      onClick={() => { setActiveTab(item.id); setIsMenuOpen(false); }}
+                      onClick={() => {
+                        router.push(item.path);
+                        setIsMenuOpen(false);
+                      }}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        activeTab === item.id
+                        pathname === item.path // Usar pathname aquí
                           ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                           : 'hover:bg-[#152a40]'
                       }`}
@@ -236,21 +250,12 @@ const DashboardManagementMentalmentePage = () => {
         
         <nav className="flex-1 py-5">
           <ul>
-            {[
-              { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-              { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-              { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-              { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-              { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-              { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-              { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-              { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
-            ].map((item) => (
+            {menuItems.map((item) => (
               <li key={item.id}>
                 <button
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => router.push(item.path)}
                   className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                    activeTab === item.id
+                    pathname === item.path // Usar pathname aquí
                       ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                       : 'hover:bg-[#152a40]'
                   }`}
@@ -294,7 +299,7 @@ const DashboardManagementMentalmentePage = () => {
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas - Psicólogo</h1>
+            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas - Gerencia</h1>
           </div>
           
           <div className="relative flex-1 max-w-xl mx-4">
@@ -364,7 +369,7 @@ const DashboardManagementMentalmentePage = () => {
           {/* Header and Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Psicólogo</h1>
+              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Gerencia</h1>
               <p className="text-gray-600">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -403,12 +408,7 @@ const DashboardManagementMentalmentePage = () => {
                 {filters.map(filter => (
                   <button
                     key={filter.id}
-                    onClick={() => setActiveTab(filter.id)}
-                    className={`px-3 py-1.5 rounded-full text-sm ${
-                      activeTab === filter.id
-                        ? 'bg-[#19334c] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className={`px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-gray-200`}
                     aria-label={`Filtro: ${filter.name}`}
                   >
                     {filter.name}

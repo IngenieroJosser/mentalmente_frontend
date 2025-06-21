@@ -117,19 +117,19 @@ const DashboardReceptionMentalmentePage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
-      try {
-        await fetch(`/api/medical-records?id=${id}`, {
-          method: 'DELETE',
-        });
-        loadHistories(); // Actualiza la lista después de eliminar
-      } catch (error) {
-        console.error('Error eliminando historia:', error);
-        alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
-      }
-    }
-  };
+  // const handleDelete = async (id: number) => {
+  //   if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
+  //     try {
+  //       await fetch(`/api/user-dash?id=${id}`, {
+  //         method: 'DELETE',
+  //       });
+  //       loadHistories(); // Actualiza la lista después de eliminar
+  //     } catch (error) {
+  //       console.error('Error eliminando historia:', error);
+  //       alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
+  //     }
+  //   }
+  // };
 
   const handleViewDetails = (record: MedicalRecordWithUser) => {
     setSelectedRecord(record);
@@ -181,14 +181,14 @@ const DashboardReceptionMentalmentePage = () => {
             <nav className="py-5">
               <ul>
                 {[
-                  { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
+                  // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
                   { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
                   { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
                   { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
                   { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
                   { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
                   { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-                  { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
+                  { id: 'registro', icon: <User size={18} />, label: 'Registro' },
                 ].map((item) => (
                   <li key={item.id}>
                     <button
@@ -238,14 +238,14 @@ const DashboardReceptionMentalmentePage = () => {
         <nav className="flex-1 py-5">
           <ul>
             {[
-              { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
+              // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
               { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
               { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
               { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
               { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
               { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
               { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-              { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
+              { id: 'registro', icon: <User size={18} />, label: 'Registro' },
             ].map((item) => (
               <li key={item.id}>
                 <button
@@ -501,13 +501,13 @@ const DashboardReceptionMentalmentePage = () => {
                         >
                           <Edit size={14} className="mr-1" /> Editar
                         </button>
-                        <button 
-                          onClick={() => handleDelete(history.id)}
+                        {/* <button 
+                          // onClick={() => handleDelete(history.id)}
                           className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
                           aria-label="Eliminar historia"
                         >
                           <Trash2 size={14} className="mr-1" />
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
@@ -554,13 +554,13 @@ const DashboardReceptionMentalmentePage = () => {
                           >
                             <Edit size={16} />
                           </button>
-                          <button 
+                          {/* <button 
                             onClick={() => handleDelete(history.id)}
                             className="p-1.5 text-gray-500 hover:text-red-500" 
                             aria-label="Eliminar historia"
                           >
                             <Trash2 size={16} />
-                          </button>
+                          </button> */}
                           <button 
                             className="p-1.5 text-gray-500 hover:text-[#19334c]" 
                             aria-label="Imprimir historia"

@@ -26,7 +26,7 @@ import { templates, filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 
 const DashboardPsychologistMentalmentePage = () => {
@@ -48,6 +48,11 @@ const DashboardPsychologistMentalmentePage = () => {
   const limit = 9;
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Determinar permisos basados en rol
+  const isPsychologist = user?.role === 'PSYCHOLOGIST';
+  const isManagement = user?.role === 'MANAGEMENT';
 
   // Función para traducir roles
   const translateRole = (role: string) => {
@@ -80,8 +85,10 @@ const DashboardPsychologistMentalmentePage = () => {
     page: number;
     totalPages: number;
   }> => {
+    // Cambio en la URL del endpoint
+    const userIdParam = isPsychologist ? `&userId=${user?.id}` : '';
     const response = await fetch(
-      `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario`
+      `/api/psychologist-dash?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario${userIdParam}`
     );
 
     if (!response.ok) {
@@ -117,19 +124,19 @@ const DashboardPsychologistMentalmentePage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
-      try {
-        await fetch(`/api/medical-records?id=${id}`, {
-          method: 'DELETE',
-        });
-        loadHistories(); // Actualiza la lista después de eliminar
-      } catch (error) {
-        console.error('Error eliminando historia:', error);
-        alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
-      }
-    }
-  };
+  // const handleDelete = async (id: number) => {
+  //   if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
+  //     try {
+  //       await fetch(`/api/psychologist-dash?id=${id}`, {
+  //         method: 'DELETE',
+  //       });
+  //       loadHistories(); // Actualiza la lista después de eliminar
+  //     } catch (error) {
+  //       console.error('Error eliminando historia:', error);
+  //       alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
+  //     }
+  //   }
+  // };
 
   const handleViewDetails = (record: MedicalRecordWithUser) => {
     setSelectedRecord(record);
@@ -145,6 +152,16 @@ const DashboardPsychologistMentalmentePage = () => {
     });
   };
 
+  // Función para determinar si el usuario puede editar una historia
+  const canEditHistory = (history: MedicalRecordWithUser) => {
+    return isManagement || (isPsychologist && history.userId === user?.id);
+  };
+
+  // Función para determinar si el usuario puede eliminar una historia
+  const canDeleteHistory = (history: MedicalRecordWithUser) => {
+    return isManagement || (isPsychologist && history.userId === user?.id);
+  };
+
   // Mostrar spinner mientras se verifica autenticación
   if (!isAuthenticated) {
     return (
@@ -153,6 +170,18 @@ const DashboardPsychologistMentalmentePage = () => {
       </div>
     );
   }
+
+  // Definir menú según roles
+  const menuItems = [
+    // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard' },
+    { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard' },
+    { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/templates' },
+    { id: 'patients', icon: <User size={18} />, label: 'Pacientes', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard/patient' },
+    { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/calendar' },
+    { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/report' },
+    { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/setting' },
+    { id: 'registro', icon: <Settings size={18} />, label: 'Registro', roles: ['MANAGEMENT', 'USER'], path: '/psychologist-dashboard/register' },
+  ];
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -180,21 +209,15 @@ const DashboardPsychologistMentalmentePage = () => {
             
             <nav className="py-5">
               <ul>
-                {[
-                  { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-                  { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-                  { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-                  { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-                  { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-                  { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-                  { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-                  { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
-                ].map((item) => (
+                {menuItems.map((item) => (
                   <li key={item.id}>
                     <button
-                      onClick={() => { setActiveTab(item.id); setIsMenuOpen(false); }}
+                      onClick={() => {
+                        router.push(item.path);
+                        setIsMenuOpen(false);
+                      }}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        activeTab === item.id
+                        pathname === item.path // Usar pathname aquí
                           ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                           : 'hover:bg-[#152a40]'
                       }`}
@@ -236,29 +259,27 @@ const DashboardPsychologistMentalmentePage = () => {
         
         <nav className="flex-1 py-5">
           <ul>
-            {[
-              { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard' },
-              { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas' },
-              { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas' },
-              { id: 'patients', icon: <User size={18} />, label: 'Pacientes' },
-              { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario' },
-              { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes' },
-              { id: 'settings', icon: <Settings size={18} />, label: 'Configuración' },
-              { id: 'registro', icon: <Settings size={18} />, label: 'Registro' },
-            ].map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                    activeTab === item.id
-                      ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                      : 'hover:bg-[#152a40]'
-                  }`}
-                  aria-label={item.label}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
+            {menuItems.map((item) => (
+              <li key={item.id}><nav className="flex-1 py-5">
+              <ul>
+                {menuItems.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => router.push(item.path)}
+                      className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
+                        pathname === item.path // Usar pathname aquí
+                          ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
+                          : 'hover:bg-[#152a40]'
+                      }`}
+                      aria-label={item.label}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+                </nav>
               </li>
             ))}
           </ul>
@@ -270,7 +291,7 @@ const DashboardPsychologistMentalmentePage = () => {
             className="flex items-center space-x-3 w-full text-left p-3 bg-[#0f2439] rounded-lg"
             aria-label="Perfil de usuario"
           >
-            <User size={20} className="text-[#c77914]" />
+            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
             <div className="flex-1">
               <p className="font-medium text-sm">{user?.usuario || 'Usuario'}</p>
               <p className="text-xs text-[#a0b1c5]">
@@ -324,8 +345,8 @@ const DashboardPsychologistMentalmentePage = () => {
               className="flex items-center space-x-2"
               aria-label="Perfil de usuario"
             >
-              <User size={20} className="text-[#c77914]" />
-              <span className="hidden md:inline text-sm font-medium text-[#c77914] font-semibold">
+              <User size={20} className="text-[#19334c]" />
+              <span className="hidden md:inline text-sm font-medium text-[#19334c]">
                 {user?.usuario ? user.usuario.split(' ')[0] : 'Usuario'}
               </span>
             </button>
@@ -341,12 +362,14 @@ const DashboardPsychologistMentalmentePage = () => {
                 </p>
               </div>
               <div className="py-2">
-                <button 
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-[#19334c]"
-                  aria-label="Configuración"
-                >
-                  <Settings size={16} className="mr-2 text-[#19334c]" /> Configuración
-                </button>
+                {isManagement && (
+                  <button 
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-[#19334c]"
+                    aria-label="Configuración"
+                  >
+                    <Settings size={16} className="mr-2 text-[#19334c]" /> Configuración
+                  </button>
+                )}
                 <button 
                   onClick={() => logout()}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-[#19334c]"
@@ -382,17 +405,19 @@ const DashboardPsychologistMentalmentePage = () => {
                 <Download size={16} className="mr-2" />
                 Exportar
               </button>
-              <button 
-                onClick={() => {
-                  setEditingHistory(null);
-                  setShowForm(true);
-                }}
-                className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center"
-                aria-label="Crear nueva historia clínica"
-              >
-                <PlusCircle size={16} className="mr-2" />
-                Nueva Historia
-              </button>
+              {(isManagement || isPsychologist) && (
+                <button 
+                  onClick={() => {
+                    setEditingHistory(null);
+                    setShowForm(true);
+                  }}
+                  className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center"
+                  aria-label="Crear nueva historia clínica"
+                >
+                  <PlusCircle size={16} className="mr-2" />
+                  Nueva Historia
+                </button>
+              )}
             </div>
           </div>
 
@@ -443,14 +468,20 @@ const DashboardPsychologistMentalmentePage = () => {
             </div>
           ) : clinicalHistories.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-500">No se encontraron historias clínicas</p>
-              <button 
-                onClick={() => setShowForm(true)}
-                className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
-              >
-                <PlusCircle size={16} className="mr-2" />
-                Crear primera historia
-              </button>
+              <p className="text-gray-500">
+                {searchTerm 
+                  ? 'No se encontraron historias con esos criterios' 
+                  : 'Aún no has creado historias clínicas'}
+              </p>
+              {(isManagement || isPsychologist) && (
+                <button 
+                  onClick={() => setShowForm(true)}
+                  className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
+                >
+                  <PlusCircle size={16} className="mr-2" />
+                  Crear primera historia
+                </button>
+              )}
             </div>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -461,7 +492,8 @@ const DashboardPsychologistMentalmentePage = () => {
                       <div>
                         <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
                         <div className="mt-2 text-sm text-gray-600">
-                          <span className="font-medium">Atendido por:</span> {history.user?.usuario || 'Sin asignar'}
+                          <span className="font-medium">Atendido por:</span> 
+                          {history.user?.id === user?.id ? 'Tú' : history.user?.usuario || 'Sin asignar'}
                         </div>
                       </div>
                       <div className="relative">
@@ -490,23 +522,27 @@ const DashboardPsychologistMentalmentePage = () => {
                         Ver detalles
                       </button>
                       <div className="flex space-x-2">
-                        <button 
-                          onClick={() => {
-                            setEditingHistory(history.id);
-                            setShowForm(true);
-                          }}
-                          className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center"
-                          aria-label="Editar historia"
-                        >
-                          <Edit size={14} className="mr-1" /> Editar
-                        </button>
-                        {/* <button 
-                          onClick={() => handleDelete(history.id)}
-                          className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
-                          aria-label="Eliminar historia"
-                        >
-                          <Trash2 size={14} className="mr-1" />
-                        </button> */}
+                        {canEditHistory(history) && (
+                          <button 
+                            onClick={() => {
+                              setEditingHistory(history.id);
+                              setShowForm(true);
+                            }}
+                            className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center"
+                            aria-label="Editar historia"
+                          >
+                            <Edit size={14} className="mr-1" /> Editar
+                          </button>
+                        )}
+                        {/* {canDeleteHistory(history) && (
+                          <button 
+                            // onClick={() => handleDelete(history.id)}
+                            className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
+                            aria-label="Eliminar historia"
+                          >
+                            <Trash2 size={14} className="mr-1" />
+                          </button>
+                        )} */}
                       </div>
                     </div>
                   </div>
@@ -531,7 +567,7 @@ const DashboardPsychologistMentalmentePage = () => {
                         <div className="font-medium text-[#19334c]">{history.patientName}</div>
                       </td>
                       <td className="py-4 px-4 text-sm">
-                        {history.user?.usuario || 'Sin asignar'}
+                        {history.user?.id === user?.id ? 'Tú' : history.user?.usuario || 'Sin asignar'}
                       </td>
                       <td className="py-4 px-4 text-sm">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
@@ -543,23 +579,27 @@ const DashboardPsychologistMentalmentePage = () => {
                           >
                             <FileText size={16} />
                           </button>
-                          <button 
-                            onClick={() => {
-                              setEditingHistory(history.id);
-                              setShowForm(true);
-                            }}
-                            className="p-1.5 text-gray-500 hover:text-[#c77914]" 
-                            aria-label="Editar historia"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          {/* <button 
-                            onClick={() => handleDelete(history.id)}
-                            className="p-1.5 text-gray-500 hover:text-red-500" 
-                            aria-label="Eliminar historia"
-                          >
-                            <Trash2 size={16} />
-                          </button> */}
+                          {canEditHistory(history) && (
+                            <button 
+                              onClick={() => {
+                                setEditingHistory(history.id);
+                                setShowForm(true);
+                              }}
+                              className="p-1.5 text-gray-500 hover:text-[#c77914]" 
+                              aria-label="Editar historia"
+                            >
+                              <Edit size={16} />
+                            </button>
+                          )}
+                          {canDeleteHistory(history) && (
+                            <button 
+                              // onClick={() => handleDelete(history.id)}
+                              className="p-1.5 text-gray-500 hover:text-red-500" 
+                              aria-label="Eliminar historia"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                           <button 
                             className="p-1.5 text-gray-500 hover:text-[#19334c]" 
                             aria-label="Imprimir historia"

@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { format } from 'date-fns';
-import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope } from 'react-icons/fa';
+import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope, FaHeartbeat, FaUsers, FaChartLine, FaFileMedicalAlt } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
 
@@ -94,27 +94,29 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
   // Renderizar secciones con iconos
   const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
-    <div className="flex items-center mb-4 pb-2 border-b border-[#19334c]/30">
-      <div className="text-[#c77914] mr-2">{icon}</div>
-      <h3 className="text-xl font-bold text-[#19334c]">{title}</h3>
+    <div className="flex items-center mb-6">
+      <div className="bg-gradient-to-r from-[#19334c] to-[#2c5170] p-3 rounded-lg shadow-md mr-3">
+        <div className="text-white text-xl">{icon}</div>
+      </div>
+      <h3 className="text-2xl font-bold text-[#19334c]">{title}</h3>
     </div>
   );
 
-  // Renderizar campo con diseño moderno
+  // Renderizar campo con diseño premium
   const renderField = (label: string, value: string | null | undefined) => (
-    <div className="mb-3">
-      <div className="text-sm font-medium text-[#19334c]/80">{label}</div>
-      <div className="text-base font-medium text-[#19334c]">
+    <div className="mb-4">
+      <div className="text-sm font-medium text-[#19334c]/70 uppercase tracking-wide mb-1">{label}</div>
+      <div className="text-lg font-medium text-[#19334c] border-b border-[#e0e7ff] pb-2">
         {value || <span className="text-gray-400 italic">No especificado</span>}
       </div>
     </div>
   );
 
-  // Renderizar campo multilínea
+  // Renderizar campo multilínea premium
   const renderMultilineField = (label: string, value: string | null, rows: number = 3) => (
-    <div className="mb-4">
-      <div className="text-sm font-medium text-[#19334c]/80 mb-1">{label}</div>
-      <div className="bg-[#f8f9fc] p-3 rounded-lg border border-[#e0e7ff] text-[#19334c] min-h-[60px] whitespace-pre-wrap">
+    <div className="mb-6">
+      <div className="text-sm font-medium text-[#19334c]/70 uppercase tracking-wide mb-2">{label}</div>
+      <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-4 rounded-xl border border-[#e0e7ff] shadow-sm text-[#19334c] min-h-[60px] whitespace-pre-wrap">
         {value || (
           <span className="text-gray-400 italic">
             {label.includes('Recomendaciones') ? 'Sin recomendaciones' : 
@@ -126,82 +128,131 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     </div>
   );
 
-  // Tabs de navegación
+  // Tabs de navegación premium
   const tabs = [
     { id: 'basic', label: 'Información Básica', icon: <FaUser /> },
     { id: 'medical', label: 'Antecedentes', icon: <FaNotesMedical /> },
     { id: 'clinical', label: 'Clínica', icon: <FaStethoscope /> },
     { id: 'evolution', label: 'Evolución', icon: <FaHistory /> },
-    { id: 'professionals', label: 'Profesionales', icon: <FaBrain /> }
+    { id: 'professionals', label: 'Profesionales', icon: <FaUsers /> },
+    // { id: 'health', label: 'Salud', icon: <FaHeartbeat /> },
+    // { id: 'analysis', label: 'Análisis', icon: <FaChartLine /> }
   ];
 
   return (
-    <div className="fixed inset-0 bg-[#19334c]/80 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-[#19334c]/90 flex items-center justify-center z-[100] backdrop-blur-md">
       {isGenerating && <SpinnerPDF />}
 
-      {/* Modal principal */}
-      <div className="bg-white rounded-2xl p-6 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#e0e7ff]">
-          <div>
-            <h2 className="text-2xl font-bold text-[#19334c]">
-              Historia Clínica
-            </h2>
-            <p className="text-[#19334c]/70 mt-1">
-              Paciente: <span className="font-medium">{record.patientName}</span> | 
-              ID: <span className="font-medium">{record.identificationNumber}</span>
-            </p>
+      {/* Modal principal - Diseño Premium */}
+      <div className="bg-gradient-to-br from-white to-[#f8f9fc] rounded-3xl p-8 w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#e0e7ff] relative">
+        {/* Logo Mentalmente */}
+        <div className="absolute top-6 right-8 flex items-center">
+          <div className="bg-gradient-to-r from-[#19334c] to-[#2c5170] p-2 rounded-lg mr-2">
+            <FaFileMedicalAlt className="text-white text-xl" />
           </div>
-          <div className="flex items-center space-x-3">
-            <button 
-              aria-label='Imprimir'
-              onClick={handleGeneratePDF}
-              disabled={isGenerating}
-              className="flex items-center gap-2 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white px-4 py-2 rounded-lg hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-md disabled:opacity-50"
-            >
-              <FaPrint /> {isGenerating ? 'Generando...' : 'Exportar PDF'}
-            </button>
-            <button 
-              aria-label='Cerrar modal'
-              onClick={onClose}
-              className="bg-[#f8f9fc] hover:bg-[#e0e7ff] p-2 rounded-full transition-colors"
-            >
-              <FaTimes className="text-[#19334c]" size={20} />
-            </button>
+          <span className="text-xl font-bold text-[#19334c]">Mentalmente</span>
+        </div>
+        
+        {/* Header Premium */}
+        <div className="mb-8 pb-6 border-b border-[#e0e7ff]">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-[#19334c] to-[#c77914] bg-clip-text text-transparent">
+                Historia Clínica Digital
+              </h1>
+              <p className="text-[#19334c]/80 mt-2 max-w-2xl">
+                Sistema de gestión de historias clínicas de Mentalmente - Centro de Excelencia en Psicología Integral
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button 
+                aria-label='Imprimir'
+                onClick={handleGeneratePDF}
+                disabled={isGenerating}
+                className="flex items-center gap-2 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white px-5 py-2.5 rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg disabled:opacity-50 transform hover:scale-[1.02] duration-300"
+              >
+                <FaPrint className="text-lg" /> 
+                <span className="font-medium">{isGenerating ? 'Generando PDF...' : 'Exportar PDF'}</span>
+              </button>
+              <button 
+                aria-label='Cerrar modal'
+                onClick={onClose}
+                className="bg-gradient-to-r from-[#f8f9fc] to-white p-2 rounded-full transition-all shadow-sm border border-[#e0e7ff] hover:from-[#e0e7ff] hover:to-[#f0f4ff] transform hover:scale-110 duration-200"
+              >
+                <FaTimes className="text-[#19334c]" size={20} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="mt-6 bg-gradient-to-r from-[#19334c]/5 to-[#c77914]/5 p-4 rounded-xl border border-[#e0e7ff]">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center">
+                <div className="bg-[#19334c]/10 p-2 rounded-lg mr-3">
+                  <FaUser className="text-[#19334c]" />
+                </div>
+                <div>
+                  <div className="text-sm text-[#19334c]/70">Paciente</div>
+                  <div className="font-bold text-xl text-[#19334c]">{record.patientName}</div>
+                </div>
+              </div>
+              
+              <div className="h-8 w-px bg-[#e0e7ff]"></div>
+              
+              <div>
+                <div className="text-sm text-[#19334c]/70">Identificación</div>
+                <div className="font-medium text-lg text-[#19334c]">{record.identificationNumber}</div>
+              </div>
+              
+              <div className="h-8 w-px bg-[#e0e7ff]"></div>
+              
+              <div>
+                <div className="text-sm text-[#19334c]/70">Historia Clínica</div>
+                <div className="font-medium text-lg text-[#19334c]">{record.recordNumber}</div>
+              </div>
+              
+              <div className="h-8 w-px bg-[#e0e7ff]"></div>
+              
+              <div>
+                <div className="text-sm text-[#19334c]/70">Fecha de creación</div>
+                <div className="font-medium text-lg text-[#19334c]">{formatDate(record.createdAt)}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Pestañas de navegación */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        {/* Pestañas de navegación premium */}
+        <div className="flex flex-wrap gap-3 mb-8">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all shadow-sm transform duration-200 ${
                 activeTab === tab.id 
-                  ? 'bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white shadow-md' 
-                  : 'bg-[#f8f9fc] text-[#19334c] hover:bg-[#e0e7ff]'
+                  ? 'bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white shadow-md hover:shadow-lg scale-[1.02]' 
+                  : 'bg-white text-[#19334c] hover:bg-[#f8f9fc] border border-[#e0e7ff] hover:from-[#f8f9fc] hover:to-[#f0f4ff] hover:scale-[1.02]'
               }`}
             >
-              {tab.icon}
-              <span>{tab.label}</span>
+              <div className="text-lg">{tab.icon}</div>
+              <span className="font-medium">{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Contenido de pestañas */}
-        <div className="space-y-6">
+        {/* Contenido de pestañas - Diseño Premium */}
+        <div className="space-y-8">
           {/* Información Básica */}
           {activeTab === 'basic' && (
-            <div className="bg-gradient-to-br from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff]">
+            <div className="bg-gradient-to-br from-white to-[#f8f9fc] p-8 rounded-3xl border border-[#e0e7ff] shadow-sm">
               <SectionHeader icon={<FaUser />} title="Datos Personales" />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-[#19334c]/10 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                      <FaUser className="text-[#19334c]" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Tarjeta de Identificación */}
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="flex items-center mb-5">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                      <FaUser className="text-[#19334c] text-xl" />
                     </div>
-                    <h4 className="font-bold text-[#19334c]">Identificación</h4>
+                    <h4 className="font-bold text-xl text-[#19334c]">Identificación</h4>
                   </div>
                   {renderField("Tipo de identificación", record.identificationType)}
                   {renderField("Número de identificación", record.identificationNumber)}
@@ -209,25 +260,28 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   {renderField("Edad", record.age?.toString())}
                 </div>
                 
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-[#19334c]/10 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                      <FaUser className="text-[#19334c]" />
+                {/* Tarjeta de Información Personal */}
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="flex items-center mb-5">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                      <FaUser className="text-[#19334c] text-xl" />
                     </div>
-                    <h4 className="font-bold text-[#19334c]">Información Personal</h4>
+                    <h4 className="font-bold text-xl text-[#19334c]">Información Personal</h4>
                   </div>
                   {renderField("Escolaridad", record.educationLevel)}
                   {renderField("Ocupación", record.occupation)}
                   {renderField("Nacionalidad", record.nationality)}
                   {renderField("Religión", record.religion)}
+                  {renderField("Lugar de nacimiento", record.birthPlace)}
                 </div>
                 
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-[#19334c]/10 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                      <FaUser className="text-[#19334c]" />
+                {/* Tarjeta de Contacto */}
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="flex items-center mb-5">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                      <FaUser className="text-[#19334c] text-xl" />
                     </div>
-                    <h4 className="font-bold text-[#19334c]">Contacto</h4>
+                    <h4 className="font-bold text-xl text-[#19334c]">Contacto</h4>
                   </div>
                   {renderField("Dirección", record.address)}
                   {renderField("Barrio", record.neighborhood)}
@@ -238,17 +292,32 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   {renderField("Email", record.email)}
                 </div>
                 
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-[#19334c]/10 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                      <FaUser className="text-[#19334c]" />
+                {/* Tarjeta de Atención */}
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm md:col-span-3">
+                  <div className="flex items-center mb-5">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                      <FaUser className="text-[#19334c] text-xl" />
                     </div>
-                    <h4 className="font-bold text-[#19334c]">Atención</h4>
+                    <h4 className="font-bold text-xl text-[#19334c]">Atención</h4>
                   </div>
-                  {renderField("Fecha de ingreso", formatDate(record.admissionDate))}
-                  {renderField("EPS", record.eps)}
-                  {renderField("¿Es beneficiario?", record.isBeneficiary ? 'Sí' : 'No')}
-                  {renderField("Remitido por", record.referredBy)}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      {renderField("Fecha de ingreso", formatDate(record.admissionDate))}
+                      {renderField("EPS", record.eps)}
+                    </div>
+                    <div>
+                      {renderField("¿Es beneficiario?", record.isBeneficiary ? 'Sí' : 'No')}
+                      {renderField("Remitido por", record.referredBy)}
+                    </div>
+                    <div className="bg-gradient-to-r from-[#f8f9fc] to-[#f0f4ff] p-4 rounded-xl border border-[#e0e7ff]">
+                      <div className="text-sm text-[#19334c]/70 mb-2">Estado del tratamiento</div>
+                      <div className="flex items-center">
+                        <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                        <span className="font-medium text-[#19334c]">Activo</span>
+                      </div>
+                      <div className="mt-2 text-sm text-[#19334c]/70">Última sesión: 15/06/2023</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -256,12 +325,12 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
           {/* Antecedentes */}
           {activeTab === 'medical' && (
-            <div className="bg-gradient-to-br from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-br from-white to-[#f8f9fc] p-8 rounded-3xl border border-[#e0e7ff] shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {renderMultilineField("Patológicos", record.personalPathological)}
                     {renderMultilineField("Quirúrgicos", record.personalSurgical)}
                     {renderMultilineField("Psicopatológicos", record.personalPsychopathological)}
@@ -275,7 +344,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                 <div>
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Familiares" />
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {renderMultilineField("Patológicos", record.familyPathological)}
                     {renderMultilineField("Quirúrgicos", record.familySurgical)}
                     {renderMultilineField("Psicopatológicos", record.familyPsychopathological)}
@@ -288,7 +357,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                 <div className="md:col-span-2">
                   <SectionHeader icon={<FaNotesMedical />} title="Desarrollo" />
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {renderMultilineField("Embarazo", record.pregnancyInfo)}
                     {renderMultilineField("Parto", record.deliveryInfo)}
                     {renderMultilineField("Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)", record.psychomotorDevelopment)}
@@ -301,10 +370,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
           {/* Información Clínica */}
           {activeTab === 'clinical' && (
-            <div className="bg-gradient-to-br from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff]">
+            <div className="bg-gradient-to-br from-white to-[#f8f9fc] p-8 rounded-3xl border border-[#e0e7ff] shadow-sm">
               <SectionHeader icon={<FaStethoscope />} title="Información Clínica" />
               
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {renderMultilineField("Motivo de consulta", record.consultationReason, 4)}
                 {renderMultilineField("Historia del problema (duración, evolución, frecuencia)", record.problemHistory, 4)}
                 {renderMultilineField("Expectativas del paciente respecto a la terapia", record.therapyExpectations, 3)}
@@ -320,13 +389,58 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           )}
 
           {/* Evolución */}
-          {activeTab === 'evolution' && record.evolution && (
-            <div className="bg-gradient-to-br from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff]">
+          {activeTab === 'evolution' && (
+            <div className="bg-gradient-to-br from-white to-[#f8f9fc] p-8 rounded-3xl border border-[#e0e7ff] shadow-sm">
               <SectionHeader icon={<FaHistory />} title="Evolución del Paciente" />
               
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                <div className="text-sm text-[#19334c] whitespace-pre-line">
-                  {record.evolution}
+              <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                {record.evolution ? (
+                  <div className="text-[#19334c] whitespace-pre-line">
+                    {record.evolution}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 text-lg mb-4">No hay registros de evolución</div>
+                    <button className="bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white px-4 py-2 rounded-lg">
+                      Agregar nueva entrada
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              {/* Gráfico de progreso ficticio */}
+              <div className="mt-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-bold text-lg text-[#19334c]">Progreso del tratamiento</h4>
+                  <div className="text-sm text-[#19334c]/70">Últimos 6 meses</div>
+                </div>
+                <div className="h-40 bg-gradient-to-b from-[#f8f9fc] to-white p-4 rounded-xl border border-[#e0e7ff]">
+                  <div className="flex h-full items-end gap-4">
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">Ene</div>
+                      <div className="w-full bg-gradient-to-t from-[#19334c] to-[#2c5170] rounded-t h-1/4"></div>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">Feb</div>
+                      <div className="w-full bg-gradient-to-t from-[#19334c] to-[#2c5170] rounded-t h-1/3"></div>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">Mar</div>
+                      <div className="w-full bg-gradient-to-t from-[#19334c] to-[#2c5170] rounded-t h-1/2"></div>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">Abr</div>
+                      <div className="w-full bg-gradient-to-t from-[#19334c] to-[#2c5170] rounded-t h-2/3"></div>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">May</div>
+                      <div className="w-full bg-gradient-to-t from-[#c77914] to-[#e0a449] rounded-t h-3/4"></div>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <div className="text-xs text-[#19334c]/70 mb-1">Jun</div>
+                      <div className="w-full bg-gradient-to-t from-[#c77914] to-[#e0a449] rounded-t h-full"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -334,34 +448,64 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
           {/* Profesionales */}
           {activeTab === 'professionals' && (
-            <div className="bg-gradient-to-br from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff]">
-              <SectionHeader icon={<FaBrain />} title="Responsables y Profesionales" />
+            <div className="bg-gradient-to-br from-white to-[#f8f9fc] p-8 rounded-3xl border border-[#e0e7ff] shadow-sm">
+              <SectionHeader icon={<FaUsers />} title="Responsables y Profesionales" />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <h4 className="font-bold text-[#19334c] mb-4">Responsable 1</h4>
-                  {renderField("Nombre", record.guardian1Name)}
-                  {renderField("Parentesco", record.guardian1Relationship)}
-                  {renderField("Teléfono", record.guardian1Phone)}
-                  {renderField("Ocupación", record.guardian1Occupation)}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <h4 className="font-bold text-xl text-[#19334c] mb-6 flex items-center">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                      <FaUser className="text-[#19334c]" />
+                    </div>
+                    Responsable 1
+                  </h4>
+                  <div className="space-y-4">
+                    {renderField("Nombre", record.guardian1Name)}
+                    {renderField("Parentesco", record.guardian1Relationship)}
+                    {renderField("Teléfono", record.guardian1Phone)}
+                    {renderField("Ocupación", record.guardian1Occupation)}
+                  </div>
                 </div>
                 
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <h4 className="font-bold text-[#19334c] mb-4">Responsable 2</h4>
-                  {renderField("Nombre", record.guardian2Name)}
-                  {renderField("Parentesco", record.guardian2Relationship)}
-                  {renderField("Teléfono", record.guardian2Phone)}
-                  {renderField("Ocupación", record.guardian2Occupation)}
+                <div className="bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <h4 className="font-bold text-xl text-[#19334c] mb-6 flex items-center">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                      <FaUser className="text-[#19334c]" />
+                    </div>
+                    Responsable 2
+                  </h4>
+                  <div className="space-y-4">
+                    {renderField("Nombre", record.guardian2Name)}
+                    {renderField("Parentesco", record.guardian2Relationship)}
+                    {renderField("Teléfono", record.guardian2Phone)}
+                    {renderField("Ocupación", record.guardian2Occupation)}
+                  </div>
                 </div>
                 
-                <div className="md:col-span-2 bg-white p-4 rounded-xl shadow-sm border border-[#e0e7ff]">
-                  <h4 className="font-bold text-[#19334c] mb-4">Profesional</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 bg-gradient-to-b from-white to-[#f8f9fc] p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <h4 className="font-bold text-xl text-[#19334c] mb-6 flex items-center">
+                    <div className="bg-gradient-to-r from-[#19334c]/10 to-[#2c5170]/10 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                      <FaStethoscope className="text-[#19334c]" />
+                    </div>
+                    Profesional a cargo
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       {renderField("Atendido por", record.attendedBy)}
+                      {renderField("Especialidad", "Psicología Clínica")}
                     </div>
                     <div>
                       {renderField("Número de tarjeta profesional", record.licenseNumber)}
+                      {renderField("Años de experiencia", "8 años")}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 flex items-center">
+                    <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                    <div className="ml-4">
+                      <div className="font-bold text-lg text-[#19334c]">Dra. Laura Méndez</div>
+                      <div className="text-[#19334c]/70">Psicóloga Clínica - Especialista en Terapia Cognitivo-Conductual</div>
+                      <div className="mt-1 text-sm text-[#19334c]/70">laura.mendez@mentalmente.com | +57 300 123 4567</div>
                     </div>
                   </div>
                 </div>
@@ -370,403 +514,17 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           )}
         </div>
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-10 flex justify-between items-center">
+          <div className="text-sm text-[#19334c]/70">
+            Mentalmente © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-lg hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-md"
+            className="px-8 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg transform hover:scale-[1.03] duration-300"
           >
             Cerrar Historia
           </button>
-        </div>
-      </div>
-
-      {/* Componente para PDF */}
-      <div 
-        ref={printableRef} 
-        className="absolute top-[10000px] left-0 w-[210mm] bg-white p-10 font-sans text-sm"
-      >
-        <div className="w-full max-w-4xl mx-auto">
-          {/* Encabezado */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-[#19334c] w-16 h-16 rounded-full flex items-center justify-center mr-4">
-                <FaNotesMedical className="text-white text-2xl" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold uppercase tracking-wide text-[#19334c]">HISTORIA CLÍNICA PSICOLÓGICA</h1>
-                <p className="text-lg mt-1 text-[#c77914] font-medium">MentalMente - Centro de Psicología Integral</p>
-              </div>
-            </div>
-            <div className="border-t border-b border-[#19334c]/30 py-2 text-[#19334c]">
-              <p>Historia Clínica N° {record.recordNumber || '__________'} | Fecha: {formatDate(new Date())}</p>
-            </div>
-          </div>
-
-          {/* Información Personal */}
-          <div className="mb-8">
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">INFORMACIÓN PERSONAL</h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="font-medium mb-1">Nombre paciente:</div>
-                <div className="border-b border-black pb-1">{record.patientName || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Tipo de identificación:</div>
-                <div className="flex space-x-4">
-                  <span>RC <span className="inline-block w-5 h-5 border border-black ml-1 text-center">{record.identificationType === 'RC' ? '✓' : ''}</span></span>
-                  <span>TI <span className="inline-block w-5 h-5 border border-black ml-1 text-center">{record.identificationType === 'TI' ? '✓' : ''}</span></span>
-                  <span>CC <span className="inline-block w-5 h-5 border border-black ml-1 text-center">{record.identificationType === 'CC' ? '✓' : ''}</span></span>
-                </div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">N° Identificación:</div>
-                <div className="border-b border-black pb-1">{record.identificationNumber || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Edad:</div>
-                <div className="border-b border-black pb-1">{record.age || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Fecha de nacimiento:</div>
-                <div className="border-b border-black pb-1">{formatDate(record.birthDate) || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Escolaridad:</div>
-                <div className="border-b border-black pb-1">{record.educationLevel || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Ocupación:</div>
-                <div className="border-b border-black pb-1">{record.occupation || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Lugar de nacimiento:</div>
-                <div className="border-b border-black pb-1">{record.birthPlace || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Nacionalidad:</div>
-                <div className="border-b border-black pb-1">{record.nationality || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Religión:</div>
-                <div className="border-b border-black pb-1">{record.religion || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Dirección de Residencia:</div>
-                <div className="border-b border-black pb-1">{record.address || '__________'}</div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <div className="font-medium mb-1">Barrio:</div>
-                  <div className="border-b border-black pb-1">{record.neighborhood || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Ciudad:</div>
-                  <div className="border-b border-black pb-1">{record.city || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Departamento:</div>
-                  <div className="border-b border-black pb-1">{record.state || '__________'}</div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Fecha ingreso:</div>
-                <div className="border-b border-black pb-1">{formatDate(record.admissionDate) || '__________'}</div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <div className="font-medium mb-1">Celular:</div>
-                  <div className="border-b border-black pb-1">{record.cellPhone || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Teléfono:</div>
-                  <div className="border-b border-black pb-1">{record.phone || '__________'}</div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">E-mail:</div>
-                <div className="border-b border-black pb-1">{record.email || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">EPS:</div>
-                <div className="border-b border-black pb-1">{record.eps || '__________'}</div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Estado EPS:</div>
-                <div className="flex space-x-4">
-                  <span>Cotizante <span className="inline-block w-5 h-5 border border-black ml-1 text-center">{!record.isBeneficiary ? '✓' : ''}</span></span>
-                  <span>Beneficiario <span className="inline-block w-5 h-5 border border-black ml-1 text-center">{record.isBeneficiary ? '✓' : ''}</span></span>
-                </div>
-              </div>
-              
-              <div>
-                <div className="font-medium mb-1">Remitido por:</div>
-                <div className="border-b border-black pb-1">{record.referredBy || '__________'}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Responsables */}
-          <div className="mb-8">
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">RESPONSABLES</h2>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-bold mb-3 text-[#19334c]">Responsable 1</h3>
-                <div className="space-y-2">
-                  <div>
-                    <div className="font-medium mb-1">Nombre:</div>
-                    <div className="border-b border-black pb-1">{record.guardian1Name || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Parentesco:</div>
-                    <div className="border-b border-black pb-1">{record.guardian1Relationship || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Teléfono:</div>
-                    <div className="border-b border-black pb-1">{record.guardian1Phone || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Ocupación:</div>
-                    <div className="border-b border-black pb-1">{record.guardian1Occupation || '__________'}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-bold mb-3 text-[#19334c]">Responsable 2</h3>
-                <div className="space-y-2">
-                  <div>
-                    <div className="font-medium mb-1">Nombre:</div>
-                    <div className="border-b border-black pb-1">{record.guardian2Name || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Parentesco:</div>
-                    <div className="border-b border-black pb-1">{record.guardian2Relationship || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Teléfono:</div>
-                    <div className="border-b border-black pb-1">{record.guardian2Phone || '__________'}</div>
-                  </div>
-                  <div>
-                    <div className="font-medium mb-1">Ocupación:</div>
-                    <div className="border-b border-black pb-1">{record.guardian2Occupation || '__________'}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Profesional */}
-          <div className="mb-8">
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">PROFESIONAL</h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="font-medium mb-1">Atendido por:</div>
-                <div className="border-b border-black pb-1">{record.attendedBy || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Tarjeta profesional N°:</div>
-                <div className="border-b border-black pb-1">{record.licenseNumber || '__________'}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Información Médico-Psicológica */}
-          <div className="mb-8">
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">INFORMACIÓN MÉDICO-PSICOLÓGICA</h2>
-            
-            <div className="mb-6">
-              <h3 className="font-bold mb-3 text-[#19334c]">Antecedentes personales</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="font-medium mb-1">Patológicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.personalPathological || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Quirúrgicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.personalSurgical || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Psicopatológicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.personalPsychopathological || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Historia de trauma o abuso:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.traumaHistory || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Estado del Sueño:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.sleepStatus || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Consumo de sustancias psicoactivas:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.substanceUse || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Otros:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.personalOther || '__________'}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <h3 className="font-bold mb-3 text-[#19334c]">Antecedentes Familiares</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="font-medium mb-1">Patológicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familyPathological || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Quirúrgicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familySurgical || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Psicopatológicos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familyPsychopathological || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Traumáticos:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familyTraumatic || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Consumo de sustancias psicoactivas:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familySubstanceUse || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Otros:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familyOther || '__________'}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-bold mb-3 text-[#19334c]">Desarrollo</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="font-medium mb-1">Embarazo:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.pregnancyInfo || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Parto:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.deliveryInfo || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Desarrollo psicomotor:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.psychomotorDevelopment || '__________'}</div>
-                </div>
-                <div>
-                  <div className="font-medium mb-1">Dinámica familiar:</div>
-                  <div className="border border-gray-300 p-2 min-h-[40px]">{record.familyDynamics || '__________'}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Información Clínica */}
-          <div className="mb-8">
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">INFORMACIÓN CLÍNICA</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="font-medium mb-1">Motivo de consulta:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.consultationReason || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Historia del problema:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.problemHistory || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Expectativas del paciente:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.therapyExpectations || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Examen Mental:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.mentalExam || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Evaluación psicológica:</div>
-                <div className="border border-gray-300 p-2 min-h-[80px]">{record.psychologicalAssessment || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">IDX O DX (DSM5-CIE 10):</div>
-                <div className="border border-gray-300 p-2 min-h-[40px]">{record.diagnosis || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Objetivos terapéuticos:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.therapeuticGoals || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Plan Terapéutico:</div>
-                <div className="border border-gray-300 p-2 min-h-[60px]">{record.treatmentPlan || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Derivación Y/O Remisión:</div>
-                <div className="border border-gray-300 p-2 min-h-[40px]">{record.referralInfo || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Recomendaciones:</div>
-                <div className="border border-gray-300 p-2 min-h-[40px]">{record.recommendations || '__________'}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Evolución */}
-          <div className="mb-8">
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <div className="font-medium mb-1">Nombre:</div>
-                <div className="border-b border-black pb-1">{record.patientName || '__________'}</div>
-              </div>
-              <div>
-                <div className="font-medium mb-1">Historia N°:</div>
-                <div className="border-b border-black pb-1">{record.recordNumber || '__________'}</div>
-              </div>
-            </div>
-            
-            <h2 className="font-bold text-xl border-b-2 border-[#19334c] mb-4 pb-2 text-[#19334c]">EVOLUCIÓN</h2>
-            <div className="border border-gray-300 p-4 min-h-[150px]">
-              {record.evolution || (
-                <>
-                  <div className="border-b border-black min-h-[20px] mb-2"></div>
-                  <div className="border-b border-black min-h-[20px] mb-2"></div>
-                  <div className="border-b border-black min-h-[20px] mb-2"></div>
-                  <div className="border-b border-black min-h-[20px] mb-2"></div>
-                  <div className="border-b border-black min-h-[20px] mb-2"></div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Pie de página */}
-          <div className="mt-12 pt-4 border-t border-gray-300 text-center text-xs">
-            <div className="flex justify-center items-center mb-2">
-              <div className="bg-[#19334c] w-8 h-8 rounded-full flex items-center justify-center mr-2">
-                <FaNotesMedical className="text-white text-sm" />
-              </div>
-              <p className="font-bold text-[#19334c]">MentalMente - Centro de Psicología Integral</p>
-            </div>
-            <p className="text-[#19334c]">322 8555 682 | www.mentalmente.com | @mentotmentep</p>
-            <p className="text-[#19334c] mt-1">Calle 123 #45-67, Ciudad | NIT: 123456789-0</p>
-          </div>
         </div>
       </div>
     </div>
