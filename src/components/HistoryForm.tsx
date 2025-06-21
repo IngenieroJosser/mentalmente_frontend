@@ -667,7 +667,21 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     </div>
                     
                     {renderField("Número de registro *", "recordNumber", "text", true)}
-                    {renderField("Nivel educativo", "educationLevel", "text")}
+                    <label className="block text-sm font-medium mb-1 text-gray-800" htmlFor="educationLevel">Nivel educativo</label>
+                    <select
+                          name="educationLevel"
+                          value={formData.educationLevel || ''}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 border ${
+                            formErrors.educationLevel ? 'border-red-500' : 'border-[#e0e7ff]'
+                          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+                        >
+                          <option value="">Seleccione un nivel educativo</option>
+                          <option value="Primaria">Primaria</option>
+                          <option value="Secundaria">Secundaria</option>
+                          <option value="Universidad">Universidad</option>
+                          <option value="Postgrado">Postgrado</option>
+                        </select>
                   </div>
                   
                   <div>
