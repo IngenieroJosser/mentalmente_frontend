@@ -159,7 +159,7 @@ const DashboardReceptionMentalmentePage = () => {
   // Mostrar spinner mientras se verifica autenticación
   if (!isAuthenticated) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
       </div>
     );
@@ -182,7 +182,7 @@ const DashboardReceptionMentalmentePage = () => {
               </div>
               <button 
                 onClick={() => setIsMenuOpen(false)} 
-                className="text-white"
+                className="text-white text-xl"
                 aria-label="Close menu"
               >
                 &times;
@@ -219,24 +219,23 @@ const DashboardReceptionMentalmentePage = () => {
       <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
           <div className="flex items-center justify-center mb-8">
-          <div className="bg-[#19334c] p-4 rounded-2xl flex items-center justify-center ring-1 ring-[#c77914]/40 shadow-lg">
-            <div className="relative w-16 h-16">
-              <Image
-                src="/img/logo.png"
-                alt="Logo de Mentalmente"
-                fill
-                className="object-contain rounded-xl"
-                quality={100}
-                priority
-                sizes="64px"
-              />
+            <div className="bg-[#19334c] p-4 rounded-2xl flex items-center justify-center ring-1 ring-[#c77914]/40 shadow-lg">
+              <div className="relative w-16 h-16">
+                <Image
+                  src="/img/logo.png"
+                  alt="Logo de Mentalmente"
+                  fill
+                  className="object-contain rounded-xl"
+                  quality={100}
+                  priority
+                  sizes="64px"
+                />
+              </div>
             </div>
           </div>
-
-        </div>
           <div>
             <h1 className="font-bold mt-[-2em]">Mentalmente</h1>
-            <p className="text-xs text-[#a0b1c5]">Historias Clínicas Digitales</p>
+            <p className="text-sm text-[#c0d0e0]">Historias Clínicas Digitales</p>
           </div>
         </div>
         
@@ -254,7 +253,7 @@ const DashboardReceptionMentalmentePage = () => {
                   aria-label={item.label}
                 >
                   {item.icon}
-                  <span>{item.label}</span>
+                  <span className="text-white">{item.label}</span>
                 </button>
               </li>
             ))}
@@ -269,12 +268,12 @@ const DashboardReceptionMentalmentePage = () => {
           >
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
             <div className="flex-1">
-              <p className="font-medium text-sm">{user?.usuario || 'Usuario'}</p>
-              <p className="text-xs text-[#a0b1c5]">
+              <p className="font-medium text-sm text-white">{user?.usuario || 'Usuario'}</p>
+              <p className="text-xs text-[#c0d0e0]">
                 {translateRole(user?.role || '')}
               </p>
             </div>
-            <ChevronDown size={16} />
+            <ChevronDown size={16} className="text-white" />
           </button>
         </div>
       </aside>
@@ -286,7 +285,7 @@ const DashboardReceptionMentalmentePage = () => {
           <div className="flex items-center">
             <button 
               onClick={() => setIsMenuOpen(true)}
-              className="md:hidden mr-3 text-gray-600"
+              className="md:hidden mr-3 text-gray-700"
               aria-label='Menú'
             >
               <Menu size={24} />
@@ -295,11 +294,11 @@ const DashboardReceptionMentalmentePage = () => {
           </div>
           
           <div className="relative flex-1 max-w-xl mx-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
               placeholder="Buscar historias, pacientes, plantillas..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white"
               value={searchTerm}
               onChange={handleSearch}
               aria-label="Buscar historias clínicas"
@@ -312,7 +311,7 @@ const DashboardReceptionMentalmentePage = () => {
               className="p-2 rounded-full hover:bg-gray-100 relative"
               aria-label="Notificaciones"
             >
-              <Bell size={20} className="text-gray-600" />
+              <Bell size={20} className="text-gray-700" />
               <span className="absolute top-1 right-1 bg-[#c77914] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
             
@@ -322,7 +321,7 @@ const DashboardReceptionMentalmentePage = () => {
               aria-label="Perfil de usuario"
             >
               <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-              <span className="hidden md:inline text-sm font-medium">
+              <span className="hidden md:inline text-sm font-medium text-gray-800">
                 {user?.usuario ? user.usuario.split(' ')[0] : 'Usuario'}
               </span>
             </button>
@@ -332,24 +331,24 @@ const DashboardReceptionMentalmentePage = () => {
           {isProfileOpen && (
             <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
               <div className="p-4 border-b border-gray-200">
-                <p className="font-semibold">{user?.usuario || 'Usuario'}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-semibold text-gray-800">{user?.usuario || 'Usuario'}</p>
+                <p className="text-sm text-gray-700">
                   {translateRole(user?.role || '')}
                 </p>
               </div>
               <div className="py-2">
                 <button 
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
                   aria-label="Configuración"
                 >
-                  <Settings size={16} className="mr-2 text-gray-600" /> Configuración
+                  <Settings size={16} className="mr-2 text-gray-700" /> Configuración
                 </button>
                 <button 
                   onClick={() => logout()}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
                   aria-label="Cerrar sesión"
                 >
-                  <LogOut size={16} className="mr-2 text-gray-600" /> Cerrar sesión
+                  <LogOut size={16} className="mr-2 text-gray-700" /> Cerrar sesión
                 </button>
               </div>
             </div>
@@ -362,18 +361,18 @@ const DashboardReceptionMentalmentePage = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
               <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Recepción</h1>
-              <p className="text-gray-600">Optimiza tu tiempo con nuestro sistema digital</p>
+              <p className="text-gray-700">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button 
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center"
+                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center"
                 aria-label="Filtros"
               >
                 <Filter size={16} className="mr-2" />
                 Filtros
               </button>
               <button 
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center"
+                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center"
                 aria-label="Exportar datos"
               >
                 <Download size={16} className="mr-2" />
@@ -403,7 +402,7 @@ const DashboardReceptionMentalmentePage = () => {
                     className={`px-3 py-1.5 rounded-full text-sm ${
                       filter.id === activeSection
                         ? 'bg-[#19334c] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     }`}
                     aria-label={`Filtro: ${filter.name}`}
                   >
@@ -413,17 +412,17 @@ const DashboardReceptionMentalmentePage = () => {
               </div>
               
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600">Vista:</span>
+                <span className="text-sm text-gray-700">Vista:</span>
                 <button 
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-800'}`}
                   aria-label="Vista de cuadrícula"
                 >
                   <LayoutGrid size={18} />
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-800'}`}
                   aria-label="Vista de lista"
                 >
                   <List size={18} />
@@ -439,7 +438,7 @@ const DashboardReceptionMentalmentePage = () => {
             </div>
           ) : clinicalHistories.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-500">No se encontraron historias clínicas</p>
+              <p className="text-gray-700">No se encontraron historias clínicas</p>
               <button 
                 onClick={() => setShowForm(true)}
                 className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
@@ -456,13 +455,13 @@ const DashboardReceptionMentalmentePage = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
-                        <div className="mt-2 text-sm text-gray-600">
+                        <div className="mt-2 text-sm text-gray-700">
                           <span className="font-medium">Atendido por:</span> {history.user?.usuario || 'Sin asignar'}
                         </div>
                       </div>
                       <div className="relative">
                         <button 
-                          className="text-gray-400 hover:text-[#c77914]"
+                          className="text-gray-600 hover:text-[#c77914]"
                           aria-label="Opciones"
                         >
                           <ChevronDown size={18} />
@@ -473,14 +472,14 @@ const DashboardReceptionMentalmentePage = () => {
                   
                   <div className="p-5">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Última actualización:</span>
-                      <span className="font-medium">{formatDate(history.updatedAt.toString())}</span>
+                      <span className="text-gray-700">Última actualización:</span>
+                      <span className="font-medium text-gray-800">{formatDate(history.updatedAt.toString())}</span>
                     </div>
                     
                     <div className="flex justify-between mt-4">
                       <button 
                         onClick={() => handleViewDetails(history)}
-                        className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg"
+                        className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg"
                         aria-label="Ver detalles"
                       >
                         Ver detalles
@@ -507,10 +506,10 @@ const DashboardReceptionMentalmentePage = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Paciente</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Terapeuta</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Última Actualización</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600">Acciones</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-800">Paciente</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-800">Terapeuta</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-800">Última Actualización</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-800">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -519,15 +518,15 @@ const DashboardReceptionMentalmentePage = () => {
                       <td className="py-4 px-4">
                         <div className="font-medium text-[#19334c]">{history.patientName}</div>
                       </td>
-                      <td className="py-4 px-4 text-sm">
+                      <td className="py-4 px-4 text-sm text-gray-800">
                         {history.user?.usuario || 'Sin asignar'}
                       </td>
-                      <td className="py-4 px-4 text-sm">{formatDate(history.updatedAt.toString())}</td>
+                      <td className="py-4 px-4 text-sm text-gray-800">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
                           <button 
                             onClick={() => handleViewDetails(history)}
-                            className="p-1.5 text-gray-500 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
                             aria-label="Ver detalles"
                           >
                             <FileText size={16} />
@@ -537,13 +536,13 @@ const DashboardReceptionMentalmentePage = () => {
                               setEditingHistory(history.id);
                               setShowForm(true);
                             }}
-                            className="p-1.5 text-gray-500 hover:text-[#c77914]" 
+                            className="p-1.5 text-gray-600 hover:text-[#c77914]" 
                             aria-label="Editar historia"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
-                            className="p-1.5 text-gray-500 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
                             aria-label="Imprimir historia"
                           >
                             <Printer size={16} />
@@ -560,7 +559,7 @@ const DashboardReceptionMentalmentePage = () => {
           {/* Pagination */}
           {clinicalHistories.length > 0 && (
             <div className="flex justify-between items-center mt-6">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-700">
                 Mostrando {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalRecords)} de {totalRecords} registros
               </div>
               <div className="flex space-x-2">
@@ -572,7 +571,7 @@ const DashboardReceptionMentalmentePage = () => {
                 >
                   Anterior
                 </button>
-                <span className="px-3 py-1 bg-white border rounded">
+                <span className="px-3 py-1 bg-white border border-gray-300 rounded text-gray-800">
                   Página {currentPage} de {totalPages}
                 </span>
                 <button 
@@ -605,8 +604,8 @@ const DashboardReceptionMentalmentePage = () => {
                   <div className="bg-[#19334c]/10 p-3 rounded-lg mb-3 inline-block">
                     <FileText size={24} className="text-[#19334c]" />
                   </div>
-                  <h3 className="font-medium mb-1">{template.name}</h3>
-                  <p className="text-sm text-gray-600">{template.category}</p>
+                  <h3 className="font-bold mb-1 text-lg text-gray-800">{template.name}</h3>
+                  <p className="text-sm text-gray-700">{template.category}</p>
                   <button 
                     className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg"
                     aria-label={`Usar plantilla ${template.name}`}
