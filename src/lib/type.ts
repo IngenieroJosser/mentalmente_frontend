@@ -34,6 +34,18 @@ export type MedicalRecordWithUser = MedicalRecord & {
   therapist?: string;
   lastVisit?: string | null;
   nextAppointment?: string | null;
+  pathologySeverityLabel?: string;
+  consultationReason?: string;
+  diagnosis?: string;
+  problemHistory?: string;
+  therapyExpectations?: string;
+  mentalExam?: string;
+  psychologicalAssessment?: string;
+  therapeuticGoals?: string;
+  treatmentPlan?: string;
+  referralInfo?: string;
+  recommendations?: string;
+  evolution?: string;
 };
 
 export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
@@ -42,6 +54,21 @@ export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | '
   therapist?: string;
   lastVisit?: Date | null;
   nextAppointment?: Date | null;
+  pathologySeverityLabel?: string;
+  consultationReason?: string;
+  diagnosis?: string;
+  problemHistory?: string;
+  therapyExpectations?: string;
+  mentalExam?: string;
+  psychologicalAssessment?: string;
+  therapeuticGoals?: string;
+  treatmentPlan?: string;
+  referralInfo?: string;
+  recommendations?: string;
+  evolution?: string;
+  birthDate?: Date;
+  admissionDate?: Date;
+  pathologySeverity?: number;
 };
 
 export type MedicalRecordFormData_ = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
@@ -60,6 +87,19 @@ export type MedicalRecordFormData_ = Omit<Partial<MedicalRecord>, 'birthDate' | 
   therapist?: string;
   lastVisit?: string | null;
   nextAppointment?: string | null;
+  pathologySeverity?: number;
+  pathologySeverityLabel?: string;
+  consultationReason?: string;
+  diagnosis?: string;
+  problemHistory?: string;
+  therapyExpectations?: string;
+  mentalExam?: string;
+  psychologicalAssessment?: string;
+  therapeuticGoals?: string;
+  treatmentPlan?: string;
+  referralInfo?: string;
+  recommendations?: string;
+  evolution?: string;
 };
 
 export interface HistoryFormProps {
