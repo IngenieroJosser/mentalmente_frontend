@@ -233,53 +233,47 @@ const DashboardPsychologistMentalmentePage = () => {
         </div>
       )}
 
-      {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
+     {/* Sidebar - Desktop */}
+     <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
         <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
-          <div className="flex items-center justify-center mb-8">
-          <div className="bg-[#19334c] p-3 rounded-xl flex items-center justify-center border border-[#c77914]/30">
-            <div className="relative w-14 h-14">
-              <Image
-                src="/img/logo.png"
-                alt="Logo de Mentalmente"
-                layout="fill"
-                objectFit="contain"
-                quality={100}
-                priority
-                className="rounded-lg"
-              />
+          <div className="flex items-center justify-center">
+            <div className="bg-[#19334c] p-3 rounded-xl flex items-center justify-center border border-[#c77914]/30">
+              <div className="relative w-14 h-14">
+                <Image
+                  src="/img/logo.png"
+                  alt="Logo de Mentalmente"
+                  layout="fill"
+                  objectFit="contain"
+                  quality={100}
+                  priority
+                  className="rounded-lg"
+                />
+              </div>
             </div>
           </div>
-        </div>
           <div>
-            <h1 className="font-bold mt-[-2em]">Mentalmente</h1>
+            <h1 className="font-bold">Mentalmente</h1>
             <p className="text-xs text-[#a0b1c5]">Historias Clínicas Digitales</p>
           </div>
         </div>
         
+        {/* Menú corregido - sin duplicación */}
         <nav className="flex-1 py-5">
           <ul>
             {menuItems.map((item) => (
-              <li key={item.id}><nav className="flex-1 py-5">
-              <ul>
-                {menuItems.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => router.push(item.path)}
-                      className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        pathname === item.path // Usar pathname aquí
-                          ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                          : 'hover:bg-[#152a40]'
-                      }`}
-                      aria-label={item.label}
-                    >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-                </nav>
+              <li key={item.id}>
+                <button
+                  onClick={() => router.push(item.path)}
+                  className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
+                    pathname === item.path
+                      ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
+                      : 'hover:bg-[#152a40]'
+                  }`}
+                  aria-label={item.label}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
               </li>
             ))}
           </ul>
