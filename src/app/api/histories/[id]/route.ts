@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { MedicalRecord } from '@prisma/client'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const record = await prisma.medicalRecord.findUnique({
       where: { id: parseInt(params.id) },
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json(record)
-  } catch (_error) { // Usar _error para ignorar la advertencia de ESLint
+  } catch (_) {
     return NextResponse.json(
       { error: 'Error al obtener la historia clínica' },
       { status: 500 }
@@ -40,7 +40,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     })
 
     return NextResponse.json(updatedRecord)
-  } catch (_error) {
+  } catch (_) {
     return NextResponse.json(
       { error: 'Error al actualizar la historia clínica' },
       { status: 500 }
@@ -57,7 +57,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     return NextResponse.json(
       { message: 'Historia clínica eliminada correctamente' }
     )
-  } catch (_error) {
+  } catch (_) {
     return NextResponse.json(
       { error: 'Error al eliminar la historia clínica' },
       { status: 500 }

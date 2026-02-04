@@ -1,4 +1,3 @@
-import { MedicalRecordsController } from '@/controllers/medical-records/medical-records.controller';
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
@@ -36,30 +35,36 @@ export async function GET(
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-    if (!id) {
+    if (!params.id) {
       return NextResponse.json(
         { error: 'ID de historia clínica es requerido' },
         { status: 400 }
       );
     }
+    
     // Eliminar la historia clínica
-    const deletedRecord = await prisma.medicalRecord.delete({
-      where: { id: parseInt(id) },
+    await prisma.medicalRecord.delete({
+      where: { id: parseInt(params.id) },
     });
+    
     // Si se elimina correctamente, devolver un estado 204 No Content
     return NextResponse.json(null, { status: 204 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error eliminando historia clínica:', error);
-    if (error.code === 'P2025') {
+    
+    // Verificar si es un error de Prisma
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
       return NextResponse.json(
         { error: 'Historia clínica no encontrada' },
         { status: 404 }
       );
     }
+    
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

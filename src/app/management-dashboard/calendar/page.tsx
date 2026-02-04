@@ -17,7 +17,7 @@ const CalendarDashboardPsychologist = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userLoaded, setUserLoaded] = useState(false);
+  const [_, setUserLoaded] = useState(false);
 
   const fetchMedicalRecords = async () => {
     if (!user || !user.id) return;

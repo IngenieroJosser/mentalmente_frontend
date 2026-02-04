@@ -71,7 +71,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     // Obtener todos los usuarios (excluyendo contraseñas)
     const users = await prisma.user.findMany({

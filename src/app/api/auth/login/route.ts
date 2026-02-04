@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
     );
 
     // 6. Eliminar la contraseña del objeto de usuario
-    const { contrasena, ...userWithoutPassword } = user;
+    const { contrasena: _, ...userWithoutPassword } = user;
 
     return NextResponse.json(
       {

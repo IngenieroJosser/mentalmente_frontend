@@ -2,8 +2,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { format } from 'date-fns';
 
 interface TherapyReport {
   month: string;

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
   FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaMapMarkerAlt, 
-  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes, FaCheck, FaPrint 
+  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes 
 } from 'react-icons/fa';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 import { toast } from 'react-toastify';
@@ -210,9 +210,9 @@ const PatientPsychologistDashboard = () => {
       toast.success('Paciente eliminado con éxito');
       setIsDeleteModalOpen(false);
       setPatientToDelete(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error al eliminar:', error);
-      toast.error(error.message || 'Error al eliminar el paciente');
+      toast.error(error instanceof Error ? error.message : 'Error al eliminar el paciente');
     }
   };
 

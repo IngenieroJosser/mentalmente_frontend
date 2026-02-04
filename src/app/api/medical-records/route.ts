@@ -382,7 +382,7 @@ import { NextRequest, NextResponse } from 'next/server';
  *           example: "Problemas de pareja y comunicación"
  *         problemHistory:
  *           type: string
- *           example: "Conflictos recurrentes durante 2 años"
+ *           example: "Conflictos recurrente durante 2 años"
  *         therapyExpectations:
  *           type: string
  *           example: "Mejorar comunicación en la relación"
@@ -649,7 +649,7 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Construir el objeto where para la búsqueda
-    let where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       // Separar los campos por los que se va a buscar
@@ -764,7 +764,7 @@ export async function PUT(req: NextRequest) {
     ];
 
     // Filtrar solo campos permitidos
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (body[key] !== undefined) {
         updateData[key] = body[key];
@@ -773,10 +773,10 @@ export async function PUT(req: NextRequest) {
 
     // Convertir fechas
     if (updateData.birthDate) {
-      updateData.birthDate = new Date(updateData.birthDate);
+      updateData.birthDate = new Date(updateData.birthDate as string);
     }
     if (updateData.admissionDate) {
-      updateData.admissionDate = new Date(updateData.admissionDate);
+      updateData.admissionDate = new Date(updateData.admissionDate as string);
     }
 
     const updatedRecord = await prisma.medicalRecord.update({

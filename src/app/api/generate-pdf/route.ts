@@ -1,6 +1,6 @@
 // src/app/api/generate-pdf/route.ts
 import { NextResponse } from 'next/server';
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import fs from 'fs';
 import path from 'path';
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
     // Función para dibujar texto con ajuste automático
     const drawText = (
-      page: any,
+      page: PDFPage,
       text: string | null | undefined,
       x: number,
       y: number,
@@ -96,13 +96,13 @@ export async function POST(request: Request) {
           maxWidth: maxWidth || 500,
           lineHeight,
         });
-      } catch (error) {
-        console.error(`Error dibujando texto: "${text}" en [${x},${y}]`, error);
+      } catch (_error) {
+        console.error(`Error dibujando texto: "${text}" en [${x},${y}]`, _error);
       }
     };
 
     // Función para formatear fechas
-    const formatDate = (dateValue: any): string => {
+    const formatDate = (dateValue: unknown): string => {
       if (!dateValue) return '';
       
       try {
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
 
         if (isNaN(date.getTime())) return '';
         return format(date, 'dd/MM/yyyy');
-      } catch (error) {
+      } catch (_error) {
         return '';
       }
     };
@@ -141,19 +141,19 @@ export async function POST(request: Request) {
     if (record.identificationType === 'RC') {
       try {
         form.getCheckBox('TipoIdentificacion_RC').check();
-      } catch (e) {
+      } catch (_) {
         drawText(firstPage, 'X', 210, 682);
       }
     } else if (record.identificationType === 'TI') {
       try {
         form.getCheckBox('TipoIdentificacion_TI').check();
-      } catch (e) {
+      } catch (_) {
         drawText(firstPage, 'X', 245, 682);
       }
     } else if (record.identificationType === 'CC') {
       try {
         form.getCheckBox('TipoIdentificacion_CC').check();
-      } catch (e) {
+      } catch (_) {
         drawText(firstPage, 'X', 280, 682);
       }
     }
@@ -180,13 +180,13 @@ export async function POST(request: Request) {
     if (record.isBeneficiary) {
       try {
         form.getCheckBox('Beneficiario_Si').check();
-      } catch (e) {
+      } catch (_) {
         drawText(firstPage, 'X', 220, 532);
       }
     } else {
       try {
         form.getCheckBox('Beneficiario_No').check();
-      } catch (e) {
+      } catch (_) {
         drawText(firstPage, 'X', 165, 532);
       }
     }
@@ -251,8 +251,10 @@ export async function POST(request: Request) {
     // Generar PDF
     const pdfBytes = await pdfDoc.save();
     
-    // Crear respuesta
-    return new NextResponse(pdfBytes, {
+    // Crear respuesta - convertir Uint8Array a Buffer para NextResponse
+    const pdfBuffer = Buffer.from(pdfBytes);
+    
+    return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -260,16 +262,19 @@ export async function POST(request: Request) {
       },
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error crítico al generar PDF:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    const errorStack = error instanceof Error ? error.stack : undefined;
     
     return NextResponse.json(
       { 
         success: false,
         error: 'Error interno del servidor',
-        message: error.message,
+        message: errorMessage,
         ...(process.env.NODE_ENV === 'development' && {
-          stack: error.stack
+          stack: errorStack
         })
       },
       { status: 500 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
+import { Role } from '@prisma/client';
 
 // Roles permitidos para validación
 const ALLOWED_ROLES = ['USER', 'MANAGEMENT', 'PSYCHOLOGIST'];
@@ -208,7 +209,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Eliminar la contraseña del objeto de respuesta
-    const { contrasena: _, ...userWithoutPassword } = newUser;
+    const { contrasena: unusedPassword, ...userWithoutPassword } = newUser;
 
     return NextResponse.json(
       {
@@ -250,7 +251,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -299,7 +300,15 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const updateData: any = {
+    interface UpdateData {
+      usuario: string;
+      correo: string;
+      genero: string;
+      role: string;
+      contrasena?: string;
+    }
+
+    const updateData: UpdateData = {
       usuario,
       correo,
       genero,
@@ -314,7 +323,13 @@ export async function PUT(req: NextRequest) {
 
     const updatedUser = await prisma.user.update({
       where: { id: parseInt(id) },
-      data: updateData,
+      data: {
+        usuario: updateData.usuario,
+        correo: updateData.correo,
+        genero: updateData.genero,
+        role: updateData.role as Role,
+        contrasena: updateData.contrasena ? await bcrypt.hash(updateData.contrasena, 10) : undefined
+      },
       select: {
         id: true,
         usuario: true,

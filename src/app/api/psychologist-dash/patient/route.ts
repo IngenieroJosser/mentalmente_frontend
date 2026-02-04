@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       OR: [
         { patientName: { contains: search, mode: 'insensitive' } },
         { identificationNumber: { contains: search, mode: 'insensitive' } },
