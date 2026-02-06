@@ -16,6 +16,12 @@ interface WhereConditions {
   status?: string;
 }
 
+// Tipo para el usuario de la sesión
+interface SessionUser {
+  id: number;
+  [key: string]: any;
+}
+
 /**
  * @swagger
  * tags:
@@ -304,6 +310,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Obtener el ID del usuario de la sesión de forma segura
+    const sessionUser = session.user as SessionUser;
+    if (!sessionUser?.id) {
+      return NextResponse.json(
+        { error: 'No se pudo identificar al usuario' },
+        { status: 400 }
+      );
+    }
+
     // Crear número de registro único
     const recordNumber = `HC-${uuidv4().substring(0, 8).toUpperCase()}`;
 
@@ -372,7 +387,7 @@ export async function POST(request: NextRequest) {
         evolution: body.evolution || null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        userId: (session.user as { id: number }).id,
+        userId: sessionUser.id,
       },
     });
 

@@ -397,7 +397,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     setIsLoading(true);
     
     // Extraer campos que no se deben enviar usando el operador rest
-    const { id, userId, createdAt, updatedAt, ...dataWithoutSystemFields } = formData; 
+    // No asignamos nombres a las variables que no usaremos
+    const { id: _, userId: __, createdAt: ___, updatedAt: ____, ...dataWithoutSystemFields } = formData; 
     
     // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
     const dataToSend = {
