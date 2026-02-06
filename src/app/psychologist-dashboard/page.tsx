@@ -74,33 +74,20 @@ const DashboardPsychologistMentalmentePage = () => {
     }
   }, [isAuthenticated, router]);
 
-  const fetchHistories = async (
-    page: number = 1,
-    limit: number = 10,
-    search: string = ''
-  ): Promise<{
-    data: MedicalRecordWithUser[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }> => {
-    // Cambio en la URL del endpoint
-    const userIdParam = isPsychologist ? `&userId=${user?.id}` : '';
-    const response = await fetch(
-      `/api/psychologist-dash?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario${userIdParam}`
-    );
-
-    if (!response.ok) {
-      throw new Error('Error al cargar historias clínicas');
-    }
-    
-    return response.json();
-  };
-
   const loadHistories = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await fetchHistories(currentPage, limit, searchTerm);
+      // Función fetchHistories definida dentro de loadHistories
+      const userIdParam = isPsychologist ? `&userId=${user?.id}` : '';
+      const response = await fetch(
+        `/api/psychologist-dash?page=${currentPage}&limit=${limit}&search=${encodeURIComponent(searchTerm)}&fields=patientName,cedula,user.usuario${userIdParam}`
+      );
+
+      if (!response.ok) {
+        throw new Error('Error al cargar historias clínicas');
+      }
+      
+      const result = await response.json();
       setClinicalHistories(result.data);
       setTotalRecords(result.total);
       setTotalPages(result.totalPages);
@@ -122,20 +109,6 @@ const DashboardPsychologistMentalmentePage = () => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
-
-  // const handleDelete = async (id: number) => {
-  //   if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
-  //     try {
-  //       await fetch(`/api/psychologist-dash?id=${id}`, {
-  //         method: 'DELETE',
-  //       });
-  //       loadHistories(); // Actualiza la lista después de eliminar
-  //     } catch (error) {
-  //       console.error('Error eliminando historia:', error);
-  //       alert('No se pudo eliminar la historia clínica. Inténtalo de nuevo más tarde.');
-  //     }
-  //   }
-  // };
 
   const handleViewDetails = (record: MedicalRecordWithUser) => {
     setSelectedRecord(record);
@@ -172,14 +145,10 @@ const DashboardPsychologistMentalmentePage = () => {
 
   // Definir menú según roles
   const menuItems = [
-    // { id: 'dashboard', icon: <LayoutGrid size={18} />, label: 'Dashboard', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard' },
-    // { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard' },
     { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/templates' },
     { id: 'patients', icon: <User size={18} />, label: 'Pacientes', roles: ['MANAGEMENT', 'PSYCHOLOGIST', 'USER'], path: '/psychologist-dashboard/patient' },
     { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', roles: ['MANAGEMENT', 'PSYCHOLOGIST'], path: '/psychologist-dashboard/calendar' },
     { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/report' },
-    // { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', roles: ['MANAGEMENT'], path: '/psychologist-dashboard/setting' },
-    // { id: 'registro', icon: <Settings size={18} />, label: 'Registro', roles: ['MANAGEMENT', 'USER'], path: '/psychologist-dashboard/register' },
   ];
 
   return (
@@ -216,7 +185,7 @@ const DashboardPsychologistMentalmentePage = () => {
                         setIsMenuOpen(false);
                       }}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        pathname === item.path // Usar pathname aquí
+                        pathname === item.path
                           ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
                           : 'hover:bg-[#152a40]'
                       }`}
@@ -316,7 +285,7 @@ const DashboardPsychologistMentalmentePage = () => {
             <input
               type="text"
               placeholder="Buscar historias, pacientes, plantillas..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white" // Añadido text-gray-800 y bg-white
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white"
               value={searchTerm}
               onChange={handleSearch}
               aria-label="Buscar historias clínicas"
@@ -527,15 +496,6 @@ const DashboardPsychologistMentalmentePage = () => {
                             <Edit size={14} className="mr-1" /> Editar
                           </button>
                         )}
-                        {/* {canDeleteHistory(history) && (
-                          <button 
-                            // onClick={() => handleDelete(history.id)}
-                            className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
-                            aria-label="Eliminar historia"
-                          >
-                            <Trash2 size={14} className="mr-1" />
-                          </button>
-                        )} */}
                       </div>
                     </div>
                   </div>
@@ -586,7 +546,6 @@ const DashboardPsychologistMentalmentePage = () => {
                           )}
                           {canDeleteHistory(history) && (
                             <button 
-                              // onClick={() => handleDelete(history.id)}
                               className="p-1.5 text-gray-500 hover:text-red-500" 
                               aria-label="Eliminar historia"
                             >

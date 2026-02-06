@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import swaggerJSDoc from 'swagger-jsdoc';
 
-export async function GET(_: NextRequest) {
+export async function GET(request: NextRequest) {
+  // Obtener la URL base del servidor actual
+  const origin = request.headers.get('origin') || request.nextUrl.origin;
+  
   const options = {
     definition: {
       openapi: '3.0.0',
@@ -12,12 +15,8 @@ export async function GET(_: NextRequest) {
       },
       servers: [
         {
-          url: 'http://localhost:3000',
-          description: 'Servidor local',
-        },
-        {
-          url: 'https://tu-produccion.com',
-          description: 'Servidor de producción',
+          url: origin,
+          description: 'Servidor actual',
         },
       ],
     },

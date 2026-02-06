@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaHistory, FaStethoscope, FaUsers, FaFileMedicalAlt, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
@@ -13,7 +13,6 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [pdfStatus, setPdfStatus] = useState<{success: boolean; message: string} | null>(null);
-  const printableRef = useRef<HTMLDivElement>(null);
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
@@ -118,7 +117,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   );
 
   // Renderizar campo multilínea premium
-  const renderMultilineField = (label: string, value: string | null, rows: number = 3) => (
+  const renderMultilineField = (label: string, value: string | null) => (
     <div className="mb-6">
       <div className="text-sm font-medium text-[#19334c]/70 uppercase tracking-wide mb-2">{label}</div>
       <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-4 rounded-xl border border-[#e0e7ff] shadow-sm text-[#19334c] min-h-[60px] whitespace-pre-wrap">
@@ -350,13 +349,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Patológicos", record.personalPathological, 3)}
-                    {renderMultilineField("Quirúrgicos", record.personalSurgical, 3)}
-                    {renderMultilineField("Psicopatológicos", record.personalPsychopathological, 3)}
-                    {renderMultilineField("Historia de trauma o abuso", record.traumaHistory, 3)}
-                    {renderMultilineField("Estado del sueño", record.sleepStatus, 3)}
-                    {renderMultilineField("Consumo de sustancias psicoactivas", record.substanceUse, 3)}
-                    {renderMultilineField("Otros", record.personalOther, 3)}
+                    {renderMultilineField("Patológicos", record.personalPathological)}
+                    {renderMultilineField("Quirúrgicos", record.personalSurgical)}
+                    {renderMultilineField("Psicopatológicos", record.personalPsychopathological)}
+                    {renderMultilineField("Historia de trauma o abuso", record.traumaHistory)}
+                    {renderMultilineField("Estado del sueño", record.sleepStatus)}
+                    {renderMultilineField("Consumo de sustancias psicoactivas", record.substanceUse)}
+                    {renderMultilineField("Otros", record.personalOther)}
                   </div>
                 </div>
                 
@@ -364,12 +363,12 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Familiares" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Patológicos", record.familyPathological, 3)}
-                    {renderMultilineField("Quirúrgicos", record.familySurgical, 3)}
-                    {renderMultilineField("Psicopatológicos", record.familyPsychopathological, 3)}
-                    {renderMultilineField("Traumáticos", record.familyTraumatic, 3)}
-                    {renderMultilineField("Consumo de sustancias psicoactivas", record.familySubstanceUse, 3)}
-                    {renderMultilineField("Otros", record.familyOther, 3)}
+                    {renderMultilineField("Patológicos", record.familyPathological)}
+                    {renderMultilineField("Quirúrgicos", record.familySurgical)}
+                    {renderMultilineField("Psicopatológicos", record.familyPsychopathological)}
+                    {renderMultilineField("Traumáticos", record.familyTraumatic)}
+                    {renderMultilineField("Consumo de sustancias psicoactivas", record.familySubstanceUse)}
+                    {renderMultilineField("Otros", record.familyOther)}
                   </div>
                 </div>
                 
@@ -377,10 +376,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Desarrollo" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Embarazo", record.pregnancyInfo, 3)}
-                    {renderMultilineField("Parto", record.deliveryInfo, 3)}
-                    {renderMultilineField("Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)", record.psychomotorDevelopment, 3)}
-                    {renderMultilineField("Descripción de la dinámica familiar", record.familyDynamics, 3)}
+                    {renderMultilineField("Embarazo", record.pregnancyInfo)}
+                    {renderMultilineField("Parto", record.deliveryInfo)}
+                    {renderMultilineField("Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)", record.psychomotorDevelopment)}
+                    {renderMultilineField("Descripción de la dinámica familiar", record.familyDynamics)}
                   </div>
                 </div>
               </div>
@@ -393,16 +392,16 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
               <SectionHeader icon={<FaStethoscope />} title="Información Clínica" />
               
               <div className="space-y-8">
-                {renderMultilineField("Motivo de consulta", record.consultationReason, 4)}
-                {renderMultilineField("Historia del problema (duración, evolución, frecuencia)", record.problemHistory, 4)}
-                {renderMultilineField("Expectativas del paciente respecto a la terapia", record.therapyExpectations, 3)}
-                {renderMultilineField("Examen Mental", record.mentalExam, 4)}
-                {renderMultilineField("Evaluación psicológica (estado de ánimo, niveles de ansiedad y estrés, habilidades de afrontamiento, funcionamiento cognitivo, emocional, conductual y social)", record.psychologicalAssessment, 6)}
-                {renderMultilineField("IDX O DX (DSM5-CIE 10)", record.diagnosis, 3)}
-                {renderMultilineField("Objetivos terapéuticos", record.therapeuticGoals, 3)}
-                {renderMultilineField("Plan Terapéutico", record.treatmentPlan, 4)}
-                {renderMultilineField("Derivación Y/O Remisión", record.referralInfo, 3)}
-                {renderMultilineField("Recomendaciones", record.recommendations, 3)}
+                {renderMultilineField("Motivo de consulta", record.consultationReason)}
+                {renderMultilineField("Historia del problema (duración, evolución, frecuencia)", record.problemHistory)}
+                {renderMultilineField("Expectativas del paciente respecto a la terapia", record.therapyExpectations)}
+                {renderMultilineField("Examen Mental", record.mentalExam)}
+                {renderMultilineField("Evaluación psicológica (estado de ánimo, niveles de ansiedad y estrés, habilidades de afrontamiento, funcionamiento cognitivo, emocional, conductual y social)", record.psychologicalAssessment)}
+                {renderMultilineField("IDX O DX (DSM5-CIE 10)", record.diagnosis)}
+                {renderMultilineField("Objetivos terapéuticos", record.therapeuticGoals)}
+                {renderMultilineField("Plan Terapéutico", record.treatmentPlan)}
+                {renderMultilineField("Derivación Y/O Remisión", record.referralInfo)}
+                {renderMultilineField("Recomendaciones", record.recommendations)}
               </div>
             </div>
           )}

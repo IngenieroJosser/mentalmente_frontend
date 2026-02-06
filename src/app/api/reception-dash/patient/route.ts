@@ -362,7 +362,7 @@ export async function POST(request: NextRequest) {
         evolution: body.evolution || null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        userId: session.user.id,
+        userId: (session.user as { id: number }).id,
       },
     });
 
