@@ -396,8 +396,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     setIsLoading(true);
     
-    // SOLUCIÓN: Extraer campos que no se deben enviar sin usar nombres de variables no utilizadas
-    const { id, userId, createdAt, updatedAt, ...dataWithoutSystemFields } = formData;
+    // SOLUCIÓN CORREGIDA: Usar prefijo underscore para variables no utilizadas
+    const { id: _, userId: __, createdAt: ___, updatedAt: ____, ...dataWithoutSystemFields } = formData;
     
     // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
     const dataToSend = {
