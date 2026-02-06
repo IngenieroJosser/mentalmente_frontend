@@ -2,10 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { MedicalRecord } from '@prisma/client'
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+// Función helper para extraer el ID
+function extractIdFromUrl(req: NextRequest): string | null {
+  const segments = req.nextUrl.pathname.split('/')
+  return segments.length > 0 ? segments[segments.length - 1] : null
+}
+
+export async function GET(req: NextRequest) {
   try {
+    const id = extractIdFromUrl(req)
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID no proporcionado' },
+        { status: 400 }
+      )
+    }
+
     const record = await prisma.medicalRecord.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         user: {
           select: {
@@ -32,11 +47,20 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest) {
   try {
+    const id = extractIdFromUrl(req)
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID no proporcionado' },
+        { status: 400 }
+      )
+    }
+
     const data: Partial<MedicalRecord> = await req.json()
     const updatedRecord = await prisma.medicalRecord.update({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       data,
     })
 
@@ -50,10 +74,19 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest) {
   try {
+    const id = extractIdFromUrl(req)
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID no proporcionado' },
+        { status: 400 }
+      )
+    }
+
     await prisma.medicalRecord.delete({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
     })
 
     return NextResponse.json(
