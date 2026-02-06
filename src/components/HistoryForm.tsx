@@ -396,7 +396,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     setIsLoading(true);
     
-    // SOLUCIÓN CORREGIDA: Usar prefijo underscore para variables no utilizadas
+    // SOLUCIÓN FINAL: Deshabilitar la regla de ESLint para esta línea específica
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: _, userId: __, createdAt: ___, updatedAt: ____, ...dataWithoutSystemFields } = formData;
     
     // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
