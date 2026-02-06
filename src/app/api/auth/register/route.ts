@@ -208,8 +208,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Eliminar la contraseña del objeto de respuesta
-    const { contrasena: unusedPassword, ...userWithoutPassword } = newUser;
+    // Crear objeto de usuario sin la contraseña
+    const userWithoutPassword = {
+      id: newUser.id,
+      usuario: newUser.usuario,
+      correo: newUser.correo,
+      genero: newUser.genero,
+      role: newUser.role,
+      createdAt: newUser.createdAt
+    };
 
     return NextResponse.json(
       {
@@ -251,7 +258,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
     const users = await prisma.user.findMany({
       select: {

@@ -96,8 +96,9 @@ export async function POST(request: Request) {
           maxWidth: maxWidth || 500,
           lineHeight,
         });
-      } catch (_error) {
-        console.error(`Error dibujando texto: "${text}" en [${x},${y}]`, _error);
+        } catch (error) {
+        console.error('Error dibujando texto:', error);
+        console.error(`Error dibujando texto: "${text}" en [${x},${y}]`, error);
       }
     };
 
@@ -128,7 +129,8 @@ export async function POST(request: Request) {
 
         if (isNaN(date.getTime())) return '';
         return format(date, 'dd/MM/yyyy');
-      } catch (_error) {
+      } catch (error) {
+        console.error('Error formateando fecha:', error);
         return '';
       }
     };
@@ -141,19 +143,22 @@ export async function POST(request: Request) {
     if (record.identificationType === 'RC') {
       try {
         form.getCheckBox('TipoIdentificacion_RC').check();
-      } catch (_) {
+      } catch (error) {
+        console.error('Error marcando checkbox:', error);
         drawText(firstPage, 'X', 210, 682);
       }
     } else if (record.identificationType === 'TI') {
       try {
         form.getCheckBox('TipoIdentificacion_TI').check();
-      } catch (_) {
+      } catch (error) {
+        console.error('Error marcando checkbox:', error);
         drawText(firstPage, 'X', 245, 682);
       }
     } else if (record.identificationType === 'CC') {
       try {
         form.getCheckBox('TipoIdentificacion_CC').check();
-      } catch (_) {
+      } catch (error) {
+        console.error('Error marcando checkbox:', error);
         drawText(firstPage, 'X', 280, 682);
       }
     }
@@ -180,13 +185,15 @@ export async function POST(request: Request) {
     if (record.isBeneficiary) {
       try {
         form.getCheckBox('Beneficiario_Si').check();
-      } catch (_) {
+      } catch (error) {
+        console.error('Error marcando checkbox:', error);
         drawText(firstPage, 'X', 220, 532);
       }
     } else {
       try {
         form.getCheckBox('Beneficiario_No').check();
-      } catch (_) {
+      } catch (error) {
+        console.error('Error marcando checkbox:', error);
         drawText(firstPage, 'X', 165, 532);
       }
     }

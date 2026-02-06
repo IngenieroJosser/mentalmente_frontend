@@ -1,8 +1,4 @@
-interface SettingDashboardPsychologistProps {
-  
-}
-
-const SettingDashboardPsychologist: React.FC<SettingDashboardPsychologistProps> = ({  }) => {
+const SettingDashboardPsychologist: React.FC = () => {
   return (
     <div>
       Configuración

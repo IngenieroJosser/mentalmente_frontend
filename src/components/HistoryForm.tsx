@@ -1,11 +1,10 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
-import { createHistory, updateHistory, getHistoryById } from '@/services/historyService';
+import React, { useState, useEffect } from 'react';
+import { createHistory, updateHistory, getHistoryById, CreateHistoryData } from '@/services/historyService';
 import { format, differenceInYears, isDate } from 'date-fns';
-import { HistoryFormProps } from '@/lib/type';
+import { HistoryFormProps, MedicalRecordFormData } from '@/lib/type';
 import { useAuth } from '@/context/AuthContext';
-import { FaUser, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaHospital, FaNotesMedical, FaClipboardList, FaFlask, FaStethoscope, FaFileMedical, FaSave, FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
-import { MedicalRecordFormData } from '@/lib/type';
+import { FaUser, FaIdCard, FaStethoscope, FaNotesMedical, FaClipboardList, FaFlask, FaFileMedical, FaHospital, FaSave, FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
 // Opciones para diagnósticos
 const DIAGNOSIS_OPTIONS = [
@@ -186,19 +185,6 @@ const DIAGNOSIS_OPTIONS = [
   }
 ];
 
-const PATHOLOGY_SEVERITY = [
-  { value: 1, label: '1 - Mínimo' },
-  { value: 2, label: '2 - Muy bajo' },
-  { value: 3, label: '3 - Bajo' },
-  { value: 4, label: '4 - Moderado bajo' },
-  { value: 5, label: '5 - Moderado' },
-  { value: 6, label: '6 - Moderado alto' },
-  { value: 7, label: '7 - Alto' },
-  { value: 8, label: '8 - Muy alto' },
-  { value: 9, label: '9 - Severo' },
-  { value: 10, label: '10 - Crítico' }
-];
-
 const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState<MedicalRecordFormData>({
@@ -289,14 +275,17 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
   }, [formData.birthDate]);
 
   // Función para conversión segura de fechas
-  const safeDateConversion = (dateValue: any): Date | null => {
+  const safeDateConversion = (dateValue: unknown): Date | null => {
     try {
       if (!dateValue) return null;
       if (dateValue instanceof Date) return dateValue;
-      const parsedDate = new Date(dateValue);
-      // Verificar si la fecha es válida
-      if (isNaN(parsedDate.getTime())) return null;
-      return parsedDate;
+      if (typeof dateValue === 'string' || typeof dateValue === 'number') {
+        const parsedDate = new Date(dateValue);
+        // Verificar si la fecha es válida
+        if (isNaN(parsedDate.getTime())) return null;
+        return parsedDate;
+      }
+      return null;
     } catch (error) {
       console.error('Error convirtiendo fecha:', dateValue, error);
       return null;
@@ -407,9 +396,12 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     setIsLoading(true);
     
+    // Extraer campos que no se deben enviar
+    const { id, userId: _userId, createdAt: _createdAt, updatedAt: _updatedAt, ...dataWithoutSystemFields } = formData; 
+    
     // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
-    const dataToSend: any = {
-      ...formData,
+    const dataToSend = {
+      ...dataWithoutSystemFields,
       ...(!historyId && { userId: user.id }),
       age: formData.age ? Number(formData.age) : null,
       birthDate: formData.birthDate instanceof Date ? formData.birthDate.toISOString() : null,
@@ -419,20 +411,18 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     try {
       if (historyId) {
-        const { id, userId, createdAt, updatedAt, user, ...updateData } = dataToSend;
-        
-        if (!id) {
+        if (!historyId) {
           throw new Error('ID de historia clínica no válido');
         }
 
-        await updateHistory(historyId, updateData);
+        await updateHistory(historyId, dataToSend);
         alert('Historia clínica actualizada exitosamente');
       } else {
         if (!dataToSend.patientName || !dataToSend.identificationNumber) {
           throw new Error('Nombre del paciente y número de identificación son requeridos');
         }
 
-        await createHistory(dataToSend);
+        await createHistory(dataToSend as unknown as CreateHistoryData);
         alert('Historia clínica creada exitosamente');
       }
       

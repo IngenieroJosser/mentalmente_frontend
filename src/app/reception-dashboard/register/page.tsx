@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  FaUserPlus, FaEdit, FaTrash, FaSearch, FaUser, FaEnvelope, 
-  FaVenusMars, FaLock, FaUserTag, FaTimes, FaSave, FaEye
+  FaUserPlus, FaEdit, FaTrash, FaSearch, FaUser, FaUserTag, FaTimes, FaEye
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { User_ } from '@/lib/type';
@@ -134,14 +133,13 @@ const RegisterDashboardPsychologist = () => {
     e.preventDefault();
     
     try {
-      let response;
       const endpoint = currentUser 
         ? `/api/auth/register?id=${currentUser.id}` 
         : '/api/auth/register';
         
       const method = currentUser ? 'PUT' : 'POST';
       
-      response = await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: method,
         headers: {
           'Content-Type': 'application/json'
@@ -169,9 +167,12 @@ const RegisterDashboardPsychologist = () => {
       }
       
       closeModals();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al procesar la solicitud');
-      console.error('Error al enviar el formulario:', error);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Error al procesar la solicitud';
+      toast.error(errorMessage);
+      console.error('Error al enviar el formulario:', err);
     }
   };
 
@@ -194,9 +195,12 @@ const RegisterDashboardPsychologist = () => {
       setUsers(updatedUsers);
       toast.success('Usuario eliminado exitosamente');
       closeModals();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al eliminar el usuario');
-      console.error('Error al eliminar:', error);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Error al eliminar el usuario';
+      toast.error(errorMessage);
+      console.error('Error al eliminar:', err);
     }
   };
 

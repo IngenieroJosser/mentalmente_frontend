@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
   User, 
@@ -50,7 +50,7 @@ const DashboardManagementMentalmentePage = () => {
   const pathname = usePathname();
 
   // Función para traducir roles
-  const translateRole = (role: string) => {
+  const translateRole = useCallback((role: string) => {
     switch(role.toUpperCase()) {
       case 'MANAGEMENT':
         return 'Gestión';
@@ -61,7 +61,7 @@ const DashboardManagementMentalmentePage = () => {
       default:
         return role;
     }
-  };
+  }, []);
 
   // Redirigir si no está autenticado
   useEffect(() => {
@@ -91,7 +91,7 @@ const DashboardManagementMentalmentePage = () => {
     return response.json();
   };
 
-  const loadHistories = async () => {
+  const loadHistories = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await fetchHistories(currentPage, limit, searchTerm);
@@ -104,13 +104,13 @@ const DashboardManagementMentalmentePage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, limit, searchTerm]);
 
   useEffect(() => {
     if (isAuthenticated) {
       loadHistories();
     }
-  }, [currentPage, searchTerm, isAuthenticated]);
+  }, [currentPage, searchTerm, isAuthenticated, loadHistories]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -136,7 +136,7 @@ const DashboardManagementMentalmentePage = () => {
     setShowDetailsModal(true);
   };
 
-  const formatDate = (dateString: string): string => {
+  const formatDate = useCallback((dateString: string): string => {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
@@ -151,7 +151,7 @@ const DashboardManagementMentalmentePage = () => {
       console.error('Error formatting date:', error);
       return dateString;
     }
-  };
+  }, []);
 
   // Mostrar spinner mientras se verifica autenticación
   if (!isAuthenticated) {

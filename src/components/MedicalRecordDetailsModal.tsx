@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { format } from 'date-fns';
-import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaBrain, FaHistory, FaStethoscope, FaHeartbeat, FaUsers, FaChartLine, FaFileMedicalAlt, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaTimes, FaPrint, FaUser, FaNotesMedical, FaHistory, FaStethoscope, FaUsers, FaFileMedicalAlt, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
 
@@ -63,12 +63,12 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           if (errorData.error?.includes('no encontrado')) {
             errorMessage = 'Archivo de plantilla o fuente no encontrado. Contacte al administrador.';
           }
-        } catch (jsonError) {
+        } catch {
           // Si falla el parseo JSON, usar el texto plano
           try {
             const text = await response.text();
             errorMessage = text;
-          } catch (textError) {
+          } catch {
             errorMessage = `Error ${response.status}: ${response.statusText}`;
           }
         }
@@ -76,12 +76,16 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         throw new Error(errorMessage);
       }
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error en generación de PDF:', error);
+      
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Error desconocido al generar PDF';
       
       setPdfStatus({
         success: false,
-        message: `Error al generar PDF: ${error.message}`
+        message: `Error al generar PDF: ${errorMessage}`
       });
     } finally {
       setIsGenerating(false);
@@ -346,13 +350,13 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Patológicos", record.personalPathological)}
-                    {renderMultilineField("Quirúrgicos", record.personalSurgical)}
-                    {renderMultilineField("Psicopatológicos", record.personalPsychopathological)}
-                    {renderMultilineField("Historia de trauma o abuso", record.traumaHistory)}
-                    {renderMultilineField("Estado del sueño", record.sleepStatus)}
-                    {renderMultilineField("Consumo de sustancias psicoactivas", record.substanceUse)}
-                    {renderMultilineField("Otros", record.personalOther)}
+                    {renderMultilineField("Patológicos", record.personalPathological, 3)}
+                    {renderMultilineField("Quirúrgicos", record.personalSurgical, 3)}
+                    {renderMultilineField("Psicopatológicos", record.personalPsychopathological, 3)}
+                    {renderMultilineField("Historia de trauma o abuso", record.traumaHistory, 3)}
+                    {renderMultilineField("Estado del sueño", record.sleepStatus, 3)}
+                    {renderMultilineField("Consumo de sustancias psicoactivas", record.substanceUse, 3)}
+                    {renderMultilineField("Otros", record.personalOther, 3)}
                   </div>
                 </div>
                 
@@ -360,12 +364,12 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Familiares" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Patológicos", record.familyPathological)}
-                    {renderMultilineField("Quirúrgicos", record.familySurgical)}
-                    {renderMultilineField("Psicopatológicos", record.familyPsychopathological)}
-                    {renderMultilineField("Traumáticos", record.familyTraumatic)}
-                    {renderMultilineField("Consumo de sustancias psicoactivas", record.familySubstanceUse)}
-                    {renderMultilineField("Otros", record.familyOther)}
+                    {renderMultilineField("Patológicos", record.familyPathological, 3)}
+                    {renderMultilineField("Quirúrgicos", record.familySurgical, 3)}
+                    {renderMultilineField("Psicopatológicos", record.familyPsychopathological, 3)}
+                    {renderMultilineField("Traumáticos", record.familyTraumatic, 3)}
+                    {renderMultilineField("Consumo de sustancias psicoactivas", record.familySubstanceUse, 3)}
+                    {renderMultilineField("Otros", record.familyOther, 3)}
                   </div>
                 </div>
                 
@@ -373,10 +377,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                   <SectionHeader icon={<FaNotesMedical />} title="Desarrollo" />
                   
                   <div className="space-y-6">
-                    {renderMultilineField("Embarazo", record.pregnancyInfo)}
-                    {renderMultilineField("Parto", record.deliveryInfo)}
-                    {renderMultilineField("Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)", record.psychomotorDevelopment)}
-                    {renderMultilineField("Descripción de la dinámica familiar", record.familyDynamics)}
+                    {renderMultilineField("Embarazo", record.pregnancyInfo, 3)}
+                    {renderMultilineField("Parto", record.deliveryInfo, 3)}
+                    {renderMultilineField("Desarrollo psicomotor (sentarse, caminar, hablar, control de esfínteres)", record.psychomotorDevelopment, 3)}
+                    {renderMultilineField("Descripción de la dinámica familiar", record.familyDynamics, 3)}
                   </div>
                 </div>
               </div>

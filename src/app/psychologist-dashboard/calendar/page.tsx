@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import format from 'date-fns/format';
 import { parseISO } from 'date-fns/parseISO';
 import { startOfMonth } from 'date-fns/startOfMonth';
@@ -17,9 +17,8 @@ const CalendarDashboardPsychologist = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userLoaded, setUserLoaded] = useState(false);
 
-  const fetchMedicalRecords = async () => {
+  const fetchMedicalRecords = useCallback(async () => {
     if (!user || !user.id) return;
     
     setIsLoading(true);
@@ -42,12 +41,11 @@ const CalendarDashboardPsychologist = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchMedicalRecords();
-    setUserLoaded(true);
-  }, [user]);
+  }, [user, fetchMedicalRecords]);
 
   const getEventsForDate = (date: Date) => {
     return events.filter(event => {

@@ -10,21 +10,21 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [firstLoad, setFirstLoad] = useState(true);
 
   useEffect(() => {
-  if (firstLoad) {
+    if (firstLoad) {
+      const timer = setTimeout(() => {
+        setFirstLoad(false);
+        setLoading(false);
+      }, 800); // Mostrar spinner mínimo 0.8s en primera carga
+      return () => clearTimeout(timer);
+    }
+
+    setLoading(true);
     const timer = setTimeout(() => {
-      setFirstLoad(false);
       setLoading(false);
-    }, 800); // Mostrar spinner mínimo 0.8s en primera carga
+    }, 1800); // Reducir tiempo máximo de 5.5s a 1.8s
+
     return () => clearTimeout(timer);
-  }
-
-  setLoading(true);
-  const timer = setTimeout(() => {
-    setLoading(false);
-  }, 1800); // Reducir tiempo máximo de 5.5s a 1.8s
-
-  return () => clearTimeout(timer);
-}, [pathname]);
+  }, [pathname, firstLoad]); // Added firstLoad to dependencies
 
   return <>{loading ? <Spinner /> : children}</>;
 }

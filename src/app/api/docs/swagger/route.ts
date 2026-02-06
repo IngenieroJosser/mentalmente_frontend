@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import swaggerJSDoc from 'swagger-jsdoc';
 
-export async function GET(req: NextRequest) {
+export async function GET(_: NextRequest) {
   const options = {
     definition: {
       openapi: '3.0.0',

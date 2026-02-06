@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
   FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaMapMarkerAlt, 
-  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes, FaCheck, FaPrint 
+  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes
 } from 'react-icons/fa';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 import { toast } from 'react-toastify';
-import { Patient } from '@/lib/type';
+import { Patient, MedicalRecordWithUser } from '@/lib/type';
 
 const PatientReceptionDashboard = () => {
   const { user } = useAuth();
@@ -183,9 +183,12 @@ const PatientReceptionDashboard = () => {
       setPatients(updatedPatients);
       toast.success('Paciente actualizado con éxito');
       setEditingPatient(null);
-    } catch (error: any) {
-      console.error('Error al guardar:', error);
-      toast.error(error.message || 'Error al actualizar el paciente');
+    } catch (err: unknown) {
+      console.error('Error al guardar:', err);
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Error al actualizar el paciente';
+      toast.error(errorMessage);
     }
   };
 
@@ -210,9 +213,12 @@ const PatientReceptionDashboard = () => {
       toast.success('Paciente eliminado con éxito');
       setIsDeleteModalOpen(false);
       setPatientToDelete(null);
-    } catch (error: any) {
-      console.error('Error al eliminar:', error);
-      toast.error(error.message || 'Error al eliminar el paciente');
+    } catch (err: unknown) {
+      console.error('Error al eliminar:', err);
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Error al eliminar el paciente';
+      toast.error(errorMessage);
     }
   };
 
@@ -562,7 +568,7 @@ const PatientReceptionDashboard = () => {
       {/* Modal de detalles de historia clínica */}
       {isDetailModalOpen && selectedPatient && (
         <MedicalRecordDetailsModal 
-          record={selectedPatient as any} 
+          record={selectedPatient as unknown as MedicalRecordWithUser} 
           onClose={closeModals}
         />
       )}

@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fa';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 import { toast } from 'react-toastify';
-import { Patient } from '@/lib/type';
+import { Patient, MedicalRecordWithUser } from '@/lib/type';
 
 const PatientPsychologistDashboard = () => {
   const { user } = useAuth();
@@ -183,9 +183,12 @@ const PatientPsychologistDashboard = () => {
       setPatients(updatedPatients);
       toast.success('Paciente actualizado con éxito');
       setEditingPatient(null);
-    } catch (error: any) {
-      console.error('Error al guardar:', error);
-      toast.error(error.message || 'Error al actualizar el paciente');
+    } catch (err) {
+      console.error('Error al guardar:', err);
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Error al actualizar el paciente';
+      toast.error(errorMessage);
     }
   };
 
@@ -562,7 +565,7 @@ const PatientPsychologistDashboard = () => {
       {/* Modal de detalles de historia clínica */}
       {isDetailModalOpen && selectedPatient && (
         <MedicalRecordDetailsModal 
-          record={selectedPatient as any} 
+          record={selectedPatient as MedicalRecordWithUser} 
           onClose={closeModals}
         />
       )}

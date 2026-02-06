@@ -1,8 +1,4 @@
-interface TemplatesDashboardPsychologistProps {
-  
-}
-
-const TemplatesDashboardPsychologist: React.FC<TemplatesDashboardPsychologistProps> = ({  }) => {
+const TemplatesDashboardPsychologist = () => {
   return (
     <div>
       Plantillas

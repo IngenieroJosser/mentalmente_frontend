@@ -730,7 +730,7 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Construir el objeto where para la búsqueda
-    let where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       // Separar los campos por los que se va a buscar

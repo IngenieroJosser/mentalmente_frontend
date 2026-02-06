@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 
@@ -14,51 +13,31 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
  * 
  * components:
  *   schemas:
- *     LoginRequest:
+ *     UserWithToken:
  *       type: object
- *       required:
- *         - email
- *         - password
  *       properties:
- *         email:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         usuario:
  *           type: string
- *           format: email
+ *           example: "Josss"
+ *         correo:
+ *           type: string
  *           example: "usuario@mentalmente.com"
- *           description: Correo electrónico registrado
- *         password:
+ *         genero:
  *           type: string
- *           format: password
- *           example: "password123"
- *           description: Contraseña del usuario
- * 
- *     LoginSuccessResponse:
- *       type: object
- *       properties:
+ *           example: "Masculino"
+ *         role:
+ *           type: string
+ *           example: "PSYCHOLOGIST"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2023-06-15T14:30:00Z"
  *         token:
  *           type: string
  *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *         user:
- *           type: object
- *           properties:
- *             id:
- *               type: integer
- *               example: 1
- *             usuario:
- *               type: string
- *               example: "Josss"
- *             correo:
- *               type: string
- *               example: "usuario@mentalmente.com"
- *             genero:
- *               type: string
- *               example: "Masculino"
- *             role:
- *               type: string
- *               example: "PSYCHOLOGIST"
- *             createdAt:
- *               type: string
- *               format: date-time
- *               example: "2023-06-15T14:30:00Z"
  * 
  *     ErrorResponse:
  *       type: object
@@ -70,51 +49,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
 
 /**
  * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Iniciar sesión
- *     description: Autentica a un usuario con sus credenciales
+ * /api/auth/all-user:
+ *   get:
+ *     summary: Obtener todos los usuarios con sus tokens
+ *     description: Devuelve la lista completa de usuarios registrados en el sistema con sus tokens JWT
  *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       description: Credenciales de acceso
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       200:
- *         description: Inicio de sesión exitoso
+ *         description: Lista de usuarios obtenida exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LoginSuccessResponse'
- *       400:
- *         description: Error en la solicitud
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *             examples:
- *               campos_requeridos:
- *                 value:
- *                   error: "Todos los campos son requeridos"
- *               formato_correo:
- *                 value:
- *                   error: "Formato de correo inválido"
- *       401:
- *         description: Credenciales inválidas
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *             examples:
- *               credenciales_invalidas:
- *                 value:
- *                   error: "Credenciales inválidas"
- *               usuario_no_encontrado:
- *                 value:
- *                   error: "Usuario no registrado"
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserWithToken'
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -123,82 +71,47 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 
-export async function POST(req: NextRequest) {
+export async function GET() {
   try {
-    const body = await req.json();
-    const { email, password } = body;
-
-    // 1. Validación de campos requeridos
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Todos los campos son requeridos' },
-        { status: 400 }
-      );
-    }
-
-    // 2. Validación de formato de correo
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Formato de correo inválido' },
-        { status: 400 }
-      );
-    }
-
-    // 3. Buscar usuario por correo
-    const user = await prisma.user.findUnique({
-      where: { correo: email },
+    // Obtener todos los usuarios (excluyendo contraseñas)
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        usuario: true,
+        correo: true,
+        genero: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Usuario no registrado' },
-        { status: 401 }
+    // Generar un token para cada usuario
+    const usersWithTokens = users.map(user => {
+      const token = jwt.sign(
+        {
+          userId: user.id,
+          usuario: user.usuario,
+          email: user.correo,
+          role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '1d' }
       );
-    }
+      
+      return {
+        ...user,
+        token
+      };
+    });
 
-    // 4. Comparar contraseña hasheada
-    const passwordMatch = await bcrypt.compare(password, user.contrasena);
-    
-    if (!passwordMatch) {
-      return NextResponse.json(
-        { error: 'Credenciales inválidas' },
-        { status: 401 }
-      );
-    }
-
-    // 5. Generar token JWT
-    const token = jwt.sign(
-      { 
-        userId: user.id, 
-        usuario: user.usuario,
-        email: user.correo,
-        role: user.role
-      },
-      JWT_SECRET,
-      { expiresIn: '1d' }
-    );
-
-    // 6. Eliminar la contraseña del objeto de usuario
-    const { contrasena: _, ...userWithoutPassword } = user;
-
-    return NextResponse.json(
-      {
-        token,
-        user: {
-          id: userWithoutPassword.id,
-          usuario: userWithoutPassword.usuario,
-          correo: userWithoutPassword.correo,
-          genero: userWithoutPassword.genero,
-          role: userWithoutPassword.role,
-          createdAt: userWithoutPassword.createdAt
-        }
-      },
-      { status: 200 }
-    );
+    return NextResponse.json(usersWithTokens, { status: 200 });
     
   } catch (error) {
-    console.error('Error en el inicio de sesión:', error);
+    console.error('Error al obtener usuarios:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

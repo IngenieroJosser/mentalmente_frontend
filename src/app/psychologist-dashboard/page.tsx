@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
   User, 
@@ -15,7 +15,6 @@ import {
   Printer,
   Calendar,
   BarChart2,
-  Settings,
   LogOut,
   Bell,
   Menu,
@@ -55,7 +54,7 @@ const DashboardPsychologistMentalmentePage = () => {
   const isManagement = user?.role === 'MANAGEMENT';
 
   // Función para traducir roles
-  const translateRole = (role: string) => {
+  const translateRole = useCallback((role: string) => {
     switch(role.toUpperCase()) {
       case 'MANAGEMENT':
         return 'Gestión';
@@ -66,7 +65,7 @@ const DashboardPsychologistMentalmentePage = () => {
       default:
         return role;
     }
-  };
+  }, []);
 
   // Redirigir si no está autenticado
   useEffect(() => {
@@ -98,7 +97,7 @@ const DashboardPsychologistMentalmentePage = () => {
     return response.json();
   };
 
-  const loadHistories = async () => {
+  const loadHistories = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await fetchHistories(currentPage, limit, searchTerm);
@@ -111,13 +110,13 @@ const DashboardPsychologistMentalmentePage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, limit, searchTerm, isPsychologist, user?.id]);
 
   useEffect(() => {
     if (isAuthenticated) {
       loadHistories();
     }
-  }, [currentPage, searchTerm, isAuthenticated]);
+  }, [currentPage, searchTerm, isAuthenticated, loadHistories]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -143,24 +142,24 @@ const DashboardPsychologistMentalmentePage = () => {
     setShowDetailsModal(true);
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-CO', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     });
-  };
+  }, []);
 
   // Función para determinar si el usuario puede editar una historia
-  const canEditHistory = (history: MedicalRecordWithUser) => {
+  const canEditHistory = useCallback((history: MedicalRecordWithUser) => {
     return isManagement || (isPsychologist && history.userId === user?.id);
-  };
+  }, [isManagement, isPsychologist, user?.id]);
 
   // Función para determinar si el usuario puede eliminar una historia
-  const canDeleteHistory = (history: MedicalRecordWithUser) => {
+  const canDeleteHistory = useCallback((history: MedicalRecordWithUser) => {
     return isManagement || (isPsychologist && history.userId === user?.id);
-  };
+  }, [isManagement, isPsychologist, user?.id]);
 
   // Mostrar spinner mientras se verifica autenticación
   if (!isAuthenticated) {

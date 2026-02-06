@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
   FaChartLine, FaUserFriends, FaUsers, FaCalendarAlt, FaHeartbeat, 
-  FaBrain, FaVenusMars, FaChartPie, FaChartBar, FaFileMedical
-} from 'react-icons/fa';
+  FaBrain, FaVenusMars, FaFileMedical
+} from 'react-icons/fa'; // Removed unused FaChartPie and FaChartBar
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,14 +31,16 @@ ChartJS.register(
   ArcElement
 );
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import format from 'date-fns/format';
-import { parseISO } from 'date-fns/parseISO';
-import { startOfMonth } from 'date-fns/startOfMonth';
-import { endOfMonth } from 'date-fns/endOfMonth';
-import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
-import { isSameMonth } from 'date-fns/isSameMonth';
-import { isSameDay } from 'date-fns/isSameDay';
-import { es } from 'date-fns/locale';
+
+// Removed unused date-fns imports:
+// import format from 'date-fns/format';
+// import { parseISO } from 'date-fns/parseISO';
+// import { startOfMonth } from 'date-fns/startOfMonth';
+// import { endOfMonth } from 'date-fns/endOfMonth';
+// import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
+// import { isSameMonth } from 'date-fns/isSameMonth';
+// import { isSameDay } from 'date-fns/isSameDay';
+// import { es } from 'date-fns/locale';
 
 interface TherapyReport {
   month: string;

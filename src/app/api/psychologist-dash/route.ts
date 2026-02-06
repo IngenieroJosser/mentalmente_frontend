@@ -730,14 +730,14 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Construir el objeto where para la búsqueda
-    let where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       // Separar los campos por los que se va a buscar
       const searchFields = fields.split(',');
 
       // Crear condiciones OR para cada campo
-      where.OR = searchFields.map(field => {
+      where.OR = searchFields.map((field: string) => {
         // Mapear 'cedula' a 'identificationNumber' para compatibilidad
         if (field === 'cedula') {
           field = 'identificationNumber';

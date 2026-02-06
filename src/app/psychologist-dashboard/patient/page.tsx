@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
   FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaMapMarkerAlt, 
-  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes, FaCheck, FaPrint 
-} from 'react-icons/fa';
+  FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes
+} from 'react-icons/fa'; // Removed unused FaCheck and FaPrint imports
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
 import { toast } from 'react-toastify';
-import { Patient } from '@/lib/type';
+import { MedicalRecordWithUser, Patient } from '@/lib/type';
 
 const PatientPsychologistDashboard = () => {
   const { user } = useAuth();
@@ -183,9 +183,9 @@ const PatientPsychologistDashboard = () => {
       setPatients(updatedPatients);
       toast.success('Paciente actualizado con éxito');
       setEditingPatient(null);
-    } catch (error: any) {
-      console.error('Error al guardar:', error);
-      toast.error(error.message || 'Error al actualizar el paciente');
+    } catch (err: unknown) { // Changed from any to unknown
+      console.error('Error al guardar:', err);
+      toast.error(err instanceof Error ? err.message : 'Error al actualizar el paciente');
     }
   };
 
@@ -210,9 +210,9 @@ const PatientPsychologistDashboard = () => {
       toast.success('Paciente eliminado con éxito');
       setIsDeleteModalOpen(false);
       setPatientToDelete(null);
-    } catch (error: any) {
-      console.error('Error al eliminar:', error);
-      toast.error(error.message || 'Error al eliminar el paciente');
+    } catch (err: unknown) { // Changed from any to unknown
+      console.error('Error al eliminar:', err);
+      toast.error(err instanceof Error ? err.message : 'Error al eliminar el paciente');
     }
   };
 
@@ -562,7 +562,7 @@ const PatientPsychologistDashboard = () => {
       {/* Modal de detalles de historia clínica */}
       {isDetailModalOpen && selectedPatient && (
         <MedicalRecordDetailsModal 
-          record={selectedPatient as any} 
+          record={selectedPatient as MedicalRecordWithUser}
           onClose={closeModals}
         />
       )}

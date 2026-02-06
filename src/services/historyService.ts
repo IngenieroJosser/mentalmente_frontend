@@ -1,6 +1,24 @@
-import { MedicalRecord, User } from '@prisma/client'
+import { MedicalRecord } from '@prisma/client'
 
 const API_URL = '/api/medical-records';
+
+export interface CreateHistoryData {
+  patientName: string;
+  diagnosis: string;
+  treatment: string;
+  notes?: string;
+  userId?: number;
+  [key: string]: unknown;
+}
+
+export interface UpdateHistoryData {
+  patientName?: string;
+  diagnosis?: string;
+  treatment?: string;
+  notes?: string;
+  userId?: number;
+  [key: string]: unknown;
+}
 
 export const fetchHistories = async (
   page: number = 1,
@@ -18,7 +36,7 @@ export const fetchHistories = async (
   return response.json()
 }
 
-export const createHistory = async (data: any) => {
+export const createHistory = async (data: CreateHistoryData) => {
   const response = await fetch('/api/medical-records', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -33,7 +51,7 @@ export const createHistory = async (data: any) => {
   return response.json();
 };
 
-export const updateHistory = async (id: number, historyData: any) => {
+export const updateHistory = async (id: number, historyData: UpdateHistoryData) => {
   try {
     const response = await fetch(`/api/medical-records?id=${id}`, {
       method: 'PUT',

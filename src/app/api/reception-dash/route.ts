@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 
 /**
  * @swagger
@@ -730,35 +731,37 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Construir el objeto where para la búsqueda
-    let where: any = {};
+    const where: Prisma.MedicalRecordWhereInput = {};
 
     if (search) {
       // Separar los campos por los que se va a buscar
       const searchFields = fields.split(',');
 
       // Crear condiciones OR para cada campo
-      where.OR = searchFields.map(field => {
+      where.OR = searchFields.map((field: string) => {
+        let fieldName = field;
+        
         // Mapear 'cedula' a 'identificationNumber' para compatibilidad
-        if (field === 'cedula') {
-          field = 'identificationNumber';
+        if (fieldName === 'cedula') {
+          fieldName = 'identificationNumber';
         }
 
         // Si el campo incluye un punto (como 'user.usuario'), se trata de una relación
-        if (field.includes('.')) {
-          const [relation, relatedField] = field.split('.');
+        if (fieldName.includes('.')) {
+          const [relation, relatedField]: string[] = fieldName.split('.');
           return {
             [relation]: {
               [relatedField]: {
                 contains: search,
-                mode: 'insensitive'
+                mode: 'insensitive' as const
               }
             }
           };
         } else {
           return {
-            [field]: {
+            [fieldName]: {
               contains: search,
-              mode: 'insensitive'
+              mode: 'insensitive' as const
             }
           };
         }

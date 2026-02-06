@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
   User, 
@@ -7,7 +7,6 @@ import {
   PlusCircle,
   ChevronDown,
   Edit,
-  FilePlus,
   LayoutGrid,
   List,
   Filter,
@@ -18,8 +17,7 @@ import {
   Settings,
   LogOut,
   Bell,
-  Menu,
-  Trash2
+  Menu
 } from 'lucide-react';
 import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
@@ -95,7 +93,7 @@ const DashboardReceptionMentalmentePage = () => {
     }
   }, [isAuthenticated, router]);
 
-  const fetchHistories = async (
+  const fetchHistories = useCallback(async (
     page: number = 1,
     limit: number = 10,
     search: string = ''
@@ -114,9 +112,11 @@ const DashboardReceptionMentalmentePage = () => {
     }
     
     return response.json();
-  };
+  }, []);
 
-  const loadHistories = async () => {
+  const loadHistories = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
     setIsLoading(true);
     try {
       const result = await fetchHistories(currentPage, limit, searchTerm);
@@ -129,13 +129,11 @@ const DashboardReceptionMentalmentePage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, searchTerm, isAuthenticated, fetchHistories]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadHistories();
-    }
-  }, [currentPage, searchTerm, isAuthenticated]);
+    loadHistories();
+  }, [loadHistories]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);

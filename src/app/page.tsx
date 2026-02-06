@@ -113,8 +113,11 @@ export default function MentalmenteLogin() {
         onClose: () => router.push(redirectPath)
       });
       
-    } catch (error: any) {
-      toast.error(error.message || 'Error en el inicio de sesión');
+    } catch (error) {
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Error en el inicio de sesión';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

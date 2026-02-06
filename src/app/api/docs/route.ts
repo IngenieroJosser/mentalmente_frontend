@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const html = `
     <!DOCTYPE html>
     <html lang="es">

@@ -149,21 +149,32 @@ export type MedicalRecordWithUser_ = MedicalRecord & {
   } | null;
 };
 
-export interface PDFDocument {
-  embedFont(fontName: string): Promise<PDFFont>;
-  getPages(): any[];
-  save(): Promise<Uint8Array>;
-}
-
 export interface PDFFont {
   drawText(text: string, options: {
     x: number;
     y: number;
     size: number;
     font: PDFFont;
-    color: any;
+    color: string | RGBColor;
   }): void;
 }
+
+export interface RGBColor {
+  red: number;
+  green: number;
+  blue: number;
+}
+
+export interface PDFDocument {
+  embedFont(fontName: string): Promise<PDFFont>;
+  getPages(): PDFPage[];
+  save(): Promise<Uint8Array>;
+}
+
+export interface PDFPage {
+  getSize(): { width: number; height: number };
+}
+
 export const authOptions = {
   providers: [
     // ... your authentication providers ...
