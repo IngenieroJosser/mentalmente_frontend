@@ -19,8 +19,11 @@ interface WhereConditions {
 // Tipo para el usuario de la sesión
 interface SessionUser {
   id: number;
-  [key: string]: any;
+  [key: string]: unknown; // Cambiado de any a unknown
 }
+
+// Tipo para la condición WHERE usando el tipo generado por Prisma
+type PrismaWhereType = NonNullable<Parameters<typeof prisma.medicalRecord.findMany>[0]>['where'];
 
 /**
  * @swagger
@@ -187,7 +190,8 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    const where: WhereConditions = {
+    // Crear objeto where con el tipo correcto
+    const where: PrismaWhereType = {
       OR: [
         { patientName: { contains: search, mode: 'insensitive' } },
         { identificationNumber: { contains: search, mode: 'insensitive' } },
@@ -196,7 +200,8 @@ export async function GET(request: NextRequest) {
     };
 
     if (status) {
-      where.status = status;
+      // Necesitamos hacer un cast aquí porque el tipo Prisma no incluye 'status'
+      (where as any).status = status;
     }
 
     const patients = await prisma.medicalRecord.findMany({
