@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import swaggerJSDoc from 'swagger-jsdoc';
 
 export async function GET(request: NextRequest) {
-  // Obtener la URL base del servidor actual
   const origin = request.headers.get('origin') || request.nextUrl.origin;
   
   const options = {

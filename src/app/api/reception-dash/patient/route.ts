@@ -6,6 +6,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
+// Definir el tipo para las condiciones WHERE
+interface WhereConditions {
+  OR?: Array<{
+    patientName?: { contains: string; mode: 'insensitive' };
+    identificationNumber?: { contains: string; mode: 'insensitive' };
+    email?: { contains: string; mode: 'insensitive' };
+  }>;
+  status?: string;
+}
+
 /**
  * @swagger
  * tags:
@@ -171,7 +181,7 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    const where: any = {
+    const where: WhereConditions = {
       OR: [
         { patientName: { contains: search, mode: 'insensitive' } },
         { identificationNumber: { contains: search, mode: 'insensitive' } },
@@ -217,7 +227,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const total = await prisma.medicalRecord.count({ where });
+    const total = await prisma.medicalRecord.count({ where: where as any });
     const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
@@ -511,7 +521,6 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
-
 
 /**
  * @swagger
