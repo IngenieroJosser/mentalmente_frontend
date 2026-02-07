@@ -8,7 +8,7 @@ function extractIdFromUrl(req: NextRequest): string | null {
   return segments.length > 0 ? segments[segments.length - 1] : null
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest) { 
   try {
     const id = extractIdFromUrl(req)
     
