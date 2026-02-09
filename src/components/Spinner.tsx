@@ -1,45 +1,33 @@
+// components/FullPageSpinner.tsx
 import Image from 'next/image';
 
-export default function Spinner() {
+export default function FullPageSpinner() {
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a1727]/95 backdrop-blur-sm transition-opacity duration-300 ease-out">
-      {/* Simplificar contenedor de animación */}
-      <div className="relative mb-8 w-32 h-32">
-        {/* Anillo exterior */}
-        <div className="absolute inset-0 border-4 border-transparent border-t-amber-400 border-r-amber-400 rounded-full animate-[spin_3s_linear_infinite] shadow-lg shadow-amber-400/30" />
-        
-        {/* Anillo interior */}
-        <div className="absolute inset-0 m-4 border-4 border-transparent border-b-blue-700 border-l-blue-700 rounded-full animate-[spinReverse_4s_linear_infinite] shadow-inner shadow-blue-700/30" />
-        
-        {/* Globo optimizado */}
-        <div className="absolute inset-0 m-6 rounded-full bg-gradient-to-br from-slate-900 to-slate-800">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-slate-500/30" />
-          <div className="absolute top-1/2 left-0 w-full h-px bg-slate-500/30" />
-        </div>
-        
-        {/* Logo con carga eficiente */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative w-14 h-14 animate-pulse">
-            <Image
-              src="/img/logo.png"
-              alt="Mentalmente"
-              fill
-              sizes="56px"
-              className="object-contain opacity-90"
-              priority
-            />
-          </div>
-        </div>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-br from-white to-gray-50/50">
+      {/* Logo con pulso sutil */}
+      <div className="relative w-20 h-20 mb-6 animate-pulse-subtle">
+        <Image
+          src="/logo-sana-tu.png"
+          alt="SanaTú Quingar"
+          fill
+          sizes="80px"
+          className="object-contain"
+          priority
+        />
       </div>
-
-      {/* Texto optimizado */}
-      <div className="mt-6 text-center">
-        <p className="text-slate-200 text-lg font-light tracking-wide">
-          <span className="inline-block animate-wave">Cargando tu experiencia</span>
+      
+      {/* Texto con efecto de aparición */}
+      <div className="text-center space-y-3">
+        <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-[#73AFCD]/30 to-transparent" />
+        <p className="text-gray-600 font-light tracking-wide">
+          Preparando tu espacio de bienestar
         </p>
-        <p className="mt-2 text-slate-500 text-sm font-medium">
-          Mentalmente - Transformando vidas
-        </p>
+        <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-[#73AFCD]/30 to-transparent" />
+      </div>
+      
+      {/* Indicador de progreso sutil */}
+      <div className="mt-8 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-full bg-gradient-to-r from-transparent via-[#73AFCD] to-transparent animate-[shimmer_2s_infinite] w-1/2" />
       </div>
     </div>
   );
