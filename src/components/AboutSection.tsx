@@ -46,7 +46,7 @@ const AboutSection = () => {
                 {/* Imagen de perfil optimizada */}
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
                   <Image
-                    src="/8a1ea41bcbdeced7fb60dca61d75df24.webp"
+                    src="/logo-liyi.jpeg"
                     alt="Liyiveth Quintero García - Psicóloga especialista en bienestar emocional"
                     fill
                     className="object-cover object-center"
