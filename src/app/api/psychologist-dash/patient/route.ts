@@ -6,6 +6,20 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
+// Definir un tipo para los parámetros de búsqueda
+interface SearchParams {
+  [key: string]: string | string[] | undefined;
+}
+
+// Definir un tipo para el usuario en la sesión
+interface SessionUser {
+  id: number;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  // Agregar otras propiedades según sea necesario
+}
+
 /**
  * @swagger
  * tags:
@@ -362,7 +376,7 @@ export async function POST(request: NextRequest) {
         evolution: body.evolution || null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        userId: session.user.id,
+        userId: (session.user as SessionUser).id,
       },
     });
 
