@@ -261,13 +261,12 @@ const DashboardManagementMentalmentePage = () => {
   // Definir rutas para cada módulo
   const menuItems = [
     { id: 'dashboard', icon: <Home size={18} />, label: 'Dashboard', path: '/management-dashboard' },
-    { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', path: '/management-dashboard' },
-    { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', path: '/management-dashboard/templates' },
-    { id: 'patients', icon: <Users size={18} />, label: 'Pacientes', path: '/management-dashboard/patients' },
+    // { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', path: '/management-dashboard/templates' },
+    // { id: 'patients', icon: <Users size={18} />, label: 'Pacientes', path: '/management-dashboard/patients' },
     { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', path: '/management-dashboard/calendar' },
-    { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', path: '/management-dashboard/reports' },
-    { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', path: '/management-dashboard/settings' },
-    { id: 'users', icon: <User size={18} />, label: 'Usuarios', path: '/management-dashboard/users' },
+    // { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', path: '/management-dashboard/reports' },
+    // { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', path: '/management-dashboard/settings' },
+    // { id: 'users', icon: <User size={18} />, label: 'Usuarios', path: '/management-dashboard/users' },
   ];
 
   return (
@@ -469,22 +468,6 @@ const DashboardManagementMentalmentePage = () => {
                   Panel de administración del sistema SanaTú Quingar. 
                   Gestiona usuarios, historias clínicas y configuraciones del sistema.
                 </p>
-              </div>
-              <div className="mt-4 md:mt-0">
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold">156</div>
-                    <div className="text-sm text-white/80">Usuarios</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold">324</div>
-                    <div className="text-sm text-white/80">Historias</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold">1,248</div>
-                    <div className="text-sm text-white/80">Citas</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
