@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { Role } from '@prisma/client';
+import jwt from 'jsonwebtoken';
 
 // Roles permitidos para validación
 const ALLOWED_ROLES = ['USER', 'MANAGEMENT', 'PSYCHOLOGIST'];
+const JWT_SECRET = process.env.JWT_SECRET || 'tu-secreto-seguro-aqui';
 
 /**
  * @swagger
@@ -147,19 +149,24 @@ export async function POST(req: NextRequest) {
     const { usuario, correo, contrasena, genero, role } = body;
 
     // Validación básica de campos requeridos
-    if (!usuario || !correo || !contrasena || !genero || !role) {
+    if (!usuario || !correo || !contrasena || !role) {
       return NextResponse.json(
-        { error: 'Todos los campos son requeridos' },
+        { 
+          success: false,
+          message: 'Todos los campos requeridos son obligatorios',
+          details: 'Faltan: usuario, correo, contraseña o rol'
+        },
         { status: 400 }
       );
     }
 
     // Validar rol permitido
-    const upperRole = role.toUpperCase();
+    const upperRole = role.toUpperCase() as Role;
     if (!ALLOWED_ROLES.includes(upperRole)) {
       return NextResponse.json(
         { 
-          error: `Rol inválido. Valores permitidos: ${ALLOWED_ROLES.join(', ')}` 
+          success: false,
+          message: `Rol inválido. Valores permitidos: ${ALLOWED_ROLES.join(', ')}` 
         },
         { status: 400 }
       );
@@ -169,7 +176,10 @@ export async function POST(req: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
       return NextResponse.json(
-        { error: 'Formato de correo inválido' },
+        { 
+          success: false,
+          message: 'Formato de correo inválido' 
+        },
         { status: 400 }
       );
     }
@@ -177,22 +187,43 @@ export async function POST(req: NextRequest) {
     // Validar longitud de contraseña
     if (contrasena.length < 6) {
       return NextResponse.json(
-        { error: 'La contraseña debe tener al menos 6 caracteres' },
+        { 
+          success: false,
+          message: 'La contraseña debe tener al menos 6 caracteres' 
+        },
         { status: 400 }
       );
     }
 
-    // Verificar si el usuario ya existe por correo
+    // Verificar si el usuario ya existe por correo (usando findUnique ya que correo es único)
     const existingUserByEmail = await prisma.user.findUnique({
       where: { correo },
     });
 
     if (existingUserByEmail) {
       return NextResponse.json(
-        { error: 'El correo ya está registrado' },
+        { 
+          success: false,
+          message: 'El correo ya está registrado' 
+        },
         { status: 400 }
       );
-    }   
+    }
+
+    // Verificar si el nombre de usuario ya existe (usando findFirst ya que usuario NO es único)
+    const existingUserByUsername = await prisma.user.findFirst({
+      where: { usuario },
+    });
+
+    if (existingUserByUsername) {
+      return NextResponse.json(
+        { 
+          success: false,
+          message: 'El nombre de usuario ya está en uso' 
+        },
+        { status: 400 }
+      );
+    }
 
     // Hash de la contraseña
     const hashedPassword = await bcrypt.hash(contrasena, 10);
@@ -202,11 +233,23 @@ export async function POST(req: NextRequest) {
       data: {
         usuario,
         correo,
-        genero,
+        genero: genero || null,
         contrasena: hashedPassword,
         role: upperRole,
       },
     });
+
+    // Generar token JWT
+    const token = jwt.sign(
+      {
+        userId: newUser.id,
+        usuario: newUser.usuario,
+        correo: newUser.correo,
+        role: newUser.role,
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     // Crear objeto de usuario sin la contraseña
     const userWithoutPassword = {
@@ -220,40 +263,40 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
+        success: true,
         message: 'Usuario registrado exitosamente',
         user: userWithoutPassword,
+        token: token,
       },
       { status: 201 }
     );
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en el registro:', error);
     
-    // Manejar errores específicos de Prisma
     let errorMessage = 'Error interno del servidor';
-    if (error instanceof Error) {
-      errorMessage = error.message;
-      
-      // Manejar errores de restricción única
-      if (error.message.includes('Unique constraint')) {
-        if (error.message.includes('correo')) {
-          return NextResponse.json(
-            { error: 'El correo electrónico ya está registrado' },
-            { status: 400 }
-          );
-        }
-        if (error.message.includes('usuario')) {
-          return NextResponse.json(
-            { error: 'El nombre de usuario ya está en uso' },
-            { status: 400 }
-          );
-        }
+    let statusCode = 500;
+
+    // Manejar errores específicos de Prisma
+    if (error.code === 'P2002') {
+      if (error.meta?.target?.includes('correo')) {
+        errorMessage = 'El correo electrónico ya está registrado';
+        statusCode = 400;
+      } else if (error.meta?.target?.includes('usuario')) {
+        errorMessage = 'El nombre de usuario ya está en uso';
+        statusCode = 400;
       }
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
     }
 
     return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
+      { 
+        success: false,
+        message: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
+      { status: statusCode }
     );
   }
 }
@@ -307,6 +350,36 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    // Verificar si el correo ya está en uso por otro usuario
+    const existingUserByEmail = await prisma.user.findFirst({
+      where: {
+        correo,
+        NOT: { id: parseInt(id) }
+      }
+    });
+
+    if (existingUserByEmail) {
+      return NextResponse.json(
+        { error: 'El correo ya está registrado por otro usuario' },
+        { status: 400 }
+      );
+    }
+
+    // Verificar si el nombre de usuario ya está en uso por otro usuario
+    const existingUserByUsername = await prisma.user.findFirst({
+      where: {
+        usuario,
+        NOT: { id: parseInt(id) }
+      }
+    });
+
+    if (existingUserByUsername) {
+      return NextResponse.json(
+        { error: 'El nombre de usuario ya está en uso por otro usuario' },
+        { status: 400 }
+      );
+    }
+
     interface UpdateData {
       usuario: string;
       correo: string;
@@ -335,7 +408,7 @@ export async function PUT(req: NextRequest) {
         correo: updateData.correo,
         genero: updateData.genero,
         role: updateData.role as Role,
-        contrasena: updateData.contrasena ? await bcrypt.hash(updateData.contrasena, 10) : undefined
+        contrasena: updateData.contrasena ? updateData.contrasena : undefined
       },
       select: {
         id: true,
@@ -348,11 +421,25 @@ export async function PUT(req: NextRequest) {
     });
 
     return NextResponse.json({ user: updatedUser });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al actualizar usuario:', error);
+    
+    let errorMessage = 'Error interno del servidor';
+    let statusCode = 500;
+
+    if (error.code === 'P2002') {
+      if (error.meta?.target?.includes('correo')) {
+        errorMessage = 'El correo electrónico ya está registrado';
+        statusCode = 400;
+      } else if (error.meta?.target?.includes('usuario')) {
+        errorMessage = 'El nombre de usuario ya está en uso';
+        statusCode = 400;
+      }
+    }
+
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
+      { error: errorMessage },
+      { status: statusCode }
     );
   }
 }
