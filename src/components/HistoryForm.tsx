@@ -396,8 +396,9 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
     setIsLoading(true);
     
-    // Extraer campos que no se deben enviar
-    const { id, userId: _userId, createdAt: _createdAt, updatedAt: _updatedAt, ...dataWithoutSystemFields } = formData; 
+    // SOLUCIÓN FINAL: Deshabilitar la regla de ESLint para esta línea específica
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _, userId: __, createdAt: ___, updatedAt: ____, ...dataWithoutSystemFields } = formData;
     
     // Preparar los datos para enviar, asegurando que las fechas sean strings ISO o null
     const dataToSend = {
@@ -482,10 +483,10 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
   const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
     <div className="flex items-center mb-6">
-      <div className="bg-gradient-to-r from-[#19334c] to-[#2c5170] p-3 rounded-xl mr-3">
+      <div className="bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] p-3 rounded-xl mr-3">
         <div className="text-white text-xl">{icon}</div>
       </div>
-      <h2 className="text-2xl font-bold text-[#19334c]">{title}</h2>
+      <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
     </div>
   );
 
@@ -502,8 +503,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           onChange={handleChange}
           rows={3}
           className={`w-full px-4 py-3 border ${
-            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
-          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+            formErrors[name] ? 'border-red-500' : 'border-gray-200'
+          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       ) : type === 'checkbox' ? (
         <input
@@ -511,7 +512,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           name={name}
           checked={formData[name as keyof MedicalRecordFormData] as boolean || false}
           onChange={handleChange}
-          className="h-5 w-5 text-[#c77914] rounded-lg focus:ring-[#c77914]"
+          className="h-5 w-5 text-[#bec5a4] rounded-lg focus:ring-[#bec5a4]"
         />
       ) : type === 'date' ? (
         <input
@@ -522,8 +523,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
             handleDateChange(name, e.target.value);
           }}
           className={`w-full px-4 py-3 border ${
-            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
-          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+            formErrors[name] ? 'border-red-500' : 'border-gray-200'
+          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       ) : (
         <input
@@ -532,8 +533,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           value={formData[name as keyof MedicalRecordFormData] as string || ''}
           onChange={handleChange}
           className={`w-full px-4 py-3 border ${
-            formErrors[name] ? 'border-red-500' : 'border-[#e0e7ff]'
-          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+            formErrors[name] ? 'border-red-500' : 'border-gray-200'
+          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       )}
       
@@ -545,10 +546,10 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-gradient-to-b from-white to-[#f8f9fc] rounded-3xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#e0e7ff]">
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#e0e7ff]">
+      <div className="bg-gradient-to-b from-white to-[#f8fafc] rounded-3xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#19334c] to-[#c77914] bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] bg-clip-text text-transparent">
               {historyId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
             </h1>
             <p className="text-gray-700 mt-1">
@@ -557,15 +558,15 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           </div>
           <button 
             onClick={onCancel}
-            className="p-2 rounded-full hover:bg-[#e0e7ff] transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
           >
-            <FaTimes className="text-[#19334c] text-xl" />
+            <FaTimes className="text-gray-800 text-xl" />
           </button>
         </div>
         
         {isFormLoading ? (
           <div className="flex flex-col items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#c77914] mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-4"></div>
             <p className="text-gray-800 font-medium">Cargando información...</p>
           </div>
         ) : (
@@ -580,9 +581,9 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   {Math.round(((currentSectionIndex + 1) / sectionItems.length) * 100)}% completado
                 </span>
               </div>
-              <div className="h-2 bg-[#e0e7ff] rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-[#19334c] to-[#2c5170]"
+                  className="h-full bg-gradient-to-r from-[#bec5a4] to-[#a0a78c]"
                   style={{ width: `${((currentSectionIndex + 1) / sectionItems.length) * 100}%` }}
                 ></div>
               </div>
@@ -607,8 +608,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           value={formData.identificationType}
                           onChange={handleChange}
                           className={`w-full px-4 py-3 border ${
-                            formErrors.identificationType ? 'border-red-500' : 'border-[#e0e7ff]'
-                          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+                            formErrors.identificationType ? 'border-red-500' : 'border-gray-200'
+                          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
                         >
                           <option value="Cédula">Cédula</option>
                           <option value="Pasaporte">Pasaporte</option>
@@ -636,8 +637,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                             handleDateChange("birthDate", e.target.value);
                           }}
                           className={`w-full px-4 py-3 border ${
-                            formErrors.birthDate ? 'border-red-500' : 'border-[#e0e7ff]'
-                          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+                            formErrors.birthDate ? 'border-red-500' : 'border-gray-200'
+                          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
                         />
                       </div>
                       <div>
@@ -650,8 +651,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           value={formData.age || ''}
                           onChange={handleChange}
                           className={`w-full px-4 py-3 border ${
-                            formErrors.age ? 'border-red-500' : 'border-[#e0e7ff]'
-                          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+                            formErrors.age ? 'border-red-500' : 'border-gray-200'
+                          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
                         />
                       </div>
                     </div>
@@ -663,8 +664,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           value={formData.educationLevel || ''}
                           onChange={handleChange}
                           className={`w-full px-4 py-3 border ${
-                            formErrors.educationLevel ? 'border-red-500' : 'border-[#e0e7ff]'
-                          } rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800`}
+                            formErrors.educationLevel ? 'border-red-500' : 'border-gray-200'
+                          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
                         >
                           <option value="">Seleccione un nivel educativo</option>
                           <option value="Primaria">Primaria</option>
@@ -697,7 +698,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         name="isBeneficiary"
                         checked={formData.isBeneficiary || false}
                         onChange={handleChange}
-                        className="h-5 w-5 text-[#c77914] rounded-lg focus:ring-[#c77914]"
+                        className="h-5 w-5 text-[#bec5a4] rounded-lg focus:ring-[#bec5a4]"
                       />
                       <label className="text-sm font-medium ml-2 text-gray-800">¿Es beneficiario?</label>
                     </div>
@@ -713,7 +714,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                 <SectionHeader icon={<FaIdCard />} title="Responsables" />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                     <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 1</h3>
                     {renderField("Nombre completo", "guardian1Name")}
                     {renderField("Parentesco", "guardian1Relationship")}
@@ -721,7 +722,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                     {renderField("Ocupación", "guardian1Occupation")}
                   </div>
                   
-                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                     <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 2</h3>
                     {renderField("Nombre completo", "guardian2Name")}
                     {renderField("Parentesco", "guardian2Relationship")}
@@ -734,10 +735,10 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
             {/* Mensaje para adultos */}
             {(activeSection === 'guardians' && !showGuardiansInfo) && (
-              <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-8 rounded-2xl border border-[#e0e7ff] shadow-sm">
+              <div className="bg-gradient-to-b from-[#f8fafc] to-white p-8 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <FaUser className="text-blue-600 text-xl" />
+                  <div className="bg-[#bec5a4]/20 p-3 rounded-full mr-4">
+                    <FaUser className="text-[#bec5a4] text-xl" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">Paciente mayor de edad</h3>
@@ -758,18 +759,18 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   {renderField("Nombre del profesional", "attendedBy")}
                   {renderField("Número de licencia", "licenseNumber")}
                   
-                  <div className="md:col-span-2 bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm mt-4">
+                  <div className="md:col-span-2 bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
                     <h3 className="font-bold text-lg text-gray-800 mb-4">Información Adicional</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-800">Especialidad</label>
-                        <div className="px-4 py-3 border border-[#e0e7ff] rounded-xl bg-[#f8f9fc] text-gray-800">
+                        <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
                           Psicología Clínica
                         </div>
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-800">Años de experiencia</label>
-                        <div className="px-4 py-3 border border-[#e0e7ff] rounded-xl bg-[#f8f9fc] text-gray-800">
+                        <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
                           8 años
                         </div>
                       </div>
@@ -794,7 +795,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   {renderField("Otros", "personalOther", "textarea")}
                   
                   {/* Selector de patología y nivel de severidad */}
-                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm mt-4">
+                  <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
                     <h3 className="font-bold text-lg text-gray-800 mb-4">Severidad de Patología</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
@@ -805,7 +806,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                           name="diagnosis"
                           value={formData.diagnosis}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-[#e0e7ff] rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
                         >
                           <option value="">Seleccione una patología</option>
                           {DIAGNOSIS_OPTIONS.map(group => (
@@ -894,7 +895,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         name="consultationReason"
                         value={formData.consultationReason || ''}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-[#e0e7ff] rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
                       >
                         <option value="">Seleccione un motivo</option>
                         {DIAGNOSIS_OPTIONS.map(group => (
@@ -917,7 +918,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         name="diagnosis"
                         value={formData.diagnosis || ''}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-[#e0e7ff] rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
                       >
                         <option value="">Seleccione un diagnóstico</option>
                         {DIAGNOSIS_OPTIONS.map(group => (
@@ -962,25 +963,25 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                       onChange={handleEvolutionChange}
                       onKeyDown={handleKeyDown}
                       rows={8}
-                      className="w-full px-4 py-3 border border-[#e0e7ff] rounded-xl focus:border-[#c77914] focus:ring-2 focus:ring-[#c77914]/20 bg-[#f8f9fc] text-gray-800"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
                     />
                     <p className="mt-1 text-sm text-gray-600">
                       Presiona Shift + Enter para nueva línea, solo el botón Guardar envía el formulario
                     </p>
                   </div>
                   
-                  <div className="bg-gradient-to-b from-[#f8f9fc] to-white p-6 rounded-2xl border border-[#e0e7ff] shadow-sm">
+                  <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                     <h3 className="font-bold text-lg text-gray-800 mb-4">Resumen del Paciente</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
                         <div className="text-sm text-gray-700">Sesiones completadas</div>
                         <div className="text-2xl font-bold text-gray-800">12</div>
                       </div>
-                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
                         <div className="text-sm text-gray-700">Progreso</div>
                         <div className="text-2xl font-bold text-gray-800">75%</div>
                       </div>
-                      <div className="bg-[#19334c]/5 p-3 rounded-lg">
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
                         <div className="text-sm text-gray-700">Última sesión</div>
                         <div className="text-lg font-bold text-gray-800">15/06/2023</div>
                       </div>
@@ -991,8 +992,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                         <span className="text-sm text-gray-800">Estado del tratamiento</span>
                         <span className="text-sm font-medium text-gray-800">Activo</span>
                       </div>
-                      <div className="h-2 bg-[#e0e7ff] rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-[#c77914] to-[#e0a449]" style={{ width: '75%' }}></div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#bec5a4] to-[#a0a78c]" style={{ width: '75%' }}></div>
                       </div>
                     </div>
                   </div>
@@ -1009,7 +1010,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                 className={`flex items-center px-5 py-2.5 rounded-xl ${
                   isFirstSection 
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-white text-gray-800 border border-[#e0e7ff] hover:bg-[#f8f9fc]'
+                    : 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 <FaArrowLeft className="mr-2" />
@@ -1021,7 +1022,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   type="button" // Cambiado a type="button" para prevenir envío automático
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg"
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
                 >
                   <FaSave className="mr-2" />
                   {isLoading ? 'Guardando...' : 'Guardar Historia'}
@@ -1030,7 +1031,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                 <button
                   type="button"
                   onClick={() => navigateToSection('next')}
-                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#19334c] to-[#2c5170] text-white font-medium rounded-xl hover:from-[#c77914] hover:to-[#e0a449] transition-all shadow-lg"
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
                 >
                   Siguiente
                   <FaArrowRight className="ml-2" />
@@ -1041,9 +1042,9 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
         )}
         
         {/* Pie de página */}
-        <div className="mt-8 pt-6 border-t border-[#e0e7ff] text-center text-sm text-gray-600">
-          <p>Mentalmente © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
-          <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos por la ley HIPAA</p>
+        <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
+          <p>SanaTú Quingar © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
+          <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos</p>
         </div>
       </div>
     </div>

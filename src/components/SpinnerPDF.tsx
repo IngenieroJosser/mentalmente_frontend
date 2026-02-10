@@ -6,9 +6,9 @@ export default function SpinnerPDF() {
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur-md">
       {/* Animated Orbital System */}
       <div className="relative mb-8 w-44 h-44">
-        {/* Outer orbit - gold */}
+        {/* Outer orbit - verde claro */}
         <motion.div 
-          className="absolute inset-0 rounded-full border-2 border-[#c77914]/30"
+          className="absolute inset-0 rounded-full border-2 border-[#bec5a4]/30"
           animate={{ 
             rotate: 360,
           }}
@@ -19,7 +19,7 @@ export default function SpinnerPDF() {
           }}
         >
           <motion.div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#c77914] shadow-[0_0_15px_3px_rgba(199,121,20,0.7)]"
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#bec5a4] shadow-[0_0_15px_3px_rgba(190,197,164,0.7)]"
             animate={{
               rotate: -360
             }}
@@ -31,9 +31,9 @@ export default function SpinnerPDF() {
           />
         </motion.div>
         
-        {/* Middle orbit - blue */}
+        {/* Middle orbit - verde claro más oscuro */}
         <motion.div 
-          className="absolute inset-4 rounded-full border-2 border-[#19334c]/30"
+          className="absolute inset-4 rounded-full border-2 border-[#9fa68c]/30"
           animate={{ 
             rotate: -360,
           }}
@@ -44,7 +44,7 @@ export default function SpinnerPDF() {
           }}
         >
           <motion.div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#19334c] shadow-[0_0_10px_3px_rgba(25,51,76,0.7)]"
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#9fa68c] shadow-[0_0_10px_3px_rgba(159,166,140,0.7)]"
             animate={{
               rotate: 360
             }}
@@ -56,9 +56,9 @@ export default function SpinnerPDF() {
           />
         </motion.div>
         
-        {/* Inner orbit - gold/blue blend */}
+        {/* Inner orbit - blend */}
         <motion.div 
-          className="absolute inset-8 rounded-full border-2 border-[#c77914]/20"
+          className="absolute inset-8 rounded-full border-2 border-[#bec5a4]/20"
           animate={{ 
             rotate: 360,
           }}
@@ -69,7 +69,7 @@ export default function SpinnerPDF() {
           }}
         >
           <motion.div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#c77914] to-[#19334c] shadow-[0_0_8px_2px_rgba(199,121,20,0.5)]"
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#bec5a4] to-[#8e957a] shadow-[0_0_8px_2px_rgba(190,197,164,0.5)]"
             animate={{
               rotate: -360
             }}
@@ -84,11 +84,11 @@ export default function SpinnerPDF() {
         {/* Central logo with gradient glow */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-16 h-16 z-10">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#c77914] to-[#19334c] animate-pulse opacity-80 blur-sm" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#bec5a4] to-[#8e957a] animate-pulse opacity-80 blur-sm" />
             <div className="absolute inset-0 flex items-center justify-center">
               <Image
-                src="/img/logo.png"
-                alt="Mentalmente"
+                src="/logo-sana-tu.png"
+                alt="SanaTú Quingar"
                 width={64}
                 height={64}
                 className="object-contain opacity-90"
@@ -102,7 +102,7 @@ export default function SpinnerPDF() {
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 rounded-full bg-[#c77914]"
+            className="absolute w-1 h-1 rounded-full bg-[#bec5a4]"
             style={{
               top: `${Math.sin((i * Math.PI) / 4) * 40 + 50}%`,
               left: `${Math.cos((i * Math.PI) / 4) * 40 + 50}%`,
@@ -159,12 +159,12 @@ export default function SpinnerPDF() {
             ease: "easeInOut"
           }}
         >
-          Mentalmente - Transformando vidas
+          SanaTú Quingar - Transformando vidas
         </motion.p>
         
         {/* Subtle brand gradient line */}
         <motion.div 
-          className="mt-4 mx-auto h-0.5 w-32 rounded-full bg-gradient-to-r from-transparent via-[#c77914] to-transparent"
+          className="mt-4 mx-auto h-0.5 w-32 rounded-full bg-gradient-to-r from-transparent via-[#bec5a4] to-transparent"
           animate={{ 
             opacity: [0.3, 0.8, 0.3],
           }}

@@ -2,32 +2,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
-  User, 
   Search, 
   PlusCircle,
   ChevronDown,
   Edit,
-  FilePlus,
   LayoutGrid,
   List,
   Filter,
   Download,
   Printer,
   Calendar,
-  BarChart2,
   Settings,
   LogOut,
   Bell,
   Menu,
-  Trash2
+  Trash2,
+  Home,
+  Brain,
 } from 'lucide-react';
-import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import MedicalRecordDetailsModal from '@/components/MedicalRecordDetailsModal';
+import Link from 'next/link';
 
 const DashboardManagementMentalmentePage = () => {
   const [viewMode, setViewMode] = useState('grid');
@@ -44,16 +43,20 @@ const DashboardManagementMentalmentePage = () => {
   const [editingHistory, setEditingHistory] = useState<number | null>(null);
   const [selectedRecord, setSelectedRecord] = useState<MedicalRecordWithUser | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const limit = 9;
-  const { user, isAuthenticated, logout } = useAuth();
+
+  // Obtener datos de autenticación
+  const { user: authUser, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   // Función para traducir roles
   const translateRole = useCallback((role: string) => {
+    if (!role) return 'Usuario';
     switch(role.toUpperCase()) {
       case 'MANAGEMENT':
-        return 'Gestión';
+        return 'Gestión/Administración';
       case 'PSYCHOLOGIST':
         return 'Psicólogo/a';
       case 'USER':
@@ -62,13 +65,6 @@ const DashboardManagementMentalmentePage = () => {
         return role;
     }
   }, []);
-
-  // Redirigir si no está autenticado
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/');
-    }
-  }, [isAuthenticated, router]);
 
   const fetchHistories = async (
     page: number = 1,
@@ -80,18 +76,25 @@ const DashboardManagementMentalmentePage = () => {
     page: number;
     totalPages: number;
   }> => {
-    const response = await fetch(
-      `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario`
-    );
+    try {
+      const response = await fetch(
+        `/api/medical-records?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&fields=patientName,cedula,user.usuario`
+      );
 
-    if (!response.ok) {
-      throw new Error('Error al cargar historias clínicas');
+      if (!response.ok) {
+        throw new Error('Error al cargar historias clínicas');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error en fetchHistories:', error);
+      throw error;
     }
-    
-    return response.json();
   };
 
   const loadHistories = useCallback(async () => {
+    if (!authChecked && !isAuthenticated) return;
+    
     setIsLoading(true);
     try {
       const result = await fetchHistories(currentPage, limit, searchTerm);
@@ -101,16 +104,54 @@ const DashboardManagementMentalmentePage = () => {
     } catch (error) {
       console.error('Error cargando historias:', error);
       setClinicalHistories([]);
+      
+      // Definir un tipo para errores con mensaje
+      interface ErrorWithMessage {
+        message: string;
+      }
+      
+      const err = error as ErrorWithMessage;
+      
+      // Si hay error de autenticación, redirigir al login
+      if (err.message && (err.message.includes('401') || err.message.includes('403'))) { 
+        router.push('/login'); 
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, limit, searchTerm]);
+  }, [currentPage, limit, searchTerm, authChecked, isAuthenticated, router]);
 
+  // Verificar autenticación al cargar el componente
   useEffect(() => {
-    if (isAuthenticated) {
+    const checkAuth = () => {
+      const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
+      const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
+      
+      console.log('Auth check - Token:', token ? 'Presente' : 'Ausente');
+      console.log('Auth check - User data:', userData ? 'Presente' : 'Ausente');
+      
+      if (!token || !userData) {
+        console.log('No autenticado, redirigiendo a /login');
+        router.push('/login');
+        return false;
+      }
+      
+      setAuthChecked(true);
+      return true;
+    };
+
+    if (!authChecked) {
+      const isAuthValid = checkAuth();
+      if (!isAuthValid) {
+        return;
+      }
+    }
+
+    // Si está autenticado, cargar historias
+    if (authChecked || isAuthenticated) {
       loadHistories();
     }
-  }, [currentPage, searchTerm, isAuthenticated, loadHistories]);
+  }, [authChecked, isAuthenticated, router, loadHistories]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -120,9 +161,19 @@ const DashboardManagementMentalmentePage = () => {
   const handleDelete = async (id: number) => {
     if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
       try {
-        await fetch(`/api/medical-records?id=${id}`, {
+        const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
+        
+        const response = await fetch(`/api/medical-records?id=${id}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
+
+        if (!response.ok) {
+          throw new Error('Error al eliminar la historia');
+        }
+
         loadHistories(); // Actualiza la lista después de eliminar
       } catch (error) {
         console.error('Error eliminando historia:', error);
@@ -153,24 +204,59 @@ const DashboardManagementMentalmentePage = () => {
     }
   }, []);
 
-  // Mostrar spinner mientras se verifica autenticación
-  if (!isAuthenticated) {
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  // Verificar autenticación antes de renderizar
+  if (!authChecked && !isAuthenticated) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#bec5a4]"></div>
       </div>
     );
   }
 
+  // Si no está autenticado después de verificar, mostrar mensaje
+  if (!isAuthenticated && authChecked) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="text-center">
+          <p className="text-gray-700 mb-4">No tienes acceso a esta página</p>
+          <button 
+            onClick={() => router.push('/login')}
+            className="bg-[#bec5a4] text-white px-4 py-2 rounded-lg"
+          >
+            Ir al login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Obtener usuario de localStorage como fallback
+  const getUserData = () => {
+    if (authUser) return authUser;
+    
+    try {
+      const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
+      if (userData) {
+        return JSON.parse(userData);
+      }
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+    }
+    
+    return null;
+  };
+
+  const user = getUserData();
+
   // Definir rutas para cada módulo
   const menuItems = [
-    { id: 'histories', icon: <FileText size={18} />, label: 'Historias Clínicas', path: '/management-dashboard' },
-    { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', path: '/management-dashboard/templates' },
-    { id: 'patients', icon: <User size={18} />, label: 'Pacientes', path: '/management-dashboard/patient' },
+    { id: 'dashboard', icon: <Home size={18} />, label: 'Dashboard', path: '/management-dashboard' },
     { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', path: '/management-dashboard/calendar' },
-    { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', path: '/management-dashboard/report' },
-    { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', path: '/management-dashboard/setting' },
-    { id: 'registro', icon: <User size={18} />, label: 'Registro', path: '/management-dashboard/register' },
   ];
 
   return (
@@ -178,14 +264,15 @@ const DashboardManagementMentalmentePage = () => {
       {/* Sidebar - Mobile */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-[rgba(0,0,0,0.2)] backdrop-blur-md" onClick={() => setIsMenuOpen(false)}>
-          <div className="w-64 h-full bg-[#19334c] text-white" onClick={e => e.stopPropagation()}>
-            <div className="p-5 flex items-center justify-between border-b border-[#2a4b6c]">
+          <div className="w-64 h-full bg-gradient-to-b from-[#bec5a4] to-[#a0a78c] text-white" onClick={e => e.stopPropagation()}>
+            <div className="p-5 flex items-center justify-between border-b border-white/20">
               <div className="flex items-center space-x-3">
-                <div className="bg-[#c77914] p-2 rounded-lg">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <Brain className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold">Mentalmente</h1>
+                  <h1 className="font-bold">SanaTú</h1>
+                  <p className="text-xs text-white/80">Quingar</p>
                 </div>
               </div>
               <button 
@@ -201,20 +288,18 @@ const DashboardManagementMentalmentePage = () => {
               <ul>
                 {menuItems.map((item) => (
                   <li key={item.id}>
-                    <button
-                      onClick={() => {
-                        router.push(item.path);
-                        setIsMenuOpen(false);
-                      }}
+                    <Link
+                      href={item.path}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
                         pathname === item.path
-                          ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                          : 'hover:bg-[#152a40]'
+                          ? 'bg-white/10 border-l-4 border-white'
+                          : 'hover:bg-white/5'
                       }`}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       {item.icon}
                       <span>{item.label}</span>
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -224,26 +309,16 @@ const DashboardManagementMentalmentePage = () => {
       )}
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
-        <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
-          <div className="flex items-center justify-center mb-8">
-          <div className="bg-[#19334c] p-3 rounded-xl flex items-center justify-center border border-[#c77914]/30">
-            <div className="relative w-14 h-14">
-              <Image
-                src="/img/logo.png"
-                alt="Logo de Mentalmente"
-                layout="fill"
-                objectFit="contain"
-                quality={100}
-                priority
-                className="rounded-lg"
-              />
+      <aside className="hidden md:flex w-64 bg-gradient-to-b from-[#bec5a4] to-[#a0a78c] text-white flex-col">
+        <div className="p-5 flex items-center space-x-3 border-b border-white/20">
+          <div className="flex items-center justify-center">
+            <div className="bg-white/20 p-3 rounded-xl flex items-center justify-center border border-white/30">
+              <Brain className="w-8 h-8 text-white" />
             </div>
           </div>
-        </div>
           <div>
-            <h1 className="font-bold mt-[-2em]">Mentalmente</h1>
-            <p className="text-sm text-[#c0d0e0]">Historias Clínicas Digitales</p>
+            <h1 className="font-bold text-lg">SanaTú</h1>
+            <p className="text-sm text-white/80">Quingar</p>
           </div>
         </div>
         
@@ -251,38 +326,36 @@ const DashboardManagementMentalmentePage = () => {
           <ul>
             {menuItems.map((item) => (
               <li key={item.id}>
-                <button
-                  onClick={() => router.push(item.path)}
+                <Link
+                  href={item.path}
                   className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
                     pathname === item.path
-                      ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                      : 'hover:bg-[#152a40]'
+                      ? 'bg-white/10 border-l-4 border-white'
+                      : 'hover:bg-white/5'
                   }`}
-                  aria-label={item.label}
                 >
                   {item.icon}
                   <span className="text-white">{item.label}</span>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
         
-        <div className="p-5 border-t border-[#2a4b6c]">
-          <button 
-            onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center space-x-3 w-full text-left p-3 bg-[#0f2439] rounded-lg"
-            aria-label="Perfil de usuario"
-          >
-            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
+        <div className="p-5 border-t border-white/20">
+          <div className="flex items-center space-x-3 w-full text-left p-3 bg-white/10 rounded-lg">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+              <span className="text-[#bec5a4] font-bold">
+                {user?.usuario?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
             <div className="flex-1">
               <p className="font-medium text-sm text-white">{user?.usuario || 'Usuario'}</p>
-              <p className="text-xs text-[#c0d0e0]">
+              <p className="text-xs text-white/80">
                 {translateRole(user?.role || '')}
               </p>
             </div>
-            <ChevronDown size={16} className="text-white" />
-          </button>
+          </div>
         </div>
       </aside>
 
@@ -298,7 +371,9 @@ const DashboardManagementMentalmentePage = () => {
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas - Gerencia</h1>
+            <h1 className="text-xl font-bold text-gray-800 hidden md:inline-block">
+              Panel de Administración - SanaTú Quingar
+            </h1>
           </div>
           
           <div className="relative flex-1 max-w-xl mx-4">
@@ -306,7 +381,7 @@ const DashboardManagementMentalmentePage = () => {
             <input
               type="text"
               placeholder="Buscar historias, pacientes, plantillas..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#bec5a4]/50 focus:border-[#bec5a4] outline-none transition-all text-gray-800 bg-white"
               value={searchTerm}
               onChange={handleSearch}
               aria-label="Buscar historias clínicas"
@@ -320,67 +395,89 @@ const DashboardManagementMentalmentePage = () => {
               aria-label="Notificaciones"
             >
               <Bell size={20} className="text-gray-700" />
-              <span className="absolute top-1 right-1 bg-[#c77914] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+              <span className="absolute top-1 right-1 bg-[#bec5a4] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
             
-            <button 
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center space-x-2"
-              aria-label="Perfil de usuario"
-            >
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-              <span className="hidden md:inline text-sm font-medium text-gray-800">
-                {user?.usuario ? user.usuario.split(' ')[0] : 'Usuario'}
-              </span>
-            </button>
-          </div>
-          
-          {/* Profile Menu */}
-          {isProfileOpen && (
-            <div className="absolute right-4 top-16 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
-              <div className="p-4 border-b border-gray-200">
-                <p className="font-semibold text-gray-800">{user?.usuario || 'Usuario'}</p>
-                <p className="text-sm text-gray-700">
-                  {translateRole(user?.role || '')}
-                </p>
-              </div>
-              <div className="py-2">
-                <button 
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
-                  aria-label="Configuración"
-                >
-                  <Settings size={16} className="mr-2 text-gray-700" /> Configuración
-                </button>
-                <button 
-                  onClick={() => logout()}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
-                  aria-label="Cerrar sesión"
-                >
-                  <LogOut size={16} className="mr-2 text-gray-700" /> Cerrar sesión
-                </button>
-              </div>
+            <div className="relative">
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center space-x-2"
+                aria-label="Perfil de usuario"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#bec5a4] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
+                    {user?.usuario?.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+                <span className="hidden md:inline text-sm font-medium text-gray-800">
+                  {user?.usuario ? user.usuario.split(' ')[0] : 'Usuario'}
+                </span>
+                <ChevronDown size={16} className="text-gray-600" />
+              </button>
+              
+              {/* Profile Menu */}
+              {isProfileOpen && (
+                <div className="absolute right-0 top-12 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
+                  <div className="p-4 border-b border-gray-200">
+                    <p className="font-semibold text-gray-800">{user?.usuario || 'Usuario'}</p>
+                    <p className="text-sm text-gray-700">
+                      {translateRole(user?.role || '')}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{user?.correo}</p>
+                  </div>
+                  <div className="py-2">
+                    <button 
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
+                      onClick={() => router.push('/management-dashboard/settings')}
+                    >
+                      <Settings size={16} className="mr-2 text-gray-700" /> Configuración
+                    </button>
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
+                    >
+                      <LogOut size={16} className="mr-2 text-gray-700" /> Cerrar sesión
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </header>
 
         {/* Content - Clinical History Dashboard */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#f8fafc]">
+          {/* Welcome Banner */}
+          <div className="bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] rounded-2xl text-white p-8 mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+              <div>
+                <h2 className="text-3xl font-bold mb-2">
+                  ¡Bienvenido, {user?.usuario || 'Administrador'}! 👋
+                </h2>
+                <p className="text-white/90 max-w-2xl">
+                  Panel de administración del sistema SanaTú Quingar. 
+                  Gestiona usuarios, historias clínicas y configuraciones del sistema.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Header and Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Gerencia</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Gestión de Historias Clínicas</h1>
               <p className="text-gray-700">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button 
-                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center"
+                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center hover:border-[#bec5a4] hover:text-[#bec5a4] transition-colors"
                 aria-label="Filtros"
               >
                 <Filter size={16} className="mr-2" />
                 Filtros
               </button>
               <button 
-                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center"
+                className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center hover:border-[#bec5a4] hover:text-[#bec5a4] transition-colors"
                 aria-label="Exportar datos"
               >
                 <Download size={16} className="mr-2" />
@@ -391,7 +488,7 @@ const DashboardManagementMentalmentePage = () => {
                   setEditingHistory(null);
                   setShowForm(true);
                 }}
-                className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center"
+                className="bg-[#bec5a4] hover:bg-[#a0a78c] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
                 aria-label="Crear nueva historia clínica"
               >
                 <PlusCircle size={16} className="mr-2" />
@@ -407,7 +504,7 @@ const DashboardManagementMentalmentePage = () => {
                 {filters.map(filter => (
                   <button
                     key={filter.id}
-                    className={`px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-800 hover:bg-gray-200`}
+                    className={`px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-800 hover:bg-[#bec5a4]/20 hover:text-[#bec5a4] transition-colors`}
                     aria-label={`Filtro: ${filter.name}`}
                   >
                     {filter.name}
@@ -419,14 +516,14 @@ const DashboardManagementMentalmentePage = () => {
                 <span className="text-sm text-gray-700">Vista:</span>
                 <button 
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#bec5a4] text-white' : 'bg-gray-100 text-gray-700 hover:bg-[#bec5a4]/20 hover:text-[#bec5a4]'}`}
                   aria-label="Vista de cuadrícula"
                 >
                   <LayoutGrid size={18} />
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-700'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#bec5a4] text-white' : 'bg-gray-100 text-gray-700 hover:bg-[#bec5a4]/20 hover:text-[#bec5a4]'}`}
                   aria-label="Vista de lista"
                 >
                   <List size={18} />
@@ -438,14 +535,14 @@ const DashboardManagementMentalmentePage = () => {
           {/* Clinical Histories List */}
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#bec5a4]"></div>
             </div>
           ) : clinicalHistories.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-gray-700">No se encontraron historias clínicas</p>
               <button 
                 onClick={() => setShowForm(true)}
-                className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
+                className="mt-4 bg-[#bec5a4] hover:bg-[#a0a78c] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
               >
                 <PlusCircle size={16} className="mr-2" />
                 Crear primera historia
@@ -458,14 +555,14 @@ const DashboardManagementMentalmentePage = () => {
                   <div className="p-5 border-b border-gray-100">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
+                        <h3 className="font-bold text-lg text-gray-800">{history.patientName}</h3>
                         <div className="mt-2 text-sm text-gray-700">
                           <span className="font-medium">Atendido por:</span> {history.user?.usuario || 'Sin asignar'}
                         </div>
                       </div>
                       <div className="relative">
                         <button 
-                          className="text-gray-500 hover:text-[#c77914]"
+                          className="text-gray-500 hover:text-[#bec5a4]"
                           aria-label="Opciones"
                         >
                           <ChevronDown size={18} />
@@ -494,7 +591,7 @@ const DashboardManagementMentalmentePage = () => {
                             setEditingHistory(history.id);
                             setShowForm(true);
                           }}
-                          className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center"
+                          className="text-sm bg-[#bec5a4] hover:bg-[#a0a78c] text-white px-3 py-1.5 rounded-lg flex items-center"
                           aria-label="Editar historia"
                         >
                           <Edit size={14} className="mr-1" /> Editar
@@ -527,7 +624,7 @@ const DashboardManagementMentalmentePage = () => {
                   {clinicalHistories.map(history => (
                     <tr key={history.id} className="border-t border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-medium text-[#19334c]">{history.patientName}</div>
+                        <div className="font-medium text-gray-800">{history.patientName}</div>
                       </td>
                       <td className="py-4 px-4 text-sm text-gray-800">
                         {history.user?.usuario || 'Sin asignar'}
@@ -537,7 +634,7 @@ const DashboardManagementMentalmentePage = () => {
                         <div className="flex space-x-2">
                           <button 
                             onClick={() => handleViewDetails(history)}
-                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Ver detalles"
                           >
                             <FileText size={16} />
@@ -547,7 +644,7 @@ const DashboardManagementMentalmentePage = () => {
                               setEditingHistory(history.id);
                               setShowForm(true);
                             }}
-                            className="p-1.5 text-gray-600 hover:text-[#c77914]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Editar historia"
                           >
                             <Edit size={16} />
@@ -560,7 +657,7 @@ const DashboardManagementMentalmentePage = () => {
                             <Trash2 size={16} />
                           </button>
                           <button 
-                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Imprimir historia"
                           >
                             <Printer size={16} />
@@ -584,7 +681,7 @@ const DashboardManagementMentalmentePage = () => {
                 <button 
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(p => p - 1)}
-                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-white hover:bg-[#a0a78c]'}`}
                   aria-label="Página anterior"
                 >
                   Anterior
@@ -595,7 +692,7 @@ const DashboardManagementMentalmentePage = () => {
                 <button 
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(p => p + 1)}
-                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-white hover:bg-[#a0a78c]'}`}
                   aria-label="Página siguiente"
                 >
                   Siguiente
@@ -607,9 +704,9 @@ const DashboardManagementMentalmentePage = () => {
           {/* Templates Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="font-semibold text-lg text-[#19334c]">Plantillas de Historias Clínicas</h2>
+              <h2 className="font-semibold text-lg text-gray-800">Plantillas de Historias Clínicas</h2>
               <button 
-                className="text-sm text-[#19334c] hover:text-[#c77914] font-medium"
+                className="text-sm text-[#bec5a4] hover:text-[#a0a78c] font-medium transition-colors"
                 aria-label="Ver todas las plantillas"
               >
                 Ver todas
@@ -618,14 +715,14 @@ const DashboardManagementMentalmentePage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {templates.map(template => (
-                <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#c77914] transition-colors">
-                  <div className="bg-[#19334c]/10 p-3 rounded-lg mb-3 inline-block">
-                    <FileText size={24} className="text-[#19334c]" />
+                <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#bec5a4] transition-colors">
+                  <div className="bg-[#bec5a4]/10 p-3 rounded-lg mb-3 inline-block">
+                    <FileText size={24} className="text-[#bec5a4]" />
                   </div>
                   <h3 className="font-bold mb-1 text-lg text-gray-800">{template.name}</h3>
                   <p className="text-sm text-gray-700">{template.category}</p>
                   <button 
-                    className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg"
+                    className="mt-3 text-sm w-full bg-[#bec5a4] hover:bg-[#a0a78c] text-white py-1.5 rounded-lg transition-colors"
                     aria-label={`Usar plantilla ${template.name}`}
                   >
                     Usar plantilla

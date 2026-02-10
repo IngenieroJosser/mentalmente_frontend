@@ -1,24 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'tu-clave-segura-aqui';
+
+// Definir tipo para el token decodificado
+interface DecodedToken {
+  userId: number;
+  usuario: string;
+  email?: string;
+  role?: string;
+  iat?: number;
+  exp?: number;
+  [key: string]: unknown;
+}
+
+// Función para verificar el token JWT
+function verifyToken(token: string): DecodedToken | null {
+  try {
+    return jwt.verify(token, JWT_SECRET) as DecodedToken;
+  } catch {
+    return null;
+  }
+}
+
+// Función para extraer el token del header
+function getTokenFromHeader(request: NextRequest): string | null {
+  const authHeader = request.headers.get('authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
+}
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    // Verificar autenticación via JWT
+    const token = getTokenFromHeader(request);
+    if (!token) {
+      return NextResponse.json({ error: 'Token no proporcionado' }, { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 401 });
+    }
+
     // Obtener psicólogo asociado al usuario
-    const psychologist = await prisma.medicalRecord.findUnique({
-      where: { id: session.user.id },
-      select: { id: true }
+    const psychologist = await prisma.user.findUnique({
+      where: { 
+        id: decoded.userId 
+      },
+      select: { 
+        id: true,
+        usuario: true,
+        role: true
+      }
     });
 
     if (!psychologist) {
-      return NextResponse.json({ error: 'Psychologist not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+    }
+
+    // Verificar que el usuario sea psicólogo
+    if (psychologist.role !== 'PSYCHOLOGIST') {
+      return NextResponse.json({ error: 'No autorizado - Rol incorrecto' }, { status: 403 });
     }
 
     // Obtener parámetros de fecha
@@ -33,6 +79,14 @@ export async function GET(request: NextRequest) {
 
     const targetMonth = month ? parseInt(month) - 1 : currentMonth;
     const targetYear = year ? parseInt(year) : currentYear;
+
+    // Validar que los parámetros sean números válidos
+    if (isNaN(targetMonth) || targetMonth < 0 || targetMonth > 11) {
+      return NextResponse.json({ error: 'Mes inválido' }, { status: 400 });
+    }
+    if (isNaN(targetYear) || targetYear < 2000 || targetYear > 2100) {
+      return NextResponse.json({ error: 'Año inválido' }, { status: 400 });
+    }
 
     // Fechas de inicio y fin del mes
     const startDate = new Date(targetYear, targetMonth, 1);
@@ -56,7 +110,8 @@ export async function GET(request: NextRequest) {
         birthDate: true,
         age: true,
         consultationReason: true,
-        createdAt: true
+        createdAt: true,
+        updatedAt: true
       },
       orderBy: { createdAt: 'asc' }
     });
@@ -70,15 +125,36 @@ export async function GET(request: NextRequest) {
       identificationType: record.identificationType,
       identificationNumber: record.identificationNumber,
       birthDate: record.birthDate,
-      age: record.age
+      age: record.age,
+      updatedAt: record.updatedAt
     }));
 
-    return NextResponse.json(formattedRecords);
+    return NextResponse.json({
+      success: true,
+      data: formattedRecords,
+      psychologist: {
+        id: psychologist.id,
+        name: psychologist.usuario,
+        role: psychologist.role
+      },
+      month: targetMonth + 1,
+      year: targetYear,
+      total: formattedRecords.length
+    });
 
   } catch (error) {
     console.error('Error fetching calendar data:', error);
+    
+    // Manejar errores específicos de Prisma
+    if (error instanceof Error && error.message.includes('Prisma')) {
+      return NextResponse.json(
+        { error: 'Error en la base de datos' },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }

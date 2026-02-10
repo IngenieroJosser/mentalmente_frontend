@@ -1,54 +1,88 @@
-'use client'
+'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContextType, User } from '@/lib/type';
+
+interface User {
+  id: number;
+  usuario: string;
+  correo: string;
+  genero: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (token: string, user: User, rememberMe?: boolean) => void;
+  logout: () => void;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const logout = useCallback(() => {
+    // Limpiar ambos almacenamientos
+    localStorage.removeItem('sanatu_token');
+    localStorage.removeItem('sanatu_user');
+    sessionStorage.removeItem('sanatu_token');
+    sessionStorage.removeItem('sanatu_user');
+    setUser(null);
+    router.push('/login');
+  }, [router]);
+
+  // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
+    const loadUser = () => {
+      const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
+      const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
+      
+      if (token && userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          logout();
+        }
+      }
+      setIsLoading(false);
+    };
+
+    loadUser();
+  }, [logout]);
+
+  const login = useCallback((token: string, userData: User, rememberMe = true) => {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem('sanatu_token', token);
+    storage.setItem('sanatu_user', JSON.stringify(userData));
+    setUser(userData);
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    setToken(newToken);
-    setUser(newUser);
-    localStorage.setItem('authToken', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
-  };
-
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    router.push('/');
-  };
-
-  const isAuthenticated = !!token;
-
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      isLoading,
+      login,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de un AuthProvider');
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
