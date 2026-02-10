@@ -4,11 +4,22 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tu-clave-segura-aqui';
 
+// Definir tipo para el token decodificado
+interface DecodedToken {
+  userId: number;
+  usuario: string;
+  email?: string;
+  role?: string;
+  iat?: number;
+  exp?: number;
+  [key: string]: unknown;
+}
+
 // Función para verificar el token JWT
-function verifyToken(token: string): any {
+function verifyToken(token: string): DecodedToken | null {
   try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
+    return jwt.verify(token, JWT_SECRET) as DecodedToken;
+  } catch {
     return null;
   }
 }
