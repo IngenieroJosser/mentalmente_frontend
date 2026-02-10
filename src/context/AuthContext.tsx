@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -28,6 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const logout = useCallback(() => {
+    // Limpiar ambos almacenamientos
+    localStorage.removeItem('sanatu_token');
+    localStorage.removeItem('sanatu_user');
+    sessionStorage.removeItem('sanatu_token');
+    sessionStorage.removeItem('sanatu_user');
+    setUser(null);
+    router.push('/login');
+  }, [router]);
+
   // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
     const loadUser = () => {
@@ -47,24 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     loadUser();
-  }, []);
+  }, [logout]);
 
-  const login = (token: string, userData: User, rememberMe = true) => {
+  const login = useCallback((token: string, userData: User, rememberMe = true) => {
     const storage = rememberMe ? localStorage : sessionStorage;
     storage.setItem('sanatu_token', token);
     storage.setItem('sanatu_user', JSON.stringify(userData));
     setUser(userData);
-  };
-
-  const logout = () => {
-    // Limpiar ambos almacenamientos
-    localStorage.removeItem('sanatu_token');
-    localStorage.removeItem('sanatu_user');
-    sessionStorage.removeItem('sanatu_token');
-    sessionStorage.removeItem('sanatu_user');
-    setUser(null);
-    router.push('/login');
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{

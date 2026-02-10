@@ -13,7 +13,7 @@ interface UserData {
   usuario: string;
   role?: string;
   correo?: string;
-  [key: string]: any;
+  [key: string]: unknown; // Cambiado de 'any' a 'unknown'
 }
 
 export default function PsychologistDashboard() {
