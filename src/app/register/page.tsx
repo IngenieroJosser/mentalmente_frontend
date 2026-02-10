@@ -14,7 +14,6 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
-  Check
 } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -119,11 +118,18 @@ export default function RegisterPage() {
         }
       });
   
-    } catch (error: any) {
+    } catch (error) {
       console.error('Register error:', error);
       
+      // Definir un tipo para errores con mensaje
+      interface ErrorWithMessage {
+        message: string;
+      }
+      
+      const err = error as ErrorWithMessage;
+      
       // Mostrar diferentes tipos de errores
-      let errorMessage = error.message || 'Error en el registro';
+      let errorMessage = err.message || 'Error en el registro';
       
       // Errores específicos de base de datos
       if (errorMessage.includes('Database Error') || errorMessage.includes('Prisma')) {

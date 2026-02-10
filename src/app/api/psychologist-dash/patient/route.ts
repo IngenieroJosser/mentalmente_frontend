@@ -6,11 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-// Definir un tipo para los parámetros de búsqueda
-interface SearchParams {
-  [key: string]: string | string[] | undefined;
-}
-
 // Definir un tipo para el usuario en la sesión
 interface SessionUser {
   id: number;

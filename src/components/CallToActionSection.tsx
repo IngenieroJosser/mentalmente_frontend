@@ -182,7 +182,7 @@ const CallToActionSection = () => {
                       </h4>
                       <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
                         <p className="text-gray-600 font-light italic">
-                          "Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios"
+                          &quot;Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios&quot;
                         </p>
                       </div>
                     </div>
@@ -302,7 +302,7 @@ const CallToActionSection = () => {
           <div className="mt-24 pt-16 border-t border-gray-100">
             <div className="text-center">
               <p className="text-sm text-gray-500 font-light mb-2">
-                "Sanar es volverte habitable y seguro para ti mismo"
+                &quot;Sanar es volverte habitable y seguro para ti mismo&quot;
               </p>
               <p className="text-gray-900 font-light">
                 — Liyiveth Quintero García

@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-import { GraduationCap, Target, Heart, Sparkles } from 'lucide-react';
+import { GraduationCap, Target } from 'lucide-react';
 import Image from 'next/image';
 
 const AboutSection = () => {
@@ -156,7 +156,7 @@ const AboutSection = () => {
                   <span className="text-xs font-light text-white">Propósito</span>
                 </div>
                 <p className="text-gray-700 font-light leading-relaxed italic">
-                  En <span className="text-[#bec5a4] font-normal">SanaTú Quingar</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: <span className="text-gray-900 font-normal">"Sanar es volverte habitable y seguro para ti mismo"</span>.
+                  En <span className="text-[#bec5a4] font-normal">SanaTú Quingar</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: &quot;Sanar es volverte habitable y seguro para ti mismo&quot;.
                 </p>
               </motion.div>
 

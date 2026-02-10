@@ -4,12 +4,20 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   User, Calendar, FileText, BarChart3, 
-  Settings, LogOut, Bell, Search,
+  LogOut, Bell, Search,
   Users, Clock, Activity, TrendingUp
 } from 'lucide-react';
 
+// Definir tipo para los datos del usuario
+interface UserData {
+  usuario: string;
+  role?: string;
+  correo?: string;
+  [key: string]: any;
+}
+
 export default function PsychologistDashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

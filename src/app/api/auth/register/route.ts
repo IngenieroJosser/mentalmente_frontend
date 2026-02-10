@@ -271,30 +271,38 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error en el registro:', error);
     
     let errorMessage = 'Error interno del servidor';
     let statusCode = 500;
 
+    // Definir un tipo para errores de Prisma con código
+    interface PrismaError extends Error {
+      code?: string;
+      meta?: {
+        target?: string[];
+      };
+    }
+
     // Manejar errores específicos de Prisma
-    if (error.code === 'P2002') {
-      if (error.meta?.target?.includes('correo')) {
+    const prismaError = error as PrismaError;
+    
+    if (prismaError.code === 'P2002') {
+      if (prismaError.meta?.target?.includes('correo')) {
         errorMessage = 'El correo electrónico ya está registrado';
         statusCode = 400;
-      } else if (error.meta?.target?.includes('usuario')) {
+      } else if (prismaError.meta?.target?.includes('usuario')) {
         errorMessage = 'El nombre de usuario ya está en uso';
         statusCode = 400;
       }
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
     }
 
     return NextResponse.json(
       { 
         success: false,
         message: errorMessage,
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
       },
       { status: statusCode }
     );
@@ -421,17 +429,28 @@ export async function PUT(req: NextRequest) {
     });
 
     return NextResponse.json({ user: updatedUser });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error al actualizar usuario:', error);
     
     let errorMessage = 'Error interno del servidor';
     let statusCode = 500;
 
-    if (error.code === 'P2002') {
-      if (error.meta?.target?.includes('correo')) {
+    // Definir un tipo para errores de Prisma con código
+    interface PrismaError extends Error {
+      code?: string;
+      meta?: {
+        target?: string[];
+      };
+    }
+
+    // Manejar errores específicos de Prisma
+    const prismaError = error as PrismaError;
+    
+    if (prismaError.code === 'P2002') {
+      if (prismaError.meta?.target?.includes('correo')) {
         errorMessage = 'El correo electrónico ya está registrado';
         statusCode = 400;
-      } else if (error.meta?.target?.includes('usuario')) {
+      } else if (prismaError.meta?.target?.includes('usuario')) {
         errorMessage = 'El nombre de usuario ya está en uso';
         statusCode = 400;
       }

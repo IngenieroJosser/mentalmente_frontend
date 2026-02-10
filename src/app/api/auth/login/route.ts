@@ -242,14 +242,14 @@ export async function POST(request: NextRequest) {
       user: userResponse
     }, { status: 200 });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Login error:', error);
     
     return NextResponse.json(
       {
         success: false,
         message: 'Error interno del servidor',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
       },
       { status: 500 }
     );

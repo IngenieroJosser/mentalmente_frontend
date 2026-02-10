@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, Lock, ChevronRight, Sparkle, Brain } from 'lucide-react';
+import { X, ChevronRight, Sparkle, Brain } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter } from "next/navigation";
 

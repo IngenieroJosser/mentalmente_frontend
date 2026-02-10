@@ -64,7 +64,7 @@ const Footer = () => {
               <div className="flex items-center space-x-2 text-gray-500">
                 <Sparkles className="w-4 h-4" />
                 <span className="text-sm font-light">
-                  "Sanar es volverte habitable y seguro para ti mismo"
+                  &quot;Sanar es volverte habitable y seguro para ti mismo&quot;
                 </span>
               </div>
             </div>

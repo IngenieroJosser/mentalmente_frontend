@@ -2,31 +2,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
-  User, 
   Search, 
   PlusCircle,
   ChevronDown,
   Edit,
-  FilePlus,
   LayoutGrid,
   List,
   Filter,
   Download,
   Printer,
   Calendar,
-  BarChart2,
   Settings,
   LogOut,
   Bell,
   Menu,
   Trash2,
   Home,
-  Shield,
   Brain,
-  Users,
-  Clipboard
 } from 'lucide-react';
-import Image from 'next/image';
 import { templates, filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
@@ -57,38 +50,6 @@ const DashboardManagementMentalmentePage = () => {
   const { user: authUser, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-
-  // Verificar autenticación al cargar el componente
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
-      const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
-      
-      console.log('Auth check - Token:', token ? 'Presente' : 'Ausente');
-      console.log('Auth check - User data:', userData ? 'Presente' : 'Ausente');
-      
-      if (!token || !userData) {
-        console.log('No autenticado, redirigiendo a /login');
-        router.push('/login');
-        return false;
-      }
-      
-      setAuthChecked(true);
-      return true;
-    };
-
-    if (!authChecked) {
-      const isAuthValid = checkAuth();
-      if (!isAuthValid) {
-        return;
-      }
-    }
-
-    // Si está autenticado, cargar historias
-    if (authChecked || isAuthenticated) {
-      loadHistories();
-    }
-  }, [authChecked, isAuthenticated, router]);
 
   // Función para traducir roles
   const translateRole = useCallback((role: string) => {
@@ -140,11 +101,19 @@ const DashboardManagementMentalmentePage = () => {
       setClinicalHistories(result.data);
       setTotalRecords(result.total);
       setTotalPages(result.totalPages);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error cargando historias:', error);
       setClinicalHistories([]);
+      
+      // Definir un tipo para errores con mensaje
+      interface ErrorWithMessage {
+        message: string;
+      }
+      
+      const err = error as ErrorWithMessage;
+      
       // Si hay error de autenticación, redirigir al login
-      if (error instanceof Error && error.message.includes('401') || error.message.includes('403')) { 
+      if (err.message && (err.message.includes('401') || err.message.includes('403'))) { 
         router.push('/login'); 
       }
     } finally {
@@ -152,11 +121,37 @@ const DashboardManagementMentalmentePage = () => {
     }
   }, [currentPage, limit, searchTerm, authChecked, isAuthenticated, router]);
 
+  // Verificar autenticación al cargar el componente
   useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
+      const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
+      
+      console.log('Auth check - Token:', token ? 'Presente' : 'Ausente');
+      console.log('Auth check - User data:', userData ? 'Presente' : 'Ausente');
+      
+      if (!token || !userData) {
+        console.log('No autenticado, redirigiendo a /login');
+        router.push('/login');
+        return false;
+      }
+      
+      setAuthChecked(true);
+      return true;
+    };
+
+    if (!authChecked) {
+      const isAuthValid = checkAuth();
+      if (!isAuthValid) {
+        return;
+      }
+    }
+
+    // Si está autenticado, cargar historias
     if (authChecked || isAuthenticated) {
       loadHistories();
     }
-  }, [currentPage, searchTerm, authChecked, isAuthenticated, loadHistories]);
+  }, [authChecked, isAuthenticated, router, loadHistories]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -261,12 +256,7 @@ const DashboardManagementMentalmentePage = () => {
   // Definir rutas para cada módulo
   const menuItems = [
     { id: 'dashboard', icon: <Home size={18} />, label: 'Dashboard', path: '/management-dashboard' },
-    // { id: 'templates', icon: <FilePlus size={18} />, label: 'Plantillas', path: '/management-dashboard/templates' },
-    // { id: 'patients', icon: <Users size={18} />, label: 'Pacientes', path: '/management-dashboard/patients' },
     { id: 'calendar', icon: <Calendar size={18} />, label: 'Calendario', path: '/management-dashboard/calendar' },
-    // { id: 'reports', icon: <BarChart2 size={18} />, label: 'Reportes', path: '/management-dashboard/reports' },
-    // { id: 'settings', icon: <Settings size={18} />, label: 'Configuración', path: '/management-dashboard/settings' },
-    // { id: 'users', icon: <User size={18} />, label: 'Usuarios', path: '/management-dashboard/users' },
   ];
 
   return (
