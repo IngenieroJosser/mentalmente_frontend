@@ -1,11 +1,19 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
+// Definir tipo para el contexto de parámetros
+interface Context {
+  params: Promise<{ id: string }>;
+}
+
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: Context
 ) {
   try {
+    // Esperar a que se resuelvan los params
+    const params = await context.params;
+    
     const record = await prisma.medicalRecord.findUnique({
       where: { id: parseInt(params.id) },
       include: {
@@ -36,10 +44,13 @@ export async function GET(
 }
 
 export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: Context
 ) {
   try {
+    // Esperar a que se resuelvan los params
+    const params = await context.params;
+    
     if (!params.id) {
       return NextResponse.json(
         { error: 'ID de historia clínica es requerido' },
@@ -54,11 +65,54 @@ export async function DELETE(
     
     // Si se elimina correctamente, devolver un estado 204 No Content
     return NextResponse.json(null, { status: 204 });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Error eliminando historia clínica:', error);
     
     // Verificar si es un error de Prisma
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
+    const prismaError = error as { code?: string };
+    
+    if (prismaError.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Historia clínica no encontrada' },
+        { status: 404 }
+      );
+    }
+    
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+// También podrías agregar un método PUT para actualizar
+export async function PUT(
+  request: NextRequest,
+  context: Context
+) {
+  try {
+    const params = await context.params;
+    const body = await request.json();
+    
+    if (!params.id) {
+      return NextResponse.json(
+        { error: 'ID de historia clínica es requerido' },
+        { status: 400 }
+      );
+    }
+    
+    const updatedRecord = await prisma.medicalRecord.update({
+      where: { id: parseInt(params.id) },
+      data: body,
+    });
+    
+    return NextResponse.json(updatedRecord);
+  } catch (error) {
+    console.error('Error actualizando historia clínica:', error);
+    
+    const prismaError = error as { code?: string };
+    
+    if (prismaError.code === 'P2025') {
       return NextResponse.json(
         { error: 'Historia clínica no encontrada' },
         { status: 404 }
