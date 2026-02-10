@@ -20,14 +20,11 @@ const AboutSection = () => {
       ref={sectionRef}
       style={{ opacity }}
       id="sobre-mi"
-      className="relative min-h-screen py-24 px-6 lg:px-8 overflow-hidden"
+      className="relative min-h-screen py-24 px-6 lg:px-8 overflow-hidden bg-white"
     >
-      {/* Fondo con efecto de gradiente sutil */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-[#f8fafc] to-white" />
-      
-      {/* Elementos decorativos de fondo */}
-      <div className="absolute top-1/4 -left-24 w-96 h-96 bg-[#bec5a4]/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 -right-24 w-96 h-96 bg-[#bec5a4]/3 rounded-full blur-3xl" />
+      {/* Elementos decorativos de fondo - Reducidos y más sutiles */}
+      <div className="absolute top-1/4 -left-24 w-96 h-96 bg-[#bec5a4]/3 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -right-24 w-96 h-96 bg-[#bec5a4]/2 rounded-full blur-3xl" />
 
       <div className="relative container mx-auto max-w-6xl">
         <motion.div
@@ -39,10 +36,10 @@ const AboutSection = () => {
             {/* Contenedor de la imagen con diseño de tarjeta */}
             <div className="relative group">
               {/* Marco decorativo */}
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#bec5a4]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#bec5a4]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               
               {/* Contenedor principal de la imagen */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-gray-100 to-gray-200">
+              <div className="relative rounded-2xl overflow-hidden shadow-xl bg-white">
                 {/* Imagen de perfil optimizada */}
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
                   <Image
@@ -54,15 +51,15 @@ const AboutSection = () => {
                     priority
                   />
                   
-                  {/* Overlay sutil para mejor contraste */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                  {/* Overlay reducido para mejor visibilidad */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent" />
                 </div>
                 
-                {/* Texto superpuesto */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent">
+                {/* Texto superpuesto - Mejor contraste */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/30 to-transparent">
                   <div className="space-y-3">
-                    <div className="h-1 w-24 bg-gradient-to-r from-transparent via-[#bec5a4] to-transparent" />
-                    <p className="text-sm text-white font-light tracking-wider">
+                    <div className="h-1 w-24 bg-gradient-to-r from-transparent via-white to-transparent" />
+                    <p className="text-sm text-white font-medium tracking-wider">
                       ESPECIALISTA EN BIENESTAR EMOCIONAL
                     </p>
                   </div>
@@ -72,7 +69,7 @@ const AboutSection = () => {
                 <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-100">
                   <div className="flex items-center space-x-2">
                     <GraduationCap className="w-4 h-4 text-[#bec5a4]" />
-                    <span className="text-xs font-light text-gray-700">Psicóloga Certificada</span>
+                    <span className="text-xs font-medium text-gray-800">Psicóloga Certificada</span>
                   </div>
                 </div>
               </div>
@@ -90,8 +87,8 @@ const AboutSection = () => {
                   <Target className="w-5 h-5 text-[#bec5a4]" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-light text-gray-900 mb-1">Enfoque Integral</h4>
-                  <p className="text-xs text-gray-600 font-light">
+                  <h4 className="text-sm font-medium text-gray-900 mb-1">Enfoque Integral</h4>
+                  <p className="text-xs text-gray-700">
                     Combinación única de sensibilidad humana y visión estratégica
                   </p>
                 </div>
@@ -105,16 +102,16 @@ const AboutSection = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="h-px w-12 bg-gradient-to-r from-[#bec5a4] to-transparent" />
-                <span className="text-sm tracking-widest font-light text-[#bec5a4] uppercase">
+                <span className="text-sm tracking-widest font-medium text-[#bec5a4] uppercase">
                   Perfil Profesional
                 </span>
               </div>
               
-              <h2 className="text-4xl lg:text-5xl font-light tracking-tight text-gray-900">
+              <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900">
                 Liyiveth <span className="text-[#bec5a4]">Quintero García</span>
               </h2>
               
-              <div className="h-px w-full bg-gradient-to-r from-[#bec5a4]/30 via-gray-300/50 to-transparent" />
+              <div className="h-px w-full bg-gradient-to-r from-[#bec5a4]/20 via-gray-300/30 to-transparent" />
             </div>
 
             {/* Credenciales destacadas */}
@@ -125,13 +122,13 @@ const AboutSection = () => {
               className="flex flex-wrap gap-4"
             >
               <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
-                <span className="text-sm font-light text-gray-700">Psicóloga</span>
+                <span className="text-sm font-medium text-gray-800">Psicóloga</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
-                <span className="text-sm font-light text-gray-700">Atención a la Primera Infancia</span>
+                <span className="text-sm font-medium text-gray-800">Atención a la Primera Infancia</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
-                <span className="text-sm font-light text-gray-700">Alta Gerencia en Proyectos Sociales</span>
+                <span className="text-sm font-medium text-gray-800">Alta Gerencia en Proyectos Sociales</span>
               </div>
             </motion.div>
 
@@ -141,22 +138,22 @@ const AboutSection = () => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-lg text-gray-700 font-light leading-relaxed"
+                className="text-lg text-gray-800 font-normal leading-relaxed"
               >
-                Soy <span className="text-[#bec5a4] font-normal">Liyiveth Quintero García</span>, psicóloga con formación técnica en Atención Integral a la Primera Infancia y diplomada en Alta Gerencia en Proyectos Sociales. Mi enfoque combina la <span className="text-gray-900 font-normal">sensibilidad humana</span> con una <span className="text-gray-900 font-normal">visión estratégica</span> de los procesos sociales para lograr una transformación real.
+                Soy <span className="text-[#bec5a4] font-semibold">Liyiveth Quintero García</span>, psicóloga con formación técnica en Atención Integral a la Primera Infancia y diplomada en Alta Gerencia en Proyectos Sociales. Mi enfoque combina la <span className="text-gray-900 font-semibold">sensibilidad humana</span> con una <span className="text-gray-900 font-semibold">visión estratégica</span> de los procesos sociales para lograr una transformación real.
               </motion.p>
 
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="relative p-6 rounded-xl bg-gradient-to-br from-white to-gray-50/50 border border-gray-100 shadow-sm"
+                className="relative p-6 rounded-xl bg-white border border-gray-200 shadow-sm"
               >
                 <div className="absolute -top-3 left-8 px-3 py-1 bg-[#bec5a4] rounded-full">
-                  <span className="text-xs font-light text-white">Propósito</span>
+                  <span className="text-xs font-medium text-white">Propósito</span>
                 </div>
-                <p className="text-gray-700 font-light leading-relaxed italic">
-                  En <span className="text-[#bec5a4] font-normal">SanaTú Quingar</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: &quot;Sanar es volverte habitable y seguro para ti mismo&quot;.
+                <p className="text-gray-800 font-normal leading-relaxed">
+                  En <span className="text-[#bec5a4] font-semibold">SanaTú Quingar</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: &quot;Sanar es volverte habitable y seguro para ti mismo&quot;.
                 </p>
               </motion.div>
 
@@ -164,7 +161,7 @@ const AboutSection = () => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="text-gray-600 font-light leading-relaxed"
+                className="text-gray-700 font-normal leading-relaxed"
               >
                 Acompaño procesos donde sanar significa soltar lo que no puedes controlar para recuperar el dominio de tu propia vida, brindándote herramientas para que logres una seguridad interna que no dependa de situaciones externas y te permita vivir con verdadera libertad.
               </motion.p>
@@ -179,7 +176,7 @@ const AboutSection = () => {
             >
               <a
                 href="#contacto"
-                className="inline-flex items-center group text-[#bec5a4] font-light tracking-wide"
+                className="inline-flex items-center group text-[#bec5a4] font-medium tracking-wide"
               >
                 <span className="border-b border-transparent group-hover:border-[#bec5a4] transition-all duration-300">
                   Iniciar un proceso de transformación
@@ -200,7 +197,7 @@ const AboutSection = () => {
         {/* Indicador de sección (para desktop) */}
         <div className="hidden lg:block absolute left-0 top-1/2 transform -translate-y-1/2">
           <div className="flex items-center space-x-4 -rotate-90">
-            <span className="text-xs tracking-widest font-light text-gray-400">SOBRE MÍ</span>
+            <span className="text-xs tracking-widest font-medium text-gray-500">SOBRE MÍ</span>
             <div className="h-px w-16 bg-gradient-to-r from-[#bec5a4] to-transparent" />
           </div>
         </div>
@@ -211,14 +208,14 @@ const AboutSection = () => {
         <div className="flex items-center space-x-8">
           <a 
             href="#inicio" 
-            className="text-xs tracking-widest font-light text-gray-400 hover:text-[#bec5a4] transition-colors duration-300"
+            className="text-xs tracking-widest font-medium text-gray-500 hover:text-[#bec5a4] transition-colors duration-300"
           >
             Inicio
           </a>
           <div className="h-px w-8 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
           <a 
             href="#servicios" 
-            className="text-xs tracking-widest font-light text-gray-400 hover:text-[#bec5a4] transition-colors duration-300"
+            className="text-xs tracking-widest font-medium text-gray-500 hover:text-[#bec5a4] transition-colors duration-300"
           >
             Servicios
           </a>
