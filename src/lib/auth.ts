@@ -8,6 +8,14 @@ import type { Session } from "next-auth";
 
 const prisma = new PrismaClient();
 
+// Definir tipo para el usuario de autorización
+interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -22,7 +30,7 @@ export const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<AuthUser | null> {
         if (!credentials?.email || !credentials.password) {
           return null;
         }
@@ -54,7 +62,7 @@ export const authOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 días
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: any }) {
+    async jwt({ token, user }: { token: JWT; user?: AuthUser }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
