@@ -2,7 +2,7 @@
   "name": "mentalmente_frontend",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+  "scripts": {  
     "dev": "next dev --turbopack",
     "postinstall": "prisma generate",
     "build": "next build",
