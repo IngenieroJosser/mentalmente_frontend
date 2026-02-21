@@ -21,7 +21,7 @@ const CallToActionSection = () => {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, '_blank');
   };
 
-  const services = [
+  let services = [
     "Consulta inicial - Psicoterapia Individual",
     "Intervención Psicosocial - Apoyo Especializado",
     "Educación y Bienestar - Talleres/Capacitaciones"

@@ -13,7 +13,6 @@ export default function SanatuLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [activeField, setActiveField] = useState('');
-  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 

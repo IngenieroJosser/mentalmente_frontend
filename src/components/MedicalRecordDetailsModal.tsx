@@ -4,13 +4,11 @@ import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
   FaTimes, FaPrint, FaUser, FaNotesMedical, FaHistory, 
-  FaStethoscope, FaUsers, FaFileMedicalAlt, FaCheckCircle, 
+  FaStethoscope, FaUsers, FaCheckCircle, 
   FaExclamationTriangle, FaPhone, FaIdCard, FaBuilding
 } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { pdf } from '@react-pdf/renderer';
 import MedicalRecordPDF from './MedicalRecordPDF';
 

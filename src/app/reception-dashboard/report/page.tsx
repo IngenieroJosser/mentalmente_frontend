@@ -233,7 +233,7 @@ const ReportDashboardPsychologist = () => {
 
   const chartData = prepareChartData();
 
-  const chartOptions = {
+  let chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
