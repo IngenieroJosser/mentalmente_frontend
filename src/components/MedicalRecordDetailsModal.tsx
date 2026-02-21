@@ -31,88 +31,53 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         status: response.status,
         ok: response.ok,
         contentType: response.headers.get('content-type'),
-        headers: Object.fromEntries(response.headers.entries())
+        contentLength: response.headers.get('content-length'),
       });
   
-      // Verificar el tipo de contenido
-      const contentType = response.headers.get('content-type') || '';
-      
-      if (response.ok && contentType.includes('application/pdf')) {
-        // Procesar como PDF
-        console.log('Descargando PDF...');
-        const blob = await response.blob();
-        
-        // Verificar que el blob no esté vacío
-        if (blob.size === 0) {
-          throw new Error('El archivo PDF está vacío');
-        }
-        
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Historia_Clinica_${record.identificationNumber}.pdf`;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        
-        // Usar un timeout para evitar problemas con IDM
-        setTimeout(() => {
-          a.click();
-          
-          // Limpieza
-          setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          }, 1000);
-        }, 100);
-        
-        setPdfStatus({
-          success: true,
-          message: 'PDF generado con éxito'
-        });
-      } else {
-        // Obtener el texto de la respuesta para ver qué contiene
-        const responseText = await response.text();
-        console.error('Error response text:', responseText);
-        
-        let errorMessage = `Error ${response.status}: ${response.statusText}`;
-        
+      if (!response.ok) {
+        // Intentar leer el cuerpo como texto para obtener el error
+        let errorText = '';
         try {
-          // Intentar parsear como JSON
-          const errorData = JSON.parse(responseText);
-          console.error('Error data parsed:', errorData);
-          
-          // Priorizar mensajes específicos
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
-          }
-          
-          // Mensajes específicos para errores comunes
-          if (errorData.error?.includes('no encontrado')) {
-            errorMessage = 'Archivo de plantilla o fuente no encontrado. Contacte al administrador.';
-          }
-          if (errorData.solucion) {
-            errorMessage += `\n${errorData.solucion}`;
-          }
-        } catch (jsonError) {
-          // Si no es JSON válido, usar el texto como está
-          console.error('No se pudo parsear como JSON:', jsonError);
-          if (responseText && responseText.trim() !== '') {
-            errorMessage = responseText;
-          }
+          const errorData = await response.json();
+          errorText = errorData.message || errorData.error || JSON.stringify(errorData);
+        } catch {
+          errorText = await response.text();
         }
-        
-        console.error('Error final:', errorMessage);
-        
-        // Manejar error específico de IDM
-        if (errorMessage.includes('IDM') || errorMessage.includes('204') || errorMessage.includes('Intercepted')) {
-          errorMessage = 'IDM (Internet Download Manager) está interceptando la descarga. Por favor, desactívelo temporalmente o configure su navegador para no usar gestores de descarga para este sitio.';
-        }
-        
-        throw new Error(errorMessage);
+        throw new Error(`Error ${response.status}: ${errorText || response.statusText}`);
       }
+  
+      // Verificar que el contenido sea un PDF
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('pdf')) {
+        console.warn('Content-Type no es PDF:', contentType);
+      }
+  
+      // Obtener el blob
+      const blob = await response.blob();
+      console.log(`Tamaño del blob: ${blob.size} bytes`);
+  
+      if (blob.size === 0) {
+        throw new Error('El archivo PDF está vacío (tamaño 0 bytes)');
+      }
+  
+      // Crear URL y descargar
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Historia_Clinica_${record.identificationNumber || 'sin_numero'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Limpiar
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+  
+      setPdfStatus({
+        success: true,
+        message: 'PDF generado con éxito'
+      });
       
     } catch (error: unknown) {
       console.error('Error en generación de PDF:', error);

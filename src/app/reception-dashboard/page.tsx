@@ -157,30 +157,30 @@ const DashboardReceptionMentalmentePage = () => {
   // Mostrar spinner mientras se verifica autenticación
   if (!isAuthenticated) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+      <div className="flex justify-center items-center h-screen bg-[#f2f2f2]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#bec5a4]"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-[#f2f2f2]">
       {/* Sidebar - Mobile */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-[rgba(0,0,0,0.2)] backdrop-blur-md" onClick={() => setIsMenuOpen(false)}>
-          <div className="w-64 h-full bg-[#19334c] text-white" onClick={e => e.stopPropagation()}>
-            <div className="p-5 flex items-center justify-between border-b border-[#2a4b6c]">
+          <div className="w-64 h-full bg-[#bec5a4] text-gray-800" onClick={e => e.stopPropagation()}>
+            <div className="p-5 flex items-center justify-between border-b border-[#8f9f7a]">
               <div className="flex items-center space-x-3">
-                <div className="bg-[#c77914] p-2 rounded-lg">
+                <div className="bg-[#f2f2f2] p-2 rounded-lg">
                   <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
                 </div>
                 <div>
-                  <h1 className="font-bold">Mentalmente</h1>
+                  <h1 className="font-bold text-gray-800">SanaTú Quingar</h1>
                 </div>
               </div>
               <button 
                 onClick={() => setIsMenuOpen(false)} 
-                className="text-white text-xl"
+                className="text-gray-800 text-xl"
                 aria-label="Close menu"
               >
                 &times;
@@ -198,9 +198,9 @@ const DashboardReceptionMentalmentePage = () => {
                       }}
                       className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
                         activeSection === item.id
-                          ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                          : 'hover:bg-[#152a40]'
-                      }`}
+                          ? 'bg-[#8f9f7a] border-l-4 border-[#f2f2f2]'
+                          : 'hover:bg-[#8f9f7a]'
+                      } text-gray-800`}
                     >
                       {item.icon}
                       <span>{item.label}</span>
@@ -214,14 +214,14 @@ const DashboardReceptionMentalmentePage = () => {
       )}
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex w-64 bg-[#19334c] text-white flex-col">
-        <div className="p-5 flex items-center space-x-3 border-b border-[#2a4b6c]">
+      <aside className="hidden md:flex w-64 bg-[#bec5a4] text-gray-800 flex-col">
+        <div className="p-5 flex items-center space-x-3 border-b border-[#8f9f7a]">
           <div className="flex items-center justify-center mb-8">
-            <div className="bg-[#19334c] p-4 rounded-2xl flex items-center justify-center ring-1 ring-[#c77914]/40 shadow-lg">
-              <div className="relative w-16 h-16">
+            <div className="bg-[#bec5a4] p-4 rounded-2xl flex items-center justify-center ring-1 ring-[#f2f2f2]/40 shadow-lg">
+              <div className="relative w-6 h-6">
                 <Image
-                  src="/img/logo.png"
-                  alt="Logo de Mentalmente"
+                  src="/logo-sana-tu.png"
+                  alt="Logo de SanaTú Quingar"
                   fill
                   className="object-contain rounded-xl"
                   quality={100}
@@ -232,8 +232,8 @@ const DashboardReceptionMentalmentePage = () => {
             </div>
           </div>
           <div>
-            <h1 className="font-bold mt-[-2em]">Mentalmente</h1>
-            <p className="text-sm text-[#c0d0e0]">Historias Clínicas Digitales</p>
+            <h1 className="font-bold mt-[-2em] text-gray-800">SanaTú Quingar</h1>
+            <p className="text-sm text-gray-600">Historias Clínicas Digitales</p>
           </div>
         </div>
         
@@ -245,33 +245,33 @@ const DashboardReceptionMentalmentePage = () => {
                   onClick={() => router.push(item.href)}
                   className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
                     activeSection === item.id
-                      ? 'bg-[#0f2439] border-l-4 border-[#c77914]'
-                      : 'hover:bg-[#152a40]'
-                  }`}
+                      ? 'bg-[#8f9f7a] border-l-4 border-[#f2f2f2]'
+                      : 'hover:bg-[#8f9f7a]'
+                  } text-gray-800`}
                   aria-label={item.label}
                 >
                   {item.icon}
-                  <span className="text-white">{item.label}</span>
+                  <span className="text-gray-800">{item.label}</span>
                 </button>
               </li>
             ))}
           </ul>
         </nav>
         
-        <div className="p-5 border-t border-[#2a4b6c]">
+        <div className="p-5 border-t border-[#8f9f7a]">
           <button 
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center space-x-3 w-full text-left p-3 bg-[#0f2439] rounded-lg"
+            className="flex items-center space-x-3 w-full text-left p-3 bg-[#8f9f7a] rounded-lg text-gray-800"
             aria-label="Perfil de usuario"
           >
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
             <div className="flex-1">
-              <p className="font-medium text-sm text-white">{user?.usuario || 'Usuario'}</p>
-              <p className="text-xs text-[#c0d0e0]">
+              <p className="font-medium text-sm text-gray-800">{user?.usuario || 'Usuario'}</p>
+              <p className="text-xs text-gray-600">
                 {translateRole(user?.role || '')}
               </p>
             </div>
-            <ChevronDown size={16} className="text-white" />
+            <ChevronDown size={16} className="text-gray-800" />
           </button>
         </div>
       </aside>
@@ -279,7 +279,7 @@ const DashboardReceptionMentalmentePage = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+        <header className="bg-[#f2f2f2] border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
             <button 
               onClick={() => setIsMenuOpen(true)}
@@ -288,7 +288,7 @@ const DashboardReceptionMentalmentePage = () => {
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-bold text-[#19334c] hidden md:inline-block">Sistema de Historias Clínicas - Recepción</h1>
+            <h1 className="text-xl font-bold text-gray-800 hidden md:inline-block">Sistema de Historias Clínicas - Recepción</h1>
           </div>
           
           <div className="relative flex-1 max-w-xl mx-4">
@@ -296,7 +296,7 @@ const DashboardReceptionMentalmentePage = () => {
             <input
               type="text"
               placeholder="Buscar historias, pacientes, plantillas..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c77914]/50 focus:border-[#c77914] outline-none transition-all text-gray-800 bg-white"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f2f2f2]/50 focus:border-[#f2f2f2] outline-none transition-all text-gray-800 bg-white"
               value={searchTerm}
               onChange={handleSearch}
               aria-label="Buscar historias clínicas"
@@ -310,7 +310,7 @@ const DashboardReceptionMentalmentePage = () => {
               aria-label="Notificaciones"
             >
               <Bell size={20} className="text-gray-700" />
-              <span className="absolute top-1 right-1 bg-[#c77914] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+              <span className="absolute top-1 right-1 bg-[#f2f2f2] text-gray-800 text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
             
             <button 
@@ -354,11 +354,11 @@ const DashboardReceptionMentalmentePage = () => {
         </header>
 
         {/* Content - Clinical History Dashboard */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#f8fafc]">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#f2f2f2]">
           {/* Header and Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-[#19334c]">Gestión de Historias Clínicas - Recepción</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Gestión de Historias Clínicas - Recepción</h1>
               <p className="text-gray-700">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -381,7 +381,7 @@ const DashboardReceptionMentalmentePage = () => {
                   setEditingHistory(null);
                   setShowForm(true);
                 }}
-                className="bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center"
+                className="bg-[#bec5a4] hover:bg-[#8f9f7a] text-gray-800 px-4 py-2 rounded-lg flex items-center"
                 aria-label="Crear nueva historia clínica"
               >
                 <PlusCircle size={16} className="mr-2" />
@@ -399,7 +399,7 @@ const DashboardReceptionMentalmentePage = () => {
                     key={filter.id}
                     className={`px-3 py-1.5 rounded-full text-sm ${
                       filter.id === activeSection
-                        ? 'bg-[#19334c] text-white'
+                        ? 'bg-[#bec5a4] text-gray-800'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     }`}
                     aria-label={`Filtro: ${filter.name}`}
@@ -413,14 +413,14 @@ const DashboardReceptionMentalmentePage = () => {
                 <span className="text-sm text-gray-700">Vista:</span>
                 <button 
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-800'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#bec5a4] text-gray-800' : 'bg-gray-100 text-gray-800'}`}
                   aria-label="Vista de cuadrícula"
                 >
                   <LayoutGrid size={18} />
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#19334c] text-white' : 'bg-gray-100 text-gray-800'}`}
+                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#bec5a4] text-gray-800' : 'bg-gray-100 text-gray-800'}`}
                   aria-label="Vista de lista"
                 >
                   <List size={18} />
@@ -432,14 +432,14 @@ const DashboardReceptionMentalmentePage = () => {
           {/* Clinical Histories List */}
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#c77914]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#bec5a4]"></div>
             </div>
           ) : clinicalHistories.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-gray-700">No se encontraron historias clínicas</p>
               <button 
                 onClick={() => setShowForm(true)}
-                className="mt-4 bg-[#c77914] hover:bg-[#b16d12] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
+                className="mt-4 bg-[#bec5a4] hover:bg-[#8f9f7a] text-gray-800 px-4 py-2 rounded-lg flex items-center mx-auto"
               >
                 <PlusCircle size={16} className="mr-2" />
                 Crear primera historia
@@ -452,14 +452,14 @@ const DashboardReceptionMentalmentePage = () => {
                   <div className="p-5 border-b border-gray-100">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-lg text-[#19334c]">{history.patientName}</h3>
+                        <h3 className="font-bold text-lg text-gray-800">{history.patientName}</h3>
                         <div className="mt-2 text-sm text-gray-700">
                           <span className="font-medium">Atendido por:</span> {history.user?.usuario || 'Sin asignar'}
                         </div>
                       </div>
                       <div className="relative">
                         <button 
-                          className="text-gray-600 hover:text-[#c77914]"
+                          className="text-gray-600 hover:text-[#bec5a4]"
                           aria-label="Opciones"
                         >
                           <ChevronDown size={18} />
@@ -488,7 +488,7 @@ const DashboardReceptionMentalmentePage = () => {
                             setEditingHistory(history.id);
                             setShowForm(true);
                           }}
-                          className="text-sm bg-[#19334c] hover:bg-[#0f2439] text-white px-3 py-1.5 rounded-lg flex items-center"
+                          className="text-sm bg-[#bec5a4] hover:bg-[#8f9f7a] text-gray-800 px-3 py-1.5 rounded-lg flex items-center"
                           aria-label="Editar historia"
                         >
                           <Edit size={14} className="mr-1" /> Editar
@@ -514,7 +514,7 @@ const DashboardReceptionMentalmentePage = () => {
                   {clinicalHistories.map(history => (
                     <tr key={history.id} className="border-t border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-medium text-[#19334c]">{history.patientName}</div>
+                        <div className="font-medium text-gray-800">{history.patientName}</div>
                       </td>
                       <td className="py-4 px-4 text-sm text-gray-800">
                         {history.user?.usuario || 'Sin asignar'}
@@ -524,7 +524,7 @@ const DashboardReceptionMentalmentePage = () => {
                         <div className="flex space-x-2">
                           <button 
                             onClick={() => handleViewDetails(history)}
-                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Ver detalles"
                           >
                             <FileText size={16} />
@@ -534,13 +534,13 @@ const DashboardReceptionMentalmentePage = () => {
                               setEditingHistory(history.id);
                               setShowForm(true);
                             }}
-                            className="p-1.5 text-gray-600 hover:text-[#c77914]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Editar historia"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
-                            className="p-1.5 text-gray-600 hover:text-[#19334c]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
                             aria-label="Imprimir historia"
                           >
                             <Printer size={16} />
@@ -564,7 +564,7 @@ const DashboardReceptionMentalmentePage = () => {
                 <button 
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(p => p - 1)}
-                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-gray-800'}`}
                   aria-label="Página anterior"
                 >
                   Anterior
@@ -575,7 +575,7 @@ const DashboardReceptionMentalmentePage = () => {
                 <button 
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(p => p + 1)}
-                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#19334c] text-white'}`}
+                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-gray-800'}`}
                   aria-label="Página siguiente"
                 >
                   Siguiente
@@ -587,9 +587,9 @@ const DashboardReceptionMentalmentePage = () => {
           {/* Templates Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="font-semibold text-lg text-[#19334c]">Plantillas de Historias Clínicas</h2>
+              <h2 className="font-semibold text-lg text-gray-800">Plantillas de Historias Clínicas</h2>
               <button 
-                className="text-sm text-[#19334c] hover:text-[#c77914] font-medium"
+                className="text-sm text-gray-800 hover:text-[#bec5a4] font-medium"
                 aria-label="Ver todas las plantillas"
               >
                 Ver todas
@@ -598,14 +598,14 @@ const DashboardReceptionMentalmentePage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {templates.map(template => (
-                <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#c77914] transition-colors">
-                  <div className="bg-[#19334c]/10 p-3 rounded-lg mb-3 inline-block">
-                    <FileText size={24} className="text-[#19334c]" />
+                <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#bec5a4] transition-colors">
+                  <div className="bg-[#bec5a4]/10 p-3 rounded-lg mb-3 inline-block">
+                    <FileText size={24} className="text-[#bec5a4]" />
                   </div>
                   <h3 className="font-bold mb-1 text-lg text-gray-800">{template.name}</h3>
                   <p className="text-sm text-gray-700">{template.category}</p>
                   <button 
-                    className="mt-3 text-sm w-full bg-[#19334c] hover:bg-[#0f2439] text-white py-1.5 rounded-lg"
+                    className="mt-3 text-sm w-full bg-[#bec5a4] hover:bg-[#8f9f7a] text-gray-800 py-1.5 rounded-lg"
                     aria-label={`Usar plantilla ${template.name}`}
                   >
                     Usar plantilla

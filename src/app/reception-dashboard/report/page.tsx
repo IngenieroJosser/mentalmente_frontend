@@ -118,8 +118,8 @@ const ReportDashboardPsychologist = () => {
           {
             label: 'Pacientes atendidos',
             data: reportData.map(r => r.patients),
-            borderColor: '#D4AF37',
-            backgroundColor: 'rgba(212, 175, 55, 0.2)',
+            borderColor: '#bec5a4',
+            backgroundColor: 'rgba(190, 197, 164, 0.2)',
             tension: 0.3,
             fill: true
           }
@@ -137,16 +137,16 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].therapyTypes.group
             ] : [0, 0, 0, 0],
             backgroundColor: [
-              'rgba(212, 175, 55, 0.8)',
-              'rgba(42, 75, 108, 0.8)',
-              'rgba(26, 43, 64, 0.8)',
-              'rgba(163, 184, 204, 0.8)'
+              'rgba(190, 197, 164, 0.8)',
+              'rgba(160, 170, 140, 0.8)',
+              'rgba(140, 150, 120, 0.8)',
+              'rgba(120, 130, 100, 0.8)'
             ],
             borderColor: [
-              'rgba(212, 175, 55, 1)',
-              'rgba(42, 75, 108, 1)',
-              'rgba(26, 43, 64, 1)',
-              'rgba(163, 184, 204, 1)'
+              '#bec5a4',
+              '#a0aa8c',
+              '#8c9678',
+              '#788264'
             ],
             borderWidth: 1,
           }
@@ -165,18 +165,18 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].diagnoses.other
             ] : [0, 0, 0, 0, 0],
             backgroundColor: [
-              'rgba(212, 175, 55, 0.6)',
-              'rgba(42, 75, 108, 0.6)',
-              'rgba(26, 43, 64, 0.6)',
-              'rgba(163, 184, 204, 0.6)',
-              'rgba(100, 120, 150, 0.6)'
+              'rgba(190, 197, 164, 0.6)',
+              'rgba(160, 170, 140, 0.6)',
+              'rgba(140, 150, 120, 0.6)',
+              'rgba(120, 130, 100, 0.6)',
+              'rgba(100, 110, 90, 0.6)'
             ],
             borderColor: [
-              'rgba(212, 175, 55, 1)',
-              'rgba(42, 75, 108, 1)',
-              'rgba(26, 43, 64, 1)',
-              'rgba(163, 184, 204, 1)',
-              'rgba(100, 120, 150, 1)'
+              '#bec5a4',
+              '#a0aa8c',
+              '#8c9678',
+              '#788264',
+              '#647052'
             ],
             borderWidth: 1,
           }
@@ -192,14 +192,14 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].genderDistribution.other
             ] : [0, 0, 0],
             backgroundColor: [
-              'rgba(42, 75, 108, 0.8)',
-              'rgba(212, 175, 55, 0.8)',
-              'rgba(163, 184, 204, 0.8)'
+              'rgba(160, 170, 140, 0.8)',
+              'rgba(190, 197, 164, 0.8)',
+              'rgba(120, 130, 100, 0.8)'
             ],
             borderColor: [
-              'rgba(42, 75, 108, 1)',
-              'rgba(212, 175, 55, 1)',
-              'rgba(163, 184, 204, 1)'
+              '#a0aa8c',
+              '#bec5a4',
+              '#788264'
             ],
             borderWidth: 1,
           }
@@ -217,8 +217,8 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].ageGroups['46-60'],
               reportData[reportData.length - 1].ageGroups['61+']
             ] : [0, 0, 0, 0, 0],
-            backgroundColor: 'rgba(212, 175, 55, 0.8)',
-            borderColor: 'rgba(212, 175, 55, 1)',
+            backgroundColor: 'rgba(190, 197, 164, 0.8)',
+            borderColor: '#bec5a4',
             borderWidth: 1,
           }
         ]
@@ -235,29 +235,29 @@ const ReportDashboardPsychologist = () => {
       legend: {
         position: 'top' as const,
         labels: {
-          color: '#F0F4F8'
+          color: '#3a3a3a'
         }
       },
       title: {
         display: true,
-        color: '#F0F4F8'
+        color: '#3a3a3a'
       },
     },
     scales: {
       x: {
         ticks: {
-          color: '#A3B8CC'
+          color: '#666666'
         },
         grid: {
-          color: 'rgba(163, 184, 204, 0.1)'
+          color: 'rgba(102, 102, 102, 0.1)'
         }
       },
       y: {
         ticks: {
-          color: '#A3B8CC'
+          color: '#666666'
         },
         grid: {
-          color: 'rgba(163, 184, 204, 0.1)'
+          color: 'rgba(102, 102, 102, 0.1)'
         }
       }
     }
@@ -265,11 +265,11 @@ const ReportDashboardPsychologist = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#D4AF37] mb-6"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-6"></div>
         <div className="text-center">
-          <h2 className="text-2xl font-light text-[#F0F4F8] mb-2">Generando reportes</h2>
-          <p className="text-[#A3B8CC]">Analizando los datos para transformar vidas...</p>
+          <h2 className="text-2xl font-light text-[#3a3a3a] mb-2">Generando reportes</h2>
+          <p className="text-[#666666]">Analizando los datos para transformar vidas...</p>
         </div>
       </div>
     );
@@ -277,20 +277,20 @@ const ReportDashboardPsychologist = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4">
-        <div className="max-w-md w-full bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl p-8 backdrop-blur-sm">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl border border-[#bec5a4] shadow-xl p-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#1A2B40]" viewBox="0 0 20 20" fill="currentColor">
+            <div className="w-16 h-16 bg-[#bec5a4] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#F0F4F8]">Error de conexión</h2>
-            <p className="text-[#A3B8CC] mt-2">{error}</p>
+            <h2 className="text-2xl font-bold text-[#3a3a3a]">Error de conexión</h2>
+            <p className="text-[#666666] mt-2">{error}</p>
           </div>
           <button 
             onClick={() => window.location.reload()}
-            className="w-full py-3 px-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold rounded-xl hover:from-[#B8860B] hover:to-[#D4AF37] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#D4AF37]/20"
+            className="w-full py-3 px-4 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#bec5a4]/20"
           >
             Reintentar
           </button>
@@ -300,15 +300,15 @@ const ReportDashboardPsychologist = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Encabezado premium */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl backdrop-blur-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-white rounded-2xl border border-[#bec5a4] shadow-xl">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0E68C]">
+            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
               Panel de Reportes Clínicos
             </h1>
-            <p className="text-[#A3B8CC] mt-2 max-w-2xl">
+            <p className="text-[#666666] mt-2 max-w-2xl">
               Estadísticas avanzadas para medir nuestro impacto en la transformación de vidas a través del cuidado especializado de la salud mental.
             </p>
           </div>
@@ -319,8 +319,8 @@ const ReportDashboardPsychologist = () => {
                 onClick={() => setTimeRange('3m')}
                 className={`px-4 py-2 rounded-xl transition-all ${
                   timeRange === '3m' 
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold' 
-                    : 'bg-[#152233] border border-[#2C4A6B] text-[#F0F4F8] hover:bg-[#1f344c]'
+                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
+                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
                 }`}
               >
                 3 meses
@@ -329,8 +329,8 @@ const ReportDashboardPsychologist = () => {
                 onClick={() => setTimeRange('6m')}
                 className={`px-4 py-2 rounded-xl transition-all ${
                   timeRange === '6m' 
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold' 
-                    : 'bg-[#152233] border border-[#2C4A6B] text-[#F0F4F8] hover:bg-[#1f344c]'
+                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
+                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
                 }`}
               >
                 6 meses
@@ -339,8 +339,8 @@ const ReportDashboardPsychologist = () => {
                 onClick={() => setTimeRange('1y')}
                 className={`px-4 py-2 rounded-xl transition-all ${
                   timeRange === '1y' 
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold' 
-                    : 'bg-[#152233] border border-[#2C4A6B] text-[#F0F4F8] hover:bg-[#1f344c]'
+                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
+                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
                 }`}
               >
                 1 año
@@ -351,52 +351,52 @@ const ReportDashboardPsychologist = () => {
         
         {/* Estadísticas resumidas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaUsers className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
+                <FaUsers className="h-6 w-6 text-[#bec5a4]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Pacientes atendidos</h3>
-                <p className="text-2xl font-bold text-[#F0F4F8] mt-1">{summaryData.totalPatients}</p>
+                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Pacientes atendidos</h3>
+                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">{summaryData.totalPatients}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaFileMedical className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
+                <FaFileMedical className="h-6 w-6 text-[#bec5a4]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Sesiones realizadas</h3>
-                <p className="text-2xl font-bold text-[#F0F4F8] mt-1">{summaryData.totalSessions}</p>
+                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Sesiones realizadas</h3>
+                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">{summaryData.totalSessions}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaHeartbeat className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
+                <FaHeartbeat className="h-6 w-6 text-[#bec5a4]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Satisfacción</h3>
-                <p className="text-2xl font-bold text-[#F0F4F8] mt-1">
+                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Satisfacción</h3>
+                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">
                   {summaryData.satisfactionRate.toFixed(1)}%
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaUserFriends className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
+                <FaUserFriends className="h-6 w-6 text-[#bec5a4]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Beneficiarios</h3>
-                <p className="text-2xl font-bold text-[#F0F4F8] mt-1">
+                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Beneficiarios</h3>
+                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">
                   {summaryData.beneficiaryRatio.toFixed(1)}%
                 </p>
               </div>
@@ -407,10 +407,10 @@ const ReportDashboardPsychologist = () => {
         {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Evolución de pacientes */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
             <div className="flex items-center mb-4">
-              <FaChartLine className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Evolución Mensual de Pacientes</h3>
+              <FaChartLine className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Evolución Mensual de Pacientes</h3>
             </div>
             <div className="h-80">
               <Line 
@@ -430,10 +430,10 @@ const ReportDashboardPsychologist = () => {
           </div>
           
           {/* Tipos de terapia */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
             <div className="flex items-center mb-4">
-              <FaUserFriends className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Distribución de Tipos de Terapia</h3>
+              <FaUserFriends className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución de Tipos de Terapia</h3>
             </div>
             <div className="h-80">
               <Pie 
@@ -453,10 +453,10 @@ const ReportDashboardPsychologist = () => {
           </div>
           
           {/* Diagnósticos principales */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
             <div className="flex items-center mb-4">
-              <FaBrain className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Diagnósticos Más Frecuentes</h3>
+              <FaBrain className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Diagnósticos Más Frecuentes</h3>
             </div>
             <div className="h-80">
               <Bar 
@@ -476,10 +476,10 @@ const ReportDashboardPsychologist = () => {
           </div>
           
           {/* Distribución por género */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
             <div className="flex items-center mb-4">
-              <FaVenusMars className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Distribución por Género</h3>
+              <FaVenusMars className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución por Género</h3>
             </div>
             <div className="h-80">
               <Pie 
@@ -499,10 +499,10 @@ const ReportDashboardPsychologist = () => {
           </div>
           
           {/* Distribución por edad */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
             <div className="flex items-center mb-4">
-              <FaCalendarAlt className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Distribución por Edad</h3>
+              <FaCalendarAlt className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución por Edad</h3>
             </div>
             <div className="h-80">
               <Bar 
@@ -522,23 +522,23 @@ const ReportDashboardPsychologist = () => {
           </div>
           
           {/* Tasa de satisfacción */}
-          <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] p-6 flex flex-col justify-center">
+          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6 flex flex-col justify-center">
             <div className="flex items-center mb-4">
-              <FaHeartbeat className="text-[#D4AF37] mr-3" />
-              <h3 className="text-xl font-bold text-[#F0F4F8]">Satisfacción de Pacientes</h3>
+              <FaHeartbeat className="text-[#bec5a4] mr-3" />
+              <h3 className="text-xl font-bold text-[#3a3a3a]">Satisfacción de Pacientes</h3>
             </div>
             <div className="text-center">
-              <div className="radial-progress text-[#D4AF37]" 
+              <div className="radial-progress text-[#bec5a4]" 
                 style={{ 
                   '--value': summaryData.satisfactionRate, 
                   '--size': '12rem',
                   '--thickness': '1rem'
                 } as React.CSSProperties}>
-                <span className="text-3xl font-bold text-[#F0F4F8]">
+                <span className="text-3xl font-bold text-[#3a3a3a]">
                   {summaryData.satisfactionRate.toFixed(1)}%
                 </span>
               </div>
-              <p className="text-[#A3B8CC] mt-4 max-w-md mx-auto">
+              <p className="text-[#666666] mt-4 max-w-md mx-auto">
                 Nuestros pacientes reportan altos niveles de satisfacción con la atención recibida.
               </p>
             </div>
@@ -546,51 +546,51 @@ const ReportDashboardPsychologist = () => {
         </div>
         
         {/* Resumen de impacto */}
-        <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-8 mb-8">
-          <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0E68C] mb-6">
+        <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-8 mb-8">
+          <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c] mb-6">
             Impacto Transformador en la Salud Mental
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-[#152233] rounded-xl border border-[#2C4A6B]">
-              <div className="text-5xl font-bold text-[#D4AF37] mb-3">+87%</div>
-              <p className="text-[#F0F4F8] font-medium mb-2">Mejora en calidad de vida</p>
-              <p className="text-[#A3B8CC]">Pacientes reportan mejoras significativas en su bienestar emocional después de 3 meses de terapia</p>
+            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
+              <div className="text-5xl font-bold text-[#bec5a4] mb-3">+87%</div>
+              <p className="text-[#3a3a3a] font-medium mb-2">Mejora en calidad de vida</p>
+              <p className="text-[#666666]">Pacientes reportan mejoras significativas en su bienestar emocional después de 3 meses de terapia</p>
             </div>
             
-            <div className="p-6 bg-[#152233] rounded-xl border border-[#2C4A6B]">
-              <div className="text-5xl font-bold text-[#D4AF37] mb-3">92%</div>
-              <p className="text-[#F0F4F8] font-medium mb-2">Reducción de síntomas</p>
-              <p className="text-[#A3B8CC]">Efectividad en la reducción de síntomas de ansiedad y depresión según escalas validadas</p>
+            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
+              <div className="text-5xl font-bold text-[#bec5a4] mb-3">92%</div>
+              <p className="text-[#3a3a3a] font-medium mb-2">Reducción de síntomas</p>
+              <p className="text-[#666666]">Efectividad en la reducción de síntomas de ansiedad y depresión según escalas validadas</p>
             </div>
             
-            <div className="p-6 bg-[#152233] rounded-xl border border-[#2C4A6B]">
-              <div className="text-5xl font-bold text-[#D4AF37] mb-3">15+</div>
-              <p className="text-[#F0F4F8] font-medium mb-2">Vidas transformadas</p>
-              <p className="text-[#A3B8CC]">Historias de éxito y superación gracias a nuestro enfoque especializado en salud mental</p>
+            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
+              <div className="text-5xl font-bold text-[#bec5a4] mb-3">15+</div>
+              <p className="text-[#3a3a3a] font-medium mb-2">Vidas transformadas</p>
+              <p className="text-[#666666]">Historias de éxito y superación gracias a nuestro enfoque especializado en salud mental</p>
             </div>
           </div>
         </div>
         
         {/* Pie de página premium */}
-        <div className="mt-12 text-center py-8 border-t border-[#2C4A6B]/30">
+        <div className="mt-12 text-center py-8 border-t border-[#bec5a4]/30">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#0d1e30]" viewBox="0 0 20 20" fill="currentColor">
+            <div className="w-10 h-10 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0E68C]">
+            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
               Mentalmente
             </h3>
           </div>
-          <p className="text-[#A3B8CC] max-w-2xl mx-auto">
-            Transformando la atención psicológica a nivel altos con estándares de calidad y ética.
+          <p className="text-[#666666] max-w-2xl mx-auto">
+            Transformando la atención psicológica a nivel mundial con estándares de calidad y ética.
           </p>
         </div>
       </div>
       
-      {/* Estilos para radial progress (necesario para el gráfico de satisfacción) */}
+      {/* Estilos para radial progress */}
       <style jsx>{`
         .radial-progress {
           --value: 0;
@@ -602,8 +602,8 @@ const ReportDashboardPsychologist = () => {
           height: var(--size);
           border-radius: 50%;
           background: 
-            radial-gradient(closest-side, #1A2B40 80%, transparent 81% 100%),
-            conic-gradient(#D4AF37 calc(var(--value) * 1%), #2C4A6B 0);
+            radial-gradient(closest-side, white 80%, transparent 81% 100%),
+            conic-gradient(#bec5a4 calc(var(--value) * 1%), #e0e0e0 0);
         }
       `}</style>
     </div>
