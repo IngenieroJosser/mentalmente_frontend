@@ -119,9 +119,14 @@ const ReportDashboardPsychologist = () => {
             label: 'Pacientes atendidos',
             data: reportData.map(r => r.patients),
             borderColor: '#bec5a4',
-            backgroundColor: 'rgba(190, 197, 164, 0.2)',
+            backgroundColor: 'rgba(190, 197, 164, 0.1)',
             tension: 0.3,
-            fill: true
+            fill: true,
+            pointBackgroundColor: '#bec5a4',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
           }
         ]
       },
@@ -143,12 +148,12 @@ const ReportDashboardPsychologist = () => {
               'rgba(120, 130, 100, 0.8)'
             ],
             borderColor: [
-              '#bec5a4',
-              '#a0aa8c',
-              '#8c9678',
-              '#788264'
+              '#ffffff',
+              '#ffffff',
+              '#ffffff',
+              '#ffffff'
             ],
-            borderWidth: 1,
+            borderWidth: 2,
           }
         ]
       },
@@ -165,20 +170,20 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].diagnoses.other
             ] : [0, 0, 0, 0, 0],
             backgroundColor: [
-              'rgba(190, 197, 164, 0.6)',
-              'rgba(160, 170, 140, 0.6)',
-              'rgba(140, 150, 120, 0.6)',
-              'rgba(120, 130, 100, 0.6)',
-              'rgba(100, 110, 90, 0.6)'
+              'rgba(190, 197, 164, 0.8)',
+              'rgba(160, 170, 140, 0.8)',
+              'rgba(140, 150, 120, 0.8)',
+              'rgba(120, 130, 100, 0.8)',
+              'rgba(100, 110, 90, 0.8)'
             ],
             borderColor: [
-              '#bec5a4',
-              '#a0aa8c',
-              '#8c9678',
-              '#788264',
-              '#647052'
+              '#ffffff',
+              '#ffffff',
+              '#ffffff',
+              '#ffffff',
+              '#ffffff'
             ],
-            borderWidth: 1,
+            borderWidth: 2,
           }
         ]
       },
@@ -197,11 +202,11 @@ const ReportDashboardPsychologist = () => {
               'rgba(120, 130, 100, 0.8)'
             ],
             borderColor: [
-              '#a0aa8c',
-              '#bec5a4',
-              '#788264'
+              '#ffffff',
+              '#ffffff',
+              '#ffffff'
             ],
-            borderWidth: 1,
+            borderWidth: 2,
           }
         ]
       },
@@ -218,8 +223,8 @@ const ReportDashboardPsychologist = () => {
               reportData[reportData.length - 1].ageGroups['61+']
             ] : [0, 0, 0, 0, 0],
             backgroundColor: 'rgba(190, 197, 164, 0.8)',
-            borderColor: '#bec5a4',
-            borderWidth: 1,
+            borderColor: '#ffffff',
+            borderWidth: 2,
           }
         ]
       }
@@ -235,29 +240,58 @@ const ReportDashboardPsychologist = () => {
       legend: {
         position: 'top' as const,
         labels: {
-          color: '#3a3a3a'
+          color: '#4a5568',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 12,
+          }
         }
       },
       title: {
         display: true,
-        color: '#3a3a3a'
+        color: '#2d3748',
+        font: {
+          family: 'Inter, sans-serif',
+          size: 14,
+          weight: 500 as 500,
+        },
+        padding: {
+          bottom: 20,
+        }
       },
+      tooltip: {
+        backgroundColor: '#ffffff',
+        titleColor: '#2d3748',
+        bodyColor: '#4a5568',
+        borderColor: '#e2e8f0',
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 6,
+      }
     },
     scales: {
       x: {
         ticks: {
-          color: '#666666'
+          color: '#718096',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 11,
+          }
         },
         grid: {
-          color: 'rgba(102, 102, 102, 0.1)'
+          color: 'rgba(0, 0, 0, 0.05)',
         }
       },
       y: {
         ticks: {
-          color: '#666666'
+          color: '#718096',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 11,
+          }
         },
         grid: {
-          color: 'rgba(102, 102, 102, 0.1)'
+          color: 'rgba(0, 0, 0, 0.05)',
         }
       }
     }
@@ -265,11 +299,16 @@ const ReportDashboardPsychologist = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-6"></div>
+      <div className="min-h-screen bg-gradient-to-br from-[#fafafa] to-[#f0f0f0] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-light text-[#3a3a3a] mb-2">Generando reportes</h2>
-          <p className="text-[#666666]">Analizando los datos para transformar vidas...</p>
+          <div className="relative inline-block">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#bec5a4] border-t-transparent"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-8 w-8 bg-[#bec5a4] rounded-full opacity-20 animate-pulse"></div>
+            </div>
+          </div>
+          <h2 className="mt-4 text-xl font-light text-[#2d3748]">Generando reportes</h2>
+          <p className="text-sm text-[#718096]">Analizando los datos para transformar vidas...</p>
         </div>
       </div>
     );
@@ -277,129 +316,112 @@ const ReportDashboardPsychologist = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl border border-[#bec5a4] shadow-xl p-8">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-[#bec5a4] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+      <div className="min-h-screen bg-gradient-to-br from-[#fafafa] to-[#f0f0f0] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-[#bec5a4]/20">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-[#bec5a4] to-[#aab38c] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#3a3a3a]">Error de conexión</h2>
-            <p className="text-[#666666] mt-2">{error}</p>
+            <h2 className="text-xl font-semibold text-[#2d3748] mb-2">Error de conexión</h2>
+            <p className="text-[#718096] mb-6">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all shadow-md shadow-[#bec5a4]/30"
+            >
+              Reintentar
+            </button>
           </div>
-          <button 
-            onClick={() => window.location.reload()}
-            className="w-full py-3 px-4 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#bec5a4]/20"
-          >
-            Reintentar
-          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#fafafa] to-[#f0f0f0] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Encabezado premium */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-white rounded-2xl border border-[#bec5a4] shadow-xl">
+        {/* Encabezado */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
-              Panel de Reportes Clínicos
+            <h1 className="text-3xl md:text-4xl font-serif text-[#2d3748] tracking-tight">
+              Reportes Clínicos
             </h1>
-            <p className="text-[#666666] mt-2 max-w-2xl">
-              Estadísticas avanzadas para medir nuestro impacto en la transformación de vidas a través del cuidado especializado de la salud mental.
+            <p className="text-[#718096] mt-2 max-w-2xl">
+              Estadísticas avanzadas para medir nuestro impacto en la transformación de vidas.
             </p>
           </div>
           
-          <div className="mt-6 md:mt-0 flex items-center space-x-4">
-            <div className="flex space-x-2">
-              <button 
-                onClick={() => setTimeRange('3m')}
-                className={`px-4 py-2 rounded-xl transition-all ${
-                  timeRange === '3m' 
-                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
-                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
-                }`}
-              >
-                3 meses
-              </button>
-              <button 
-                onClick={() => setTimeRange('6m')}
-                className={`px-4 py-2 rounded-xl transition-all ${
-                  timeRange === '6m' 
-                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
-                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
-                }`}
-              >
-                6 meses
-              </button>
-              <button 
-                onClick={() => setTimeRange('1y')}
-                className={`px-4 py-2 rounded-xl transition-all ${
-                  timeRange === '1y' 
-                    ? 'bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold' 
-                    : 'bg-[#f2f2f2] border border-[#bec5a4] text-[#3a3a3a] hover:bg-[#e8e8e8]'
-                }`}
-              >
-                1 año
-              </button>
-            </div>
+          <div className="mt-4 md:mt-0 flex items-center space-x-2 bg-white p-1 rounded-xl shadow-sm border border-[#bec5a4]/20">
+            <button 
+              onClick={() => setTimeRange('3m')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                timeRange === '3m' 
+                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+                  : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
+              }`}
+            >
+              3 meses
+            </button>
+            <button 
+              onClick={() => setTimeRange('6m')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                timeRange === '6m' 
+                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+                  : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
+              }`}
+            >
+              6 meses
+            </button>
+            <button 
+              onClick={() => setTimeRange('1y')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                timeRange === '1y' 
+                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+                  : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
+              }`}
+            >
+              1 año
+            </button>
           </div>
         </div>
         
-        {/* Estadísticas resumidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <FaUsers className="h-6 w-6 text-[#bec5a4]" />
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Pacientes atendidos</h3>
-                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">{summaryData.totalPatients}</p>
-              </div>
+        {/* Tarjetas de estadísticas resumidas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-5 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaUsers className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#a0aec0]">Pacientes atendidos</div>
+              <div className="text-2xl font-light text-[#2d3748]">{summaryData.totalPatients}</div>
             </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <FaFileMedical className="h-6 w-6 text-[#bec5a4]" />
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Sesiones realizadas</h3>
-                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">{summaryData.totalSessions}</p>
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-5 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaFileMedical className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#a0aec0]">Sesiones realizadas</div>
+              <div className="text-2xl font-light text-[#2d3748]">{summaryData.totalSessions}</div>
             </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <FaHeartbeat className="h-6 w-6 text-[#bec5a4]" />
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Satisfacción</h3>
-                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">
-                  {summaryData.satisfactionRate.toFixed(1)}%
-                </p>
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-5 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaHeartbeat className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#a0aec0]">Satisfacción</div>
+              <div className="text-2xl font-light text-[#2d3748]">{summaryData.satisfactionRate.toFixed(1)}%</div>
             </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <FaUserFriends className="h-6 w-6 text-[#bec5a4]" />
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Beneficiarios</h3>
-                <p className="text-2xl font-bold text-[#3a3a3a] mt-1">
-                  {summaryData.beneficiaryRatio.toFixed(1)}%
-                </p>
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-5 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaUserFriends className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#a0aec0]">Beneficiarios</div>
+              <div className="text-2xl font-light text-[#2d3748]">{summaryData.beneficiaryRatio.toFixed(1)}%</div>
             </div>
           </div>
         </div>
@@ -407,190 +429,157 @@ const ReportDashboardPsychologist = () => {
         {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Evolución de pacientes */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
-              <FaChartLine className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Evolución Mensual de Pacientes</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaChartLine className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Evolución Mensual de Pacientes</h3>
             </div>
-            <div className="h-80">
-              <Line 
-                data={chartData.patientsData}
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    title: {
-                      ...chartOptions.plugins.title,
-                      text: 'Crecimiento en la atención psicológica'
-                    }
+            <div className="h-72">
+              <Line data={chartData.patientsData} options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  title: {
+                    ...chartOptions.plugins.title,
+                    text: 'Crecimiento en la atención psicológica'
                   }
-                }}
-              />
+                }
+              }} />
             </div>
           </div>
           
           {/* Tipos de terapia */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
-              <FaUserFriends className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución de Tipos de Terapia</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaUserFriends className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Tipos de Terapia</h3>
             </div>
-            <div className="h-80">
-              <Pie 
-                data={chartData.therapyTypeData}
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    title: {
-                      ...chartOptions.plugins.title,
-                      text: 'Modalidades de atención psicológica'
-                    }
+            <div className="h-72">
+              <Pie data={chartData.therapyTypeData} options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  title: {
+                    ...chartOptions.plugins.title,
+                    text: 'Modalidades de atención'
                   }
-                }}
-              />
+                }
+              }} />
             </div>
           </div>
           
           {/* Diagnósticos principales */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
-              <FaBrain className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Diagnósticos Más Frecuentes</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaBrain className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Diagnósticos Frecuentes</h3>
             </div>
-            <div className="h-80">
-              <Bar 
-                data={chartData.diagnosisData}
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    title: {
-                      ...chartOptions.plugins.title,
-                      text: 'Principales condiciones atendidas'
-                    }
+            <div className="h-72">
+              <Bar data={chartData.diagnosisData} options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  title: {
+                    ...chartOptions.plugins.title,
+                    text: 'Principales condiciones atendidas'
                   }
-                }}
-              />
+                }
+              }} />
             </div>
           </div>
           
           {/* Distribución por género */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
-              <FaVenusMars className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución por Género</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaVenusMars className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Distribución por Género</h3>
             </div>
-            <div className="h-80">
-              <Pie 
-                data={chartData.genderData}
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    title: {
-                      ...chartOptions.plugins.title,
-                      text: 'Diversidad en la atención psicológica'
-                    }
+            <div className="h-72">
+              <Pie data={chartData.genderData} options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  title: {
+                    ...chartOptions.plugins.title,
+                    text: 'Diversidad en la atención'
                   }
-                }}
-              />
+                }
+              }} />
             </div>
           </div>
           
           {/* Distribución por edad */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
-              <FaCalendarAlt className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Distribución por Edad</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaCalendarAlt className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Rangos de Edad</h3>
             </div>
-            <div className="h-80">
-              <Bar 
-                data={chartData.ageData}
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    title: {
-                      ...chartOptions.plugins.title,
-                      text: 'Rangos de edad de nuestros pacientes'
-                    }
+            <div className="h-72">
+              <Bar data={chartData.ageData} options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  title: {
+                    ...chartOptions.plugins.title,
+                    text: 'Pacientes por grupo etario'
                   }
-                }}
-              />
+                }
+              }} />
             </div>
           </div>
           
           {/* Tasa de satisfacción */}
-          <div className="bg-white rounded-2xl border border-[#bec5a4] p-6 flex flex-col justify-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6 flex flex-col justify-center">
             <div className="flex items-center mb-4">
-              <FaHeartbeat className="text-[#bec5a4] mr-3" />
-              <h3 className="text-xl font-bold text-[#3a3a3a]">Satisfacción de Pacientes</h3>
+              <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-lg flex items-center justify-center mr-3">
+                <FaHeartbeat className="text-[#bec5a4]" />
+              </div>
+              <h3 className="text-lg font-medium text-[#2d3748]">Satisfacción de Pacientes</h3>
             </div>
             <div className="text-center">
-              <div className="radial-progress text-[#bec5a4]" 
+              <div className="radial-progress text-[#bec5a4] mx-auto" 
                 style={{ 
                   '--value': summaryData.satisfactionRate, 
-                  '--size': '12rem',
-                  '--thickness': '1rem'
+                  '--size': '10rem',
+                  '--thickness': '0.8rem'
                 } as React.CSSProperties}>
-                <span className="text-3xl font-bold text-[#3a3a3a]">
+                <span className="text-2xl font-light text-[#2d3748]">
                   {summaryData.satisfactionRate.toFixed(1)}%
                 </span>
               </div>
-              <p className="text-[#666666] mt-4 max-w-md mx-auto">
+              <p className="text-sm text-[#718096] mt-4 max-w-xs mx-auto">
                 Nuestros pacientes reportan altos niveles de satisfacción con la atención recibida.
               </p>
             </div>
           </div>
         </div>
         
-        {/* Resumen de impacto */}
-        <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-8 mb-8">
-          <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c] mb-6">
-            Impacto Transformador en la Salud Mental
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
-              <div className="text-5xl font-bold text-[#bec5a4] mb-3">+87%</div>
-              <p className="text-[#3a3a3a] font-medium mb-2">Mejora en calidad de vida</p>
-              <p className="text-[#666666]">Pacientes reportan mejoras significativas en su bienestar emocional después de 3 meses de terapia</p>
-            </div>
-            
-            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
-              <div className="text-5xl font-bold text-[#bec5a4] mb-3">92%</div>
-              <p className="text-[#3a3a3a] font-medium mb-2">Reducción de síntomas</p>
-              <p className="text-[#666666]">Efectividad en la reducción de síntomas de ansiedad y depresión según escalas validadas</p>
-            </div>
-            
-            <div className="p-6 bg-[#f2f2f2] rounded-xl border border-[#bec5a4]">
-              <div className="text-5xl font-bold text-[#bec5a4] mb-3">15+</div>
-              <p className="text-[#3a3a3a] font-medium mb-2">Vidas transformadas</p>
-              <p className="text-[#666666]">Historias de éxito y superación gracias a nuestro enfoque especializado en salud mental</p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Pie de página premium */}
-        <div className="mt-12 text-center py-8 border-t border-[#bec5a4]/30">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
+        {/* Footer */}
+        <div className="text-center py-6 border-t border-[#bec5a4]/20">
+          <div className="flex items-center justify-center mb-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4] to-[#aab38c] rounded-lg flex items-center justify-center mr-2 shadow-sm">
+              <svg className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
-              Mentalmente
-            </h3>
+            <span className="text-lg font-serif text-[#2d3748]">SanaTú Guingar</span>
           </div>
-          <p className="text-[#666666] max-w-2xl mx-auto">
-            Transformando la atención psicológica a nivel mundial con estándares de calidad y ética.
-          </p>
+          <p className="text-xs text-[#a0aec0]">Transformando la atención psicológica con estándares de calidad y ética.</p>
+          <p className="text-xs text-[#a0aec0] mt-1">© {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.</p>
         </div>
       </div>
       
-      {/* Estilos para radial progress */}
+      {/* Estilos para el radial progress */}
       <style jsx>{`
         .radial-progress {
           --value: 0;
@@ -603,7 +592,7 @@ const ReportDashboardPsychologist = () => {
           border-radius: 50%;
           background: 
             radial-gradient(closest-side, white 80%, transparent 81% 100%),
-            conic-gradient(#bec5a4 calc(var(--value) * 1%), #e0e0e0 0);
+            conic-gradient(#bec5a4 calc(var(--value) * 1%), #eaeef2 0);
         }
       `}</style>
     </div>

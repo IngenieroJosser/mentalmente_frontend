@@ -10,6 +10,7 @@ import { isSameMonth } from 'date-fns/isSameMonth';
 import { isSameDay } from 'date-fns/isSameDay';
 import { useAuth } from '@/context/AuthContext';
 import { MedicalRecordEvent } from '@/lib/type';
+import { FaCalendarAlt, FaUsers, FaUserMd, FaChartLine } from 'react-icons/fa';
 
 const CalendarDashboardPsychologist = () => {
   const { user } = useAuth();
@@ -101,11 +102,16 @@ const CalendarDashboardPsychologist = () => {
   
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-6"></div>
-        <div className="text-center">
-          <h2 className="text-2xl font-light text-[#3a3a3a] mb-2">Cargando calendario</h2>
-          <p className="text-[#666666]">Obteniendo los registros clínicos...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#fafafa] to-[#f0f0f0] p-4">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#bec5a4]"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-10 w-10 bg-[#bec5a4] rounded-full opacity-20 animate-pulse"></div>
+          </div>
+        </div>
+        <div className="text-center mt-8">
+          <h2 className="text-2xl font-light text-[#2c3e50] mb-2">Cargando calendario</h2>
+          <p className="text-[#7f8c8d]">Preparando vista de citas y registros...</p>
         </div>
       </div>
     );
@@ -113,20 +119,20 @@ const CalendarDashboardPsychologist = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl border border-[#bec5a4] shadow-xl p-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fafafa] to-[#f0f0f0] p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-[#bec5a4]/20">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-[#bec5a4] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#bec5a4] to-[#aab38c] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#3a3a3a]">Error de conexión</h2>
-            <p className="text-[#666666] mt-2">{error}</p>
+            <h2 className="text-2xl font-bold text-[#2c3e50]">Error de conexión</h2>
+            <p className="text-[#7f8c8d] mt-2">{error}</p>
           </div>
           <button 
             onClick={fetchMedicalRecords}
-            className="w-full py-3 px-4 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-bold rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#bec5a4]/20"
+            className="w-full py-3 px-4 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-medium rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#bec5a4]/20"
           >
             Reintentar
           </button>
@@ -136,79 +142,85 @@ const CalendarDashboardPsychologist = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#e0e0e0] p-4 md:p-8">
-      {/* Encabezado premium */}
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-white rounded-2xl border border-[#bec5a4] shadow-xl">
+    <div className="min-h-screen bg-[#fafafa]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Encabezado */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
-              Calendario de Historias Clínicas
+            <h1 className="text-3xl md:text-4xl font-serif font-light text-[#2c3e50] tracking-tight">
+              Calendario Clínico
             </h1>
-            <p className="text-[#666666] mt-2 max-w-2xl">
-              Visualización avanzada de pacientes con tecnología Mentalmente. 
-              Cada día muestra los pacientes atendidos con historias clínicas completadas.
+            <p className="text-[#7f8c8d] mt-2 max-w-2xl text-sm">
+              Visualiza tus sesiones y pacientes por día. Cada día muestra los pacientes atendidos con historias clínicas completadas.
             </p>
           </div>
-          
-          <div className="mt-6 md:mt-0 flex items-center space-x-6">
-            <div className="flex items-center">
-              <div className="w-5 h-5 bg-[#bec5a4] rounded-full mr-2 shadow-sm shadow-[#bec5a4]/50"></div>
-              <span className="text-[#3a3a3a] text-sm">Paciente</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-5 h-5 bg-[#e0e0e0] rounded-full mr-2 border-2 border-[#bec5a4]"></div>
-              <span className="text-[#3a3a3a] text-sm">Hoy</span>
+          <div className="mt-4 md:mt-0 flex items-center space-x-4">
+            <div className="bg-white rounded-2xl px-6 py-3 shadow-sm border border-[#bec5a4]/20">
+              <div className="text-xs uppercase tracking-wider text-[#7f8c8d]">Total registros</div>
+              <div className="text-3xl font-light text-[#2c3e50]">{events.length}</div>
             </div>
           </div>
         </div>
-        
-        {/* Panel principal */}
-        <div className="bg-white rounded-2xl border border-[#bec5a4] shadow-2xl overflow-hidden">
+
+        {/* Panel principal del calendario */}
+        <div className="bg-white rounded-3xl shadow-xl border border-[#bec5a4]/20 overflow-hidden mb-8">
           {/* Controles del calendario */}
-          <div className="flex items-center justify-between p-6 bg-gradient-to-r from-[#f2f2f2] to-[#e8e8e8]">
+          <div className="flex items-center justify-between p-6 bg-gradient-to-r from-[#f9f9f9] to-[#f5f5f5] border-b border-[#bec5a4]/20">
             <button 
               onClick={goToPreviousMonth}
-              className="flex items-center text-[#3a3a3a] hover:text-[#bec5a4] transition-colors group"
+              className="flex items-center text-[#2c3e50] hover:text-[#bec5a4] transition-colors group"
             >
-              <div className="w-10 h-10 flex items-center justify-center bg-white rounded-full mr-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#bec5a4]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl mr-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#e0e0e0] group-hover:border-[#bec5a4] shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </div>
-              <span className="font-medium">Mes anterior</span>
+              <span className="font-medium hidden sm:inline">Mes anterior</span>
             </button>
             
-            <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
+            <h2 className="text-2xl md:text-3xl font-serif text-[#2c3e50]">
               {capitalizedMonthTitle}
             </h2>
             
             <button 
               onClick={goToNextMonth}
-              className="flex items-center text-[#3a3a3a] hover:text-[#bec5a4] transition-colors group"
+              className="flex items-center text-[#2c3e50] hover:text-[#bec5a4] transition-colors group"
             >
-              <span className="font-medium">Siguiente mes</span>
-              <div className="w-10 h-10 flex items-center justify-center bg-white rounded-full ml-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#bec5a4]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="font-medium hidden sm:inline">Siguiente mes</span>
+              <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl ml-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#e0e0e0] group-hover:border-[#bec5a4] shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
             </button>
           </div>
-          
+
+          {/* Leyenda */}
+          <div className="px-6 pt-4 flex items-center space-x-6 text-sm">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-[#bec5a4] rounded-full mr-2"></div>
+              <span className="text-[#2c3e50]">Día con pacientes</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-[#e0e0e0] rounded-full mr-2 border border-[#bec5a4]"></div>
+              <span className="text-[#2c3e50]">Hoy</span>
+            </div>
+          </div>
+
           {/* Encabezados de días */}
-          <div className="grid grid-cols-7 gap-1 px-4 pt-4">
+          <div className="grid grid-cols-7 gap-1 px-6 pt-4">
             {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(day => (
               <div 
                 key={day} 
-                className="p-3 text-center font-bold text-[#bec5a4] bg-[#f2f2f2] rounded-lg border border-[#bec5a4]"
+                className="py-2 text-center text-sm font-medium text-[#bec5a4] bg-[#f9f9f9] rounded-lg border border-[#bec5a4]/30"
               >
                 {day}
               </div>
             ))}
           </div>
-          
+
           {/* Días del calendario */}
-          <div className="grid grid-cols-7 gap-1 p-4">
+          <div className="grid grid-cols-7 gap-1 p-6">
             {generateCalendarDays().map((day, index) => {
               const isCurrentMonth = isSameMonth(day, currentDate);
               const isToday = isSameDay(day, new Date());
@@ -217,26 +229,26 @@ const CalendarDashboardPsychologist = () => {
               return (
                 <div 
                   key={index}
-                  className={`min-h-32 p-3 rounded-xl flex flex-col transition-all duration-300
+                  className={`min-h-24 p-2 rounded-xl flex flex-col transition-all duration-200
                     ${isCurrentMonth 
-                      ? 'bg-white border border-[#bec5a4] hover:border-[#bec5a4] hover:bg-[#f2f2f2] hover:shadow-lg hover:shadow-[#bec5a4]/10' 
-                      : 'bg-[#f2f2f2] border border-[#d0d0d0] text-[#999999]'} 
-                    ${isToday ? 'bg-gradient-to-br from-white to-[#f2f2f2] border-2 border-[#bec5a4] shadow-lg shadow-[#bec5a4]/20' : ''}`}
+                      ? 'bg-white border border-[#e0e0e0] hover:border-[#bec5a4] hover:shadow-md' 
+                      : 'bg-[#f9f9f9] border border-[#eaeaea] text-[#b0b0b0]'} 
+                    ${isToday ? 'border-2 border-[#bec5a4] shadow-sm' : ''}`}
                 >
-                  <div className={`text-right font-bold text-lg ${isToday ? 'text-[#bec5a4]' : 'text-[#3a3a3a]'}`}>
+                  <div className={`text-right text-sm font-medium ${isToday ? 'text-[#bec5a4]' : isCurrentMonth ? 'text-[#2c3e50]' : 'text-[#b0b0b0]'}`}>
                     {format(day, 'd')}
                   </div>
                   
-                  <div className="mt-2 flex-grow overflow-y-auto max-h-28 custom-scrollbar">
+                  <div className="mt-1 flex-grow overflow-y-auto max-h-16 custom-scrollbar">
                     {dayEvents.map(event => (
                       <div 
                         key={event.id} 
-                        className="text-xs p-2 mb-2 rounded-lg bg-gradient-to-r from-[#e0e0e0] to-[#d0d0d0] text-[#3a3a3a] truncate hover:from-[#bec5a4] hover:to-[#aab38c] hover:text-white transition-all duration-300 transform hover:scale-[1.02] group"
+                        className="text-xs p-1 mb-1 rounded-md bg-[#f2f2f2] text-[#2c3e50] truncate hover:bg-[#bec5a4] hover:text-white transition-colors cursor-default"
                         title={event.patientName}
                       >
                         <div className="flex items-center">
-                          <div className="w-2 h-2 bg-[#bec5a4] rounded-full mr-2 group-hover:bg-white transition-colors"></div>
-                          <span className="font-medium">{event.patientName}</span>
+                          <div className="w-1.5 h-1.5 bg-[#bec5a4] rounded-full mr-1 flex-shrink-0"></div>
+                          <span className="truncate">{event.patientName}</span>
                         </div>
                       </div>
                     ))}
@@ -246,81 +258,65 @@ const CalendarDashboardPsychologist = () => {
             })}
           </div>
         </div>
-        
-        {/* Estadísticas premium */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#bec5a4]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Total de registros</h3>
-                <p className="text-3xl font-bold text-[#3a3a3a] mt-1">{events.length}</p>
+
+        {/* Estadísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaCalendarAlt className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Total registros</div>
+              <div className="text-2xl font-light text-[#2c3e50]">{events.length}</div>
+            </div>
+          </div>
+          <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaUsers className="text-xl text-[#bec5a4]" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Pacientes únicos</div>
+              <div className="text-2xl font-light text-[#2c3e50]">
+                {new Set(events.map(e => e.patientName)).size}
               </div>
             </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#bec5a4]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Pacientes únicos</h3>
-                <p className="text-3xl font-bold text-[#3a3a3a] mt-1">
-                  {new Set(events.map(e => e.patientName)).size}
-                </p>
-              </div>
+          <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-xl flex items-center justify-center mr-4">
+              <FaChartLine className="text-xl text-[#bec5a4]" />
             </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-white to-[#f2f2f2] rounded-2xl border border-[#bec5a4] p-6 shadow-xl">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 border border-[#bec5a4]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#bec5a4]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-[#666666] text-sm uppercase tracking-wider">Registros hoy</h3>
-                <p className="text-3xl font-bold text-[#3a3a3a] mt-1">
-                  {getEventsForDate(new Date()).length}
-                </p>
+            <div>
+              <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Registros hoy</div>
+              <div className="text-2xl font-light text-[#2c3e50]">
+                {getEventsForDate(new Date()).length}
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Pie de página premium */}
-        <div className="mt-10 text-center py-6 border-t border-[#bec5a4]/30">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+
+        {/* Footer */}
+        <div className="mt-16 text-center">
+          <div className="flex items-center justify-center mb-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#bec5a4] to-[#aab38c] rounded-lg flex items-center justify-center mr-2 shadow-md">
+              <svg className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#aab38c]">
-              Mentalmente - Transformando la atención psicológica.
-            </h3>
+            <h3 className="text-lg font-serif text-[#2c3e50]">Mentalmente</h3>
           </div>
-          <p className="text-[#666666] max-w-2xl mx-auto">
-            Plataforma de gestión clínica premium para profesionales de la salud mental. 
+          <p className="text-xs text-[#95a5a6] max-w-2xl mx-auto">
+            Plataforma de gestión clínica premium para profesionales de la salud mental.
           </p>
         </div>
       </div>
-      
-      {/* Estilos personalizados para la barra de desplazamiento */}
+
+      {/* Estilos personalizados para scrollbar */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f2f2f2;
+          background: #f0f0f0;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
