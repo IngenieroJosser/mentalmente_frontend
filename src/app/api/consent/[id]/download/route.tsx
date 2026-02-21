@@ -1,3 +1,6 @@
+export const runtime = 'nodejs';
+
+import React from 'react';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { renderToBuffer } from '@react-pdf/renderer';
@@ -8,9 +11,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const consentId = parseInt(params.id);
-    if (isNaN(consentId)) {
-      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    const consentId = Number(params.id);
+
+    if (!consentId || isNaN(consentId)) {
+      return NextResponse.json(
+        { error: 'ID inválido' },
+        { status: 400 }
+      );
     }
 
     const consent = await prisma.consentRecord.findUnique({
@@ -22,56 +29,61 @@ export async function GET(
     });
 
     if (!consent) {
-      return NextResponse.json({ error: 'Consentimiento no encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Consentimiento no encontrado' },
+        { status: 404 }
+      );
     }
 
-    const protocol = req.nextUrl.protocol;
-    const host = req.nextUrl.host;
-    const baseUrl = `${protocol}//${host}`;
+    // ⚠️ No usamos protocolo dinámico para evitar inconsistencias
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      `${req.nextUrl.protocol}//${req.nextUrl.host}`;
 
-    console.log('Generando PDF para consentimiento ID:', consentId);
-    console.log('Paciente:', consent.medicalRecord.patientName);
-    console.log('Tamaño documentSnapshot:', consent.documentSnapshot?.length);
-    console.log('Tiene firma:', !!consent.signatureBase64);
+    let pdfBuffer: Buffer;
 
-    let pdfBuffer;
     try {
       pdfBuffer = await renderToBuffer(
         <ConsentPDF consent={consent} baseUrl={baseUrl} />
       );
     } catch (renderError) {
-      console.error('Error en renderToBuffer:', renderError);
+      console.error('Error renderizando PDF:', renderError);
       return NextResponse.json(
-        { error: 'Error al generar el PDF', details: renderError instanceof Error ? renderError.message : String(renderError) },
+        { error: 'Error al generar el PDF' },
         { status: 500 }
       );
     }
 
     if (!pdfBuffer || pdfBuffer.length === 0) {
-      console.error('El buffer del PDF está vacío');
+      console.error('PDF vacío');
       return NextResponse.json(
-        { error: 'El PDF generado está vacío' },
+        { error: 'PDF generado vacío' },
         { status: 500 }
       );
     }
 
-    console.log('PDF generado, tamaño:', pdfBuffer.length);
+    // Validación crítica: un PDF válido siempre empieza con %PDF-
+    const headerCheck = pdfBuffer.toString('utf-8', 0, 5);
+    if (!headerCheck.startsWith('%PDF-')) {
+      console.error('El archivo generado no es un PDF válido');
+      return NextResponse.json(
+        { error: 'Archivo PDF corrupto' },
+        { status: 500 }
+      );
+    }
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="consentimiento_${consentId}.pdf"`,
-        'Content-Length': pdfBuffer.length.toString(),
       },
     });
   } catch (error) {
-    console.error('Error general:', error);
+    console.error('Error general generando PDF:', error);
+
     return NextResponse.json(
-      { 
-        error: 'Error interno del servidor', 
-        details: error instanceof Error ? error.message : String(error) 
-      },
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }

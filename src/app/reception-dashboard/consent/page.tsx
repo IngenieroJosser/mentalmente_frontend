@@ -86,22 +86,22 @@ const ConsentsPage = () => {
     setShowModal(true);
   };
 
-  const handleDownload = async (consent: ConsentRecord) => {
-    try {
-      const response = await fetch(`/api/consent/${consent.id}/download`);
-      if (!response.ok) throw new Error('Error al descargar el PDF');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `consentimiento_${consent.id}.pdf`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error(error);
-      alert('No se pudo descargar el consentimiento');
-    }
-  };
+  // const handleDownload = async (consent: ConsentRecord) => {
+  //   try {
+  //     const response = await fetch(`/api/consent/${consent.id}/download`);
+  //     if (!response.ok) throw new Error('Error al descargar el PDF');
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = `consentimiento_${consent.id}.pdf`;
+  //     a.click();
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert('No se pudo descargar el consentimiento');
+  //   }
+  // };
 
   if (!isAuthenticated) {
     return (
@@ -194,13 +194,13 @@ const ConsentsPage = () => {
                         >
                           <FaEye size={16} />
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => handleDownload(consent)}
                           className="p-1.5 text-gray-500 hover:text-[#bec5a4] transition-colors"
                           title="Descargar PDF"
                         >
                           <FaDownload size={16} />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>
