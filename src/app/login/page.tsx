@@ -105,10 +105,7 @@ export default function SanatuLogin() {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(credentials)
       });
   
@@ -124,26 +121,27 @@ export default function SanatuLogin() {
   
       console.log('Login exitoso - Usuario:', data.user);
       console.log('Rol:', data.user.role);
-
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem('sanatu_token', data.token);
-      storage.setItem('sanatu_user', JSON.stringify(data.user));
+  
+      // Guardar en ambos storages para mayor compatibilidad
+      localStorage.setItem('sanatu_token', data.token);
+      localStorage.setItem('sanatu_user', JSON.stringify(data.user));
+      
+      if (rememberMe) {
+        sessionStorage.setItem('sanatu_token', data.token);
+        sessionStorage.setItem('sanatu_user', JSON.stringify(data.user));
+      }
       
       toast.success(`¡Bienvenido/a ${data.user.usuario} a SanaTú!`, {
         position: "top-center",
         autoClose: 1500
       });
-
+  
       const redirectPath = getRedirectPathByRole(data.user.role);
       console.log('Redirigiendo a:', redirectPath);
-
+  
+      // Usar window.location para forzar recarga completa
       setTimeout(() => {
-        try {
-          router.push(redirectPath);
-        } catch (routerError) {
-          console.error('Error con router.push, usando window.location:', routerError);
-          window.location.href = redirectPath;
-        }
+        window.location.href = redirectPath;
       }, 1500);
       
     } catch (error) {

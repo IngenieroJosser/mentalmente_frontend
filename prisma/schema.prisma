@@ -28,6 +28,12 @@ enum Role {
   PSYCHOLOGIST
 }
 
+enum ConsentType {
+  DATA_PROCESSING
+  CLINICAL_PROCEDURE
+  TELEMEDICINE
+}
+
 model MedicalRecord {
   id                                  Int                       @id @default(autoincrement())
   recordNumber                        String                    @unique
@@ -37,6 +43,7 @@ model MedicalRecord {
   // Relaciones                       
   userId                              Int                 
   user                                User                      @relation(fields: [userId], references: [id])
+  consents                            ConsentRecord[]
 
   // Información personal del paciente
   patientName                         String
@@ -112,4 +119,42 @@ model MedicalRecord {
 
   // Evolución (campo amplio para registros de seguimiento)
   evolution                           String?
+}
+
+model ConsentTemplate {
+  id              Int        @id @default(autoincrement())
+  type            ConsentType
+  version         String
+  title           String
+  htmlContent     String
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+
+  consents        ConsentRecord[]
+}
+
+model ConsentRecord {
+  id                  Int       @id @default(autoincrement())
+
+  // Relaciones
+  medicalRecordId     Int
+  medicalRecord       MedicalRecord @relation(fields: [medicalRecordId], references: [id])
+
+  templateId          Int
+  template            ConsentTemplate @relation(fields: [templateId], references: [id])
+
+  signedByName        String
+  signedByDocument    String
+
+  documentSnapshot    String    // HTML final renderizado
+  pdfUrl              String?   // Ruta en S3 o storage
+  documentHash        String    // SHA256
+
+  signatureBase64     String?   // Firma en canvas
+
+  signedAt            DateTime  @default(now())
+  signedFromIp        String
+  signedUserAgent     String
+
+  createdAt           DateTime  @default(now())
 }
