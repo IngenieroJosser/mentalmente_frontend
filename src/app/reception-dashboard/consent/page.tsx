@@ -9,6 +9,7 @@ import {
   FaEye,
   FaTimes,
 } from 'react-icons/fa'; // Eliminamos FaDownload porque no se usa
+import Image from 'next/image';
 
 interface ConsentRecord {
   id: number;
