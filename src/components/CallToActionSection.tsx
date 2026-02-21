@@ -1,11 +1,8 @@
-// components/CallToActionSection.tsx
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { 
-  MessageCircle, 
-  Send, 
+import {
+  MessageCircle,
   Phone,
   Mail,
   ChevronRight,
@@ -14,11 +11,11 @@ import {
 } from 'lucide-react';
 
 const CallToActionSection = () => {
-  const [activeMethod, setActiveMethod] = useState<'whatsapp' | 'form'>('whatsapp');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
   const WHATSAPP_NUMBER = '3113266223';
-  const WHATSAPP_MESSAGE = encodeURIComponent('Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios');
+
+  const WHATSAPP_MESSAGE = encodeURIComponent(
+    '¡Hola, Liyiveth! Vengo de tu página SanaTú. Me sentí identificado/a con lo que haces y me gustaría que me acompañaras en mi proceso. ¿Cómo puedo agendar una cita contigo?'
+  );
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, '_blank');
@@ -26,16 +23,9 @@ const CallToActionSection = () => {
 
   const services = [
     "Consulta inicial - Psicoterapia Individual",
-    "Intervención Psicosocial - Apoyo Especializado", 
+    "Intervención Psicosocial - Apoyo Especializado",
     "Educación y Bienestar - Talleres/Capacitaciones"
   ];
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-  };
 
   return (
     <>
@@ -71,38 +61,14 @@ const CallToActionSection = () => {
             </h2>
 
             <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto">
-              Elige el método que mejor se adapte a tu comodidad
+              Escríbeme directamente por WhatsApp y empecemos tu proceso
             </p>
           </motion.div>
 
-          {/* Selector de método */}
-          <div className="flex justify-center mb-16">
-            <div className="inline-flex bg-white border border-gray-200 rounded-2xl p-1">
-              <motion.button
-                onClick={() => setActiveMethod('whatsapp')}
-                animate={{ 
-                  backgroundColor: activeMethod === 'whatsapp' ? '#bec5a4' : 'transparent',
-                  color: activeMethod === 'whatsapp' ? 'white' : '#6B7280'
-                }}
-                className="px-8 py-3 rounded-xl font-light text-sm tracking-wide transition-all duration-300"
-              >
-                WhatsApp
-              </motion.button>
-              <motion.button
-                onClick={() => setActiveMethod('form')}
-                animate={{ 
-                  backgroundColor: activeMethod === 'form' ? '#bec5a4' : 'transparent',
-                  color: activeMethod === 'form' ? 'white' : '#6B7280'
-                }}
-                className="px-8 py-3 rounded-xl font-light text-sm tracking-wide transition-all duration-300"
-              >
-                Formulario
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Contenido principal */}
-          <div className="grid lg:grid-cols-2 gap-16">
+          {/* Contenido principal - una sola columna centrada o dos columnas? 
+              Decido mantener dos columnas para mantener la estructura visual,
+              pero la segunda columna ahora solo tiene el contenido de WhatsApp */}
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Panel izquierdo - Información esencial */}
             <div className="space-y-12">
               <div className="space-y-8">
@@ -155,7 +121,7 @@ const CallToActionSection = () => {
                       <p className="text-gray-600 text-sm font-light">hola@sanatuquingar.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-4">
                     <Shield className="w-10 h-10 text-gray-400" />
                     <p className="text-gray-600 font-light text-sm">
@@ -166,135 +132,46 @@ const CallToActionSection = () => {
               </div>
             </div>
 
-            {/* Panel derecho - Interacción */}
+            {/* Panel derecho - Solo WhatsApp */}
             <div>
-              {activeMethod === 'whatsapp' ? (
-                <motion.div
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  className="h-full flex flex-col"
-                >
-                  <div className="bg-gradient-to-b from-white to-gray-50/30 border border-gray-200 rounded-2xl p-8 h-full">
-                    <div className="mb-8">
-                      <h4 className="text-lg font-light text-gray-900 mb-4">
-                        Mensaje preparado:
-                      </h4>
-                      <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                        <p className="text-gray-600 font-light italic">
-                          &quot;Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios&quot;
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-auto">
-                      <motion.button
-                        onClick={handleWhatsAppClick}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-4 bg-[#bec5a4] text-white rounded-xl font-light tracking-wide 
-                                 hover:bg-[#a0a78c] transition-colors duration-300 flex items-center 
-                                 justify-center space-x-3"
-                      >
-                        <MessageCircle className="w-5 h-5" />
-                        <span>Iniciar proceso por WhatsApp</span>
-                        <ChevronRight className="w-5 h-5" />
-                      </motion.button>
-                      
-                      <p className="text-center text-gray-500 text-sm font-light mt-4">
-                        Número: {WHATSAPP_NUMBER}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="h-full flex flex-col"
+              >
+                <div className="bg-gradient-to-b from-white to-gray-50/30 border border-gray-200 rounded-2xl p-8 h-full">
+                  <div className="mb-8">
+                    <h4 className="text-lg font-light text-gray-900 mb-4">
+                      Mensaje preparado:
+                    </h4>
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                      <p className="text-gray-600 font-light italic">
+                        &quot;Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios&quot;
                       </p>
                     </div>
                   </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  className="h-full"
-                >
-                  <form onSubmit={handleSubmit} className="bg-gradient-to-b from-white to-gray-50/30 
-                           border border-gray-200 rounded-2xl p-8 h-full space-y-6">
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-light text-gray-700 block">
-                        Nombre completo
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl 
-                                 focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 
-                                 outline-none transition-all font-light placeholder-gray-400"
-                        placeholder="Tu nombre"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-light text-gray-700 block">
-                        Correo electrónico
-                      </label>
-                      <input
-                        type="email"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl 
-                                 focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 
-                                 outline-none transition-all font-light placeholder-gray-400"
-                        placeholder="ejemplo@email.com"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-light text-gray-700 block">
-                        Servicio de interés
-                      </label>
-                      <select className="w-full px-4 py-3 border border-gray-300 rounded-xl 
-                               focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 
-                               outline-none transition-all font-light appearance-none">
-                        {services.map((service, index) => (
-                          <option key={index} value={service}>{service}</option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-light text-gray-700 block">
-                        Mensaje breve
-                      </label>
-                      <textarea
-                        rows={4}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl 
-                                 focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 
-                                 outline-none transition-all font-light placeholder-gray-400 resize-none"
-                        placeholder="¿En qué puedo ayudarte?"
-                      />
-                    </div>
-                    
+
+                  <div className="mt-auto">
                     <motion.button
-                      type="submit"
-                      disabled={isSubmitting}
+                      onClick={handleWhatsAppClick}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`w-full py-4 bg-[#bec5a4] text-white rounded-xl font-light 
-                               tracking-wide hover:bg-[#a0a78c] transition-colors duration-300 
-                               flex items-center justify-center space-x-3 ${
-                                 isSubmitting ? 'opacity-80' : ''
-                               }`}
+                      className="w-full py-4 bg-[#bec5a4] text-white rounded-xl font-light tracking-wide 
+                               hover:bg-[#a0a78c] transition-colors duration-300 flex items-center 
+                               justify-center space-x-3"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Enviando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          <span>Enviar mensaje</span>
-                        </>
-                      )}
+                      <MessageCircle className="w-5 h-5" />
+                      <span>Iniciar proceso por WhatsApp</span>
+                      <ChevronRight className="w-5 h-5" />
                     </motion.button>
-                  </form>
-                </motion.div>
-              )}
+
+                    <p className="text-center text-gray-500 text-sm font-light mt-4">
+                      Número: {WHATSAPP_NUMBER}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
 
@@ -326,7 +203,7 @@ const CallToActionSection = () => {
                        hover:scale-110 transition-transform duration-300">
             <MessageCircle className="w-6 h-6 text-white" />
           </div>
-          
+
           <div className="absolute -top-10 right-0 bg-white px-4 py-2 rounded-lg shadow-lg 
                        border border-gray-200">
             <span className="text-sm font-light text-gray-700 whitespace-nowrap">

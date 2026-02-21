@@ -80,8 +80,8 @@ const ServicesSection = () => {
   ];
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = '+573001234567';
-    const message = encodeURIComponent('Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios');
+    const phoneNumber = '+573113266223';
+    const message = encodeURIComponent('¡Hola, Liyiveth! Vengo de tu página SanaTú. Me sentí identificado/a con lo que haces y me gustaría que me acompañaras en mi proceso. ¿Cómo puedo agendar una cita contigo?');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
@@ -352,16 +352,6 @@ const ServicesSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
                               translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </motion.button>
-              
-              <motion.a
-                href="#contacto"
-                whileHover={{ scale: 1.05 }}
-                className="px-10 py-5 border border-gray-300 text-gray-700 rounded-xl 
-                         hover:border-[#bec5a4] hover:text-[#bec5a4] transition-all duration-300 
-                         font-light tracking-wide bg-white/50 backdrop-blur-sm"
-              >
-                Más información
-              </motion.a>
             </div>
           </div>
         </motion.div>
