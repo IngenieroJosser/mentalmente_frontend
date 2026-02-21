@@ -26,7 +26,7 @@ export default function RegisterPage() {
     contrasena: '',
     confirmPassword: '',
     genero: '',
-    role: 'USER'
+    // role fijo eliminado del estado
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -85,26 +85,23 @@ export default function RegisterPage() {
           correo: formData.correo,
           contrasena: formData.contrasena,
           genero: formData.genero || null,
-          role: formData.role
+          role: 'USER' // Rol fijo
         })
       });
   
       const data = await response.json();
   
       if (!response.ok) {
-        // Mostrar mensaje de error más específico
         const errorMessage = data.details 
           ? `${data.message}: ${data.details}`
           : data.message || 'Error en el registro';
         throw new Error(errorMessage);
       }
   
-      // Verificar que los datos necesarios están presentes
       if (!data.user || !data.token) {
         throw new Error('La respuesta del servidor no contiene los datos esperados');
       }
   
-      // Guardar token y usuario
       localStorage.setItem('sanatu_token', data.token);
       localStorage.setItem('sanatu_user', JSON.stringify(data.user));
   
@@ -112,26 +109,22 @@ export default function RegisterPage() {
         position: "top-center",
         autoClose: 2000,
         onClose: () => {
-          // Redirigir según el rol
-          const redirectPath = getRedirectPathByRole(data.user.role);
-          router.push(redirectPath);
+          // Redirigir siempre a reception-dashboard (rol USER)
+          router.push('/reception-dashboard');
         }
       });
   
     } catch (error) {
       console.error('Register error:', error);
       
-      // Definir un tipo para errores con mensaje
       interface ErrorWithMessage {
         message: string;
       }
       
       const err = error as ErrorWithMessage;
       
-      // Mostrar diferentes tipos de errores
       let errorMessage = err.message || 'Error en el registro';
       
-      // Errores específicos de base de datos
       if (errorMessage.includes('Database Error') || errorMessage.includes('Prisma')) {
         errorMessage = 'Error de conexión con la base de datos. Por favor, intenta nuevamente.';
       }
@@ -144,24 +137,9 @@ export default function RegisterPage() {
     }
   };
 
-  const getRedirectPathByRole = (role: string) => {
-    const normalizedRole = role.toUpperCase();
-    switch(normalizedRole) {
-      case 'PSYCHOLOGIST':
-        return '/psychologist-dashboard';
-      case 'MANAGEMENT':
-        return '/management-dashboard';
-      case 'USER':
-        return '/reception-dashboard';
-      default:
-        return '/dashboard';
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Limpiar error cuando el usuario empieza a escribir
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -218,9 +196,9 @@ export default function RegisterPage() {
                         <User className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-light mb-1">Roles Específicos</h3>
+                        <h3 className="font-light mb-1">Recepción</h3>
                         <p className="text-sm text-white/70 font-light">
-                          Acceso personalizado según tu función
+                          Acceso para personal de recepción
                         </p>
                       </div>
                     </div>
@@ -324,26 +302,6 @@ export default function RegisterPage() {
                       <option value="Otro">Otro</option>
                       <option value="Prefiero no decirlo">Prefiero no decirlo</option>
                     </select>
-                  </div>
-
-                  {/* Rol */}
-                  <div>
-                    <label className="block text-sm font-light text-gray-700 mb-2">
-                      Rol en el Sistema *
-                    </label>
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all"
-                    >
-                      <option value="USER">Recepción</option>
-                      <option value="PSYCHOLOGIST">Psicólogo/a</option>
-                      <option value="MANAGEMENT">Gestión/Administración</option>
-                    </select>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Este rol determina tus permisos en el sistema
-                    </p>
                   </div>
 
                   {/* Contraseña */}

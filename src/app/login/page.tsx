@@ -16,9 +16,7 @@ export default function SanatuLogin() {
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const animationFrameId = useRef<number | null>(null);
 
-  // Efecto de partículas minimalista
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -63,51 +61,39 @@ export default function SanatuLogin() {
         ctx.fill();
       });
       
-      animationFrameId.current = requestAnimationFrame(animate);
+      requestAnimationFrame(animate);
     };
     
-    animate();
+    const animationId = requestAnimationFrame(animate);
     
     return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resizeCanvas);
     };
   }, []);
 
   const getRedirectPathByRole = (role: string) => {
     console.log('DEBUG - Role recibido:', role);
-    console.log('DEBUG - Tipo de role:', typeof role);
-    
-    if (!role) {
-      console.error('DEBUG - Role es undefined/null/vacío');
-      return '/dashboard'; // Ruta por defecto
-    }
+    if (!role) return '/dashboard';
     
     const normalizedRole = role.toString().toUpperCase().trim();
     console.log('DEBUG - Role normalizado:', normalizedRole);
     
     switch(normalizedRole) {
       case 'PSYCHOLOGIST':
-        console.log('DEBUG - Redirigiendo a /psychologist-dashboard');
         return '/psychologist-dashboard';
       case 'MANAGEMENT':
-        console.log('DEBUG - Redirigiendo a /management-dashboard');
         return '/management-dashboard';
       case 'USER':
-        console.log('DEBUG - Redirigiendo a /reception-dashboard');
         return '/reception-dashboard';
       default:
-        console.warn(`DEBUG - Role desconocido: ${normalizedRole}, redirigiendo a /dashboard`);
+        console.warn(`Role desconocido: ${normalizedRole}`);
         return '/dashboard';
     }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('Login - Iniciando proceso de login...');
     
     if (!credentials.email || !credentials.password) {
       toast.error('Por favor completa todos los campos');
@@ -117,7 +103,6 @@ export default function SanatuLogin() {
     setIsLoading(true);
     
     try {
-      console.log('Login - Enviando solicitud a /api/auth/login...');
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 
@@ -129,8 +114,6 @@ export default function SanatuLogin() {
   
       const data = await response.json();
       
-      console.log('Login - Respuesta del servidor:', data);
-      
       if (!response.ok) {
         throw new Error(data.message || data.error || 'Error en el inicio de sesión');
       }
@@ -139,50 +122,37 @@ export default function SanatuLogin() {
         throw new Error('Estructura de respuesta inválida');
       }
   
-      console.log('Login - Usuario autenticado:', data.user);
-      console.log('Login - Rol del usuario:', data.user.role);
+      console.log('Login exitoso - Usuario:', data.user);
+      console.log('Rol:', data.user.role);
 
-      // Guardar token y datos
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem('sanatu_token', data.token);
       storage.setItem('sanatu_user', JSON.stringify(data.user));
       
-      console.log('Login - Datos guardados en:', rememberMe ? 'localStorage' : 'sessionStorage');
-      
-      // Mostrar mensaje de éxito
       toast.success(`¡Bienvenido/a ${data.user.usuario} a SanaTú!`, {
         position: "top-center",
-        autoClose: 2000
+        autoClose: 1500
       });
 
-      // Redireccionar después de un breve delay
+      const redirectPath = getRedirectPathByRole(data.user.role);
+      console.log('Redirigiendo a:', redirectPath);
+
       setTimeout(() => {
-        const redirectPath = getRedirectPathByRole(data.user.role);
-        console.log('Login - Redirigiendo a:', redirectPath);
-        router.push(redirectPath);
+        try {
+          router.push(redirectPath);
+        } catch (routerError) {
+          console.error('Error con router.push, usando window.location:', routerError);
+          window.location.href = redirectPath;
+        }
       }, 1500);
       
     } catch (error) {
-      console.error('Login error details:', error);
-      
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : 'Error en el inicio de sesión';
-      
-      toast.error(errorMessage, {
-        position: "top-center",
-        autoClose: 4000
-      });
+      console.error('Login error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error en el inicio de sesión';
+      toast.error(errorMessage, { position: "top-center", autoClose: 4000 });
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleForgotPassword = () => {
-    toast.info('Se ha enviado un enlace de recuperación a tu correo electrónico', {
-      position: "top-center",
-      autoClose: 3000
-    });
   };
 
   const togglePasswordVisibility = () => {
@@ -192,16 +162,8 @@ export default function SanatuLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-white">
-      {/* Fondo sutil con partículas */}
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-      />
-      
-      {/* Gradiente sutil */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50/30" />
-      
-      {/* Elementos decorativos minimalistas */}
       <div className="absolute top-10 left-10 opacity-5">
         <Brain className="h-24 w-24 text-[#bec5a4]" strokeWidth={1} />
       </div>
@@ -209,20 +171,10 @@ export default function SanatuLogin() {
         <Heart className="h-24 w-24 text-[#bec5a4]" strokeWidth={1} />
       </div>
       
-      <ToastContainer 
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer position="top-center" autoClose={5000} />
       
       <div className="relative z-10 w-full max-w-4xl flex flex-col lg:flex-row rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white">
-        {/* Panel izquierdo - Minimalista */}
+        {/* Panel izquierdo */}
         <div className="w-full lg:w-1/2 p-8 md:p-10 flex flex-col justify-between bg-gradient-to-br from-white to-gray-50/50">
           <div>
             <div className="flex flex-col items-center mb-8">
@@ -237,7 +189,6 @@ export default function SanatuLogin() {
                       className="object-contain"
                       priority
                       onError={(e) => {
-                        // Fallback si la imagen no existe
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         target.parentElement!.innerHTML = `
@@ -250,7 +201,6 @@ export default function SanatuLogin() {
                   </div>
                 </div>
               </div>
-              
               <h1 className="text-2xl font-light text-gray-900 text-center mb-2">
                 Sana<span className="text-[#bec5a4]">Tú</span> Quingar
               </h1>
@@ -271,21 +221,16 @@ export default function SanatuLogin() {
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center">
-                    <div className="text-[#bec5a4]">
-                      <Heart className="h-5 w-5" />
-                    </div>
+                    <Heart className="h-5 w-5 text-[#bec5a4]" />
                   </div>
                   <div>
                     <p className="text-gray-900 font-light">Atención Humanizada</p>
                     <p className="text-gray-500 text-sm font-light">Enfoque personalizado</p>
                   </div>
                 </div>
-                
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center">
-                    <div className="text-[#bec5a4]">
-                      <Brain className="h-5 w-5" />
-                    </div>
+                    <Brain className="h-5 w-5 text-[#bec5a4]" />
                   </div>
                   <div>
                     <p className="text-gray-900 font-light">Ética Profesional</p>
@@ -298,9 +243,7 @@ export default function SanatuLogin() {
           
           <div className="mt-8 pt-8 border-t border-gray-100">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-[#bec5a4]/10 flex items-center justify-center mr-3">
-                <ShieldCheck className="h-4 w-4 text-[#bec5a4]" />
-              </div>
+              <ShieldCheck className="h-4 w-4 text-[#bec5a4] mr-3" />
               <p className="text-sm text-gray-500 font-light">
                 Sistema seguro con encriptación de datos
               </p>
@@ -308,7 +251,7 @@ export default function SanatuLogin() {
           </div>
         </div>
         
-        {/* Panel derecho - Formulario */}
+        {/* Panel derecho */}
         <div className="w-full lg:w-1/2 p-8 md:p-10 bg-white">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
@@ -321,9 +264,8 @@ export default function SanatuLogin() {
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Email field */}
             <div className="relative">
-              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all duration-300 ${
+              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${
                 activeField === 'email' ? 'text-[#bec5a4]' : 'text-gray-400'
               }`}>
                 <UserCircle className="h-5 w-5" />
@@ -341,9 +283,8 @@ export default function SanatuLogin() {
               />
             </div>
             
-            {/* Password field */}
             <div className="relative">
-              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all duration-300 ${
+              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${
                 activeField === 'password' ? 'text-[#bec5a4]' : 'text-gray-400'
               }`}>
                 <Lock className="h-5 w-5" />
@@ -366,21 +307,15 @@ export default function SanatuLogin() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#bec5a4] transition-colors"
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
             
-            {/* Remember me & Forgot password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="relative flex items-center">
                   <input
                     id="remember-me"
-                    name="remember-me"
                     type="checkbox"
                     checked={rememberMe}
                     onChange={() => setRememberMe(!rememberMe)}
@@ -400,45 +335,35 @@ export default function SanatuLogin() {
                   </label>
                 </div>
               </div>
-              <button 
-                type="button"
-                onClick={handleForgotPassword}
-                className="text-sm font-light text-[#bec5a4] hover:text-[#a0a78c] transition-colors"
-              >
+              <button type="button" className="text-sm font-light text-[#bec5a4] hover:text-[#a0a78c] transition-colors">
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
             
-            {/* Login button */}
-            <div className="mt-6">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all duration-300 ${
-                  isLoading 
-                    ? 'bg-[#bec5a4]/80 cursor-not-allowed' 
-                    : 'bg-[#bec5a4] hover:bg-[#a0a78c]'
-                }`}
-              >
-                {isLoading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Iniciando sesión...
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    Acceder
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </span>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all ${
+                isLoading ? 'bg-[#bec5a4]/80 cursor-not-allowed' : 'bg-[#bec5a4] hover:bg-[#a0a78c]'
+              }`}
+            >
+              {isLoading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Iniciando sesión...
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  Acceder
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </span>
+              )}
+            </button>
           </form>
           
-          {/* Quality seal */}
           <div className="mt-6 pt-6 border-t border-gray-100">
             <div className="flex items-center justify-center space-x-2">
               <ShieldCheck className="h-4 w-4 text-[#bec5a4]" />
@@ -448,7 +373,6 @@ export default function SanatuLogin() {
         </div>
       </div>
       
-      {/* Footer */}
       <div className="absolute bottom-4 left-0 right-0 text-center text-xs text-gray-400 font-light px-4">
         © {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.
       </div>
