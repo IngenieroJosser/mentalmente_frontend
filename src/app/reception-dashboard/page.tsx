@@ -69,6 +69,12 @@ const DashboardReceptionMentalmentePage = () => {
       label: 'Reportes', 
       href: '/reception-dashboard/report' 
     },
+    { 
+      id: 'consents', 
+      icon: <FileText size={18} />, 
+      label: 'Consentimientos', 
+      href: '/reception-dashboard/consent' 
+    },
   ];
 
   const activeSection = menuItems.find(item => pathname.includes(item.id))?.id || '';

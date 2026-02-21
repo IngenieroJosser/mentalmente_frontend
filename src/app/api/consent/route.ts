@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { ConsentType } from '@prisma/client';
+import { createHash } from 'crypto';
+
+function generateHash(content: string): string {
+  return createHash('sha256').update(content).digest('hex');
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Buscar o crear la plantilla de consentimiento informado
+    // Buscar o crear la plantilla de consentimiento
     const templateTitle = 'Consentimiento Informado - Atención Psicológica';
     let template = await prisma.consentTemplate.findFirst({
       where: { title: templateTitle, isActive: true },
@@ -24,9 +29,9 @@ export async function POST(req: NextRequest) {
       const htmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="text-align: center;">SANATÚ SAS – CONSENTIMIENTO INFORMADO</h2>
-          <p><strong>FECHA:</strong> ____ / ____ / 20____</p>
+          <p><strong>FECHA:</strong> __FECHA__</p>
           <p><strong>CIUDAD:</strong> Quibdó, Chocó</p>
-          <p>Yo, <strong>___PACIENTE___</strong>, mayor de edad, identificado(a) con la cédula número <strong>___DOCUMENTO___</strong>, por medio de este documento declaro que acepto de manera voluntaria recibir atención psicológica por parte de SANATÚ SAS (NIT 902010331-8).</p>
+          <p>Yo, <strong>__PACIENTE__</strong>, mayor de edad, identificado(a) con la cédula número <strong>__DOCUMENTO__</strong>, por medio de este documento declaro que acepto de manera voluntaria recibir atención psicológica por parte de SANATÚ SAS (NIT 902010331-8).</p>
           <p>Entiendo y acepto que:</p>
           <ol>
             <li><strong>Privacidad:</strong> Todo lo que hablemos es confidencial (secreto profesional). Nadie más sabrá lo que se diga en consulta, a menos que mi vida o la de alguien más esté en peligro grave, según lo manda la ley colombiana.</li>
@@ -54,9 +59,21 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
+    // Fecha actual formateada (dd / mm / yyyy)
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).replace(/\//g, ' / '); // "01 / 02 / 2025"
+
     const finalHtml = template.htmlContent
-      .replace('___PACIENTE___', signedByName)
-      .replace('___DOCUMENTO___', signedByDocument);
+      .replace('__FECHA__', formattedDate)
+      .replace('__PACIENTE__', signedByName)
+      .replace('__DOCUMENTO__', signedByDocument);
+
+    // Generar hash del documento (obligatorio según el modelo)
+    const documentHash = generateHash(finalHtml + (signatureBase64 || ''));
 
     const consentRecord = await prisma.consentRecord.create({
       data: {
@@ -68,6 +85,7 @@ export async function POST(req: NextRequest) {
         signatureBase64,
         signedFromIp: ip,
         signedUserAgent: userAgent,
+        documentHash, // ← Campo obligatorio agregado
       },
     });
 
@@ -78,6 +96,57 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error guardando consentimiento:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const medicalRecordId = searchParams.get('medicalRecordId');
+
+    const where: any = {};
+
+    if (medicalRecordId) {
+      where.medicalRecordId = parseInt(medicalRecordId);
+    }
+
+    if (search) {
+      where.OR = [
+        { signedByName: { contains: search, mode: 'insensitive' } },
+        { signedByDocument: { contains: search, mode: 'insensitive' } },
+        { medicalRecord: { patientName: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
+    const consents = await prisma.consentRecord.findMany({
+      where,
+      include: {
+        medicalRecord: {
+          select: {
+            id: true,
+            patientName: true,
+            identificationNumber: true,
+            recordNumber: true,
+          },
+        },
+        template: {
+          select: {
+            title: true,
+            version: true,
+          },
+        },
+      },
+      orderBy: { signedAt: 'desc' },
+    });
+
+    return NextResponse.json({ data: consents });
+  } catch (error) {
+    console.error('Error fetching consents:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }
