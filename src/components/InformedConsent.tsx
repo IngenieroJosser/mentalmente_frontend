@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { FaCheck, FaTimes, FaPen } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 interface InformedConsentProps {
   medicalRecordId?: number; // Si ya existe la historia, pasamos el ID

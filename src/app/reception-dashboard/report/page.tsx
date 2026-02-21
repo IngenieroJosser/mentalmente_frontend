@@ -233,7 +233,8 @@ const ReportDashboardPsychologist = () => {
 
   const chartData = prepareChartData();
 
-  let chartOptions = {
+  // CORREGIDO: let -> const
+  const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -253,7 +254,8 @@ const ReportDashboardPsychologist = () => {
         font: {
           family: 'Inter, sans-serif',
           size: 14,
-          weight: 500 as 500,
+          // CORREGIDO: weight: 500 (sin aserción)
+          weight: 500,
         },
         padding: {
           bottom: 20,

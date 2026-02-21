@@ -9,6 +9,20 @@ import {
 } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
+// Definir el tipo del consentimiento en lugar de any
+interface ConsentPDFData {
+  id: number;
+  signedByName: string;
+  signedByDocument: string;
+  documentSnapshot: string;
+  signatureBase64: string | null;
+  signedAt: string;
+  medicalRecord: {
+    patientName: string;
+    identificationNumber: string;
+  };
+}
+
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -48,7 +62,7 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-  consent: any;
+  consent: ConsentPDFData;
   baseUrl: string;
 }
 
@@ -116,6 +130,7 @@ const ConsentPDF: React.FC<Props> = ({ consent }) => {
 
         {consent.signatureBase64 && (
           <View style={{ marginTop: 20 }}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image
               src={consent.signatureBase64}
               style={{ width: 150, height: 50 }}

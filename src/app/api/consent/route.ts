@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ConsentType } from '@prisma/client';
+import { ConsentType, Prisma } from '@prisma/client'; // Importar Prisma para los tipos
 import { createHash } from 'crypto';
 
 function generateHash(content: string): string {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         signatureBase64,
         signedFromIp: ip,
         signedUserAgent: userAgent,
-        documentHash, // ← Campo obligatorio agregado
+        documentHash,
       },
     });
 
@@ -109,7 +109,8 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search') || '';
     const medicalRecordId = searchParams.get('medicalRecordId');
 
-    const where: any = {};
+    // Tipado correcto con Prisma
+    const where: Prisma.ConsentRecordWhereInput = {};
 
     if (medicalRecordId) {
       where.medicalRecordId = parseInt(medicalRecordId);

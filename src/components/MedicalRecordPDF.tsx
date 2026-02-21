@@ -193,6 +193,7 @@ const MedicalRecordPDF: React.FC<Props> = ({ record, baseUrl }) => {
       <Page size="A4" style={styles.page}>
         {/* Encabezado con logo real */}
         <View style={styles.header}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image style={styles.logo} src={`${baseUrl}/logo-sana-tu.png`} />
           <View style={styles.headerRight}>
             <Text style={styles.companyName}>SANATÚ SAS</Text>

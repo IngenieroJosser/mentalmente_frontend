@@ -7,9 +7,8 @@ import {
   FaFileSignature,
   FaSearch,
   FaEye,
-  FaDownload,
   FaTimes,
-} from 'react-icons/fa';
+} from 'react-icons/fa'; // Eliminamos FaDownload porque no se usa
 
 interface ConsentRecord {
   id: number;
@@ -52,7 +51,8 @@ const ConsentsPage = () => {
   const fetchConsents = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/consent');
+      // CORREGIDO: usar plural /api/consents
+      const response = await fetch('/api/consents');
       if (!response.ok) throw new Error('Error al cargar consentimientos');
       const data = await response.json();
       setConsents(data.data);
@@ -85,23 +85,6 @@ const ConsentsPage = () => {
     setSelectedConsent(consent);
     setShowModal(true);
   };
-
-  // const handleDownload = async (consent: ConsentRecord) => {
-  //   try {
-  //     const response = await fetch(`/api/consent/${consent.id}/download`);
-  //     if (!response.ok) throw new Error('Error al descargar el PDF');
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = `consentimiento_${consent.id}.pdf`;
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert('No se pudo descargar el consentimiento');
-  //   }
-  // };
 
   if (!isAuthenticated) {
     return (
@@ -194,13 +177,6 @@ const ConsentsPage = () => {
                         >
                           <FaEye size={16} />
                         </button>
-                        {/* <button
-                          onClick={() => handleDownload(consent)}
-                          className="p-1.5 text-gray-500 hover:text-[#bec5a4] transition-colors"
-                          title="Descargar PDF"
-                        >
-                          <FaDownload size={16} />
-                        </button> */}
                       </div>
                     </td>
                   </tr>
@@ -247,7 +223,7 @@ const ConsentsPage = () => {
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Plantilla</p>
-                    <p className="text-lg text-[#2c3e50]">{selectedConsent.template.title} (v{selectedConsent.template.version})</p>
+                    <p className="text-lg text-[#2c3e50]">{selectedConsent.template.title}</p>
                   </div>
                 </div>
 
@@ -262,6 +238,7 @@ const ConsentsPage = () => {
                 {selectedConsent.signatureBase64 && (
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-2">Firma del paciente</p>
+                    {/* La firma en base64 es una imagen pequeña; no afecta LCP significativamente */}
                     <img
                       src={selectedConsent.signatureBase64}
                       alt="Firma"

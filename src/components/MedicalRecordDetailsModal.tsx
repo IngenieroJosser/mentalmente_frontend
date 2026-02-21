@@ -11,6 +11,7 @@ import { MedicalRecordDetailsModalProps } from '@/lib/type';
 import SpinnerPDF from './SpinnerPDF';
 import { pdf } from '@react-pdf/renderer';
 import MedicalRecordPDF from './MedicalRecordPDF';
+import Image from 'next/image'; // <-- AÑADIR ESTA LÍNEA
 
 const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
   record,
@@ -60,9 +61,11 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b-2 border-[#bec5a4]">
       {/* Logo a la izquierda */}
       <div className="flex items-center mb-4 md:mb-0">
-        <img 
+        <Image 
           src="/logo-sana-tu.png" 
           alt="SanaTú Quingar" 
+          width={80}  // Ajusta según necesites, equivalente a h-20 w-auto
+          height={80}
           className="h-20 w-auto mr-4"
           onError={(e) => {
             const target = e.target as HTMLImageElement;

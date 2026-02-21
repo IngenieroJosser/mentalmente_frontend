@@ -21,12 +21,6 @@ const CallToActionSection = () => {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, '_blank');
   };
 
-  let services = [
-    "Consulta inicial - Psicoterapia Individual",
-    "Intervención Psicosocial - Apoyo Especializado",
-    "Educación y Bienestar - Talleres/Capacitaciones"
-  ];
-
   return (
     <>
       <section
@@ -65,9 +59,7 @@ const CallToActionSection = () => {
             </p>
           </motion.div>
 
-          {/* Contenido principal - una sola columna centrada o dos columnas? 
-              Decido mantener dos columnas para mantener la estructura visual,
-              pero la segunda columna ahora solo tiene el contenido de WhatsApp */}
+          {/* Contenido principal */}
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Panel izquierdo - Información esencial */}
             <div className="space-y-12">
@@ -201,7 +193,7 @@ const CallToActionSection = () => {
           <div className="w-14 h-14 bg-[#bec5a4] rounded-full shadow-lg hover:shadow-xl 
                        transition-shadow duration-300 flex items-center justify-center 
                        hover:scale-110 transition-transform duration-300">
-            <MessageCircle className="w-6 h-6 text-white" />
+            <MessageCircle className="w-6 w-6 text-white" />
           </div>
 
           <div className="absolute -top-10 right-0 bg-white px-4 py-2 rounded-lg shadow-lg 
