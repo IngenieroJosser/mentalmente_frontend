@@ -239,10 +239,12 @@ const ConsentsPage = () => {
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-2">Firma del paciente</p>
                     {/* La firma en base64 es una imagen pequeña; no afecta LCP significativamente */}
-                    <img
+                    <Image
                       src={selectedConsent.signatureBase64}
                       alt="Firma"
-                      className="max-h-32 border border-gray-200 rounded-lg p-2 bg-white"
+                      width={200}
+                      height={80}
+                      className="max-h-32 border border-gray-200 rounded-lg p-2 bg-white object-contain"
                     />
                   </div>
                 )}
