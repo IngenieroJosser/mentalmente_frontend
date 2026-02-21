@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaEnvelope, FaMapMarkerAlt, 
+  FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaMapMarkerAlt, 
   FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes,
   FaSearch, FaFilter, FaChartLine, FaHeartbeat, FaUsers
 } from 'react-icons/fa';

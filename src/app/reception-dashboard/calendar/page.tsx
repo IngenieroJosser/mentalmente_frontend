@@ -10,7 +10,7 @@ import { isSameMonth } from 'date-fns/isSameMonth';
 import { isSameDay } from 'date-fns/isSameDay';
 import { useAuth } from '@/context/AuthContext';
 import { MedicalRecordEvent } from '@/lib/type';
-import { FaCalendarAlt, FaUsers, FaUserMd, FaChartLine } from 'react-icons/fa';
+import { FaCalendarAlt, FaUsers, FaChartLine } from 'react-icons/fa';
 
 const CalendarDashboardPsychologist = () => {
   const { user } = useAuth();
