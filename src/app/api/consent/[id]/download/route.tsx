@@ -22,10 +22,11 @@ interface ConsentPDFData {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const consentId = Number(params.id);
+    const { id } = await params;
+    const consentId = Number(id);
 
     if (!consentId || isNaN(consentId)) {
       return NextResponse.json(
