@@ -4,10 +4,11 @@ const API_URL = '/api/medical-records';
 
 export interface CreateHistoryData {
   patientName: string;
-  diagnosis: string;
-  treatment: string;
+  recordNumber: string;
+  userId: number;
+  diagnosis?: string;        // Opcional
+  treatment?: string;        // Opcional
   notes?: string;
-  userId?: number;
   [key: string]: unknown;
 }
 
@@ -62,7 +63,6 @@ export const updateHistory = async (id: number, historyData: UpdateHistoryData) 
     const responseData = await response.json();
     
     if (!response.ok) {
-      // Extraer mensaje de error detallado del backend
       const errorMessage = responseData.error || 
                            responseData.message || 
                            'Error al actualizar historia';
@@ -89,8 +89,6 @@ export const getHistoryById = async (id: number) => {
   return response.json();
 };
 
-// Definir el tipo extendido
-// services/historyService.ts
 export type MedicalRecordWithUser = {
   id: number;
   patientName: string;

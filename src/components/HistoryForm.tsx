@@ -187,12 +187,23 @@ const DIAGNOSIS_OPTIONS = [
   }
 ];
 
-const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCancel }) => {
+interface ExtendedHistoryFormProps extends HistoryFormProps {
+  patientName?: string;
+  patientDocument?: string;
+}
+
+const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({ 
+  historyId, 
+  onSuccess, 
+  onCancel, 
+  patientName: initialPatientName, 
+  patientDocument: initialPatientDocument 
+}) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState<MedicalRecordFormData>({
-    patientName: '',
+    patientName: initialPatientName || '',
     identificationType: 'Cédula',
-    identificationNumber: '',
+    identificationNumber: initialPatientDocument || '',
     birthDate: new Date(),
     age: undefined,
     educationLevel: '',
@@ -261,7 +272,9 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
   // Estados para el consentimiento informado
   const [showConsent, setShowConsent] = useState(false);
-  const [newRecordId, setNewRecordId] = useState<number | null>(null);
+  const [currentHistoryId, setCurrentHistoryId] = useState<number | undefined>(historyId);
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
+  const [draftError, setDraftError] = useState<string | null>(null);
 
   // Calcular edad automáticamente cuando cambia la fecha de nacimiento
   useEffect(() => {
@@ -269,12 +282,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
       const birthDate = new Date(formData.birthDate);
       const today = new Date();
       const age = differenceInYears(today, birthDate);
-
-      setFormData(prev => ({
-        ...prev,
-        age: age
-      }));
-
+      setFormData(prev => ({ ...prev, age }));
       setShowGuardiansInfo(age < 18);
     }
   }, [formData.birthDate]);
@@ -295,21 +303,20 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     }
   };
 
+  // Cargar historia existente (solo si se proporcionó historyId)
   useEffect(() => {
     if (historyId) {
       const loadHistory = async () => {
         setIsFormLoading(true);
         try {
           const history = await getHistoryById(historyId);
-
           const convertedHistory: MedicalRecordFormData = {
             ...history,
             birthDate: safeDateConversion(history.birthDate) || new Date(),
             admissionDate: safeDateConversion(history.admissionDate) || new Date(),
           };
-
           setFormData(convertedHistory);
-
+          setCurrentHistoryId(historyId);
           if (convertedHistory.birthDate) {
             const today = new Date();
             const age = differenceInYears(today, new Date(convertedHistory.birthDate));
@@ -325,16 +332,76 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     }
   }, [historyId]);
 
+  // Crear borrador automáticamente para nueva historia (sin historyId)
+  useEffect(() => {
+    if (!historyId && !currentHistoryId && !isCreatingDraft) {
+      const createDraft = async () => {
+        setIsCreatingDraft(true);
+        setDraftError(null);
+        try {
+          if (!user) throw new Error('Usuario no autenticado');
+          if (!user.id) throw new Error('ID de usuario no disponible');
+
+          // Asegurar que el nombre no sea vacío (el backend lo exige)
+          const patientName = (initialPatientName && initialPatientName.trim()) || 'Paciente';
+          const identificationNumber = initialPatientDocument?.trim() || '';
+
+          const draftData: CreateHistoryData = {
+            patientName,
+            identificationNumber,
+            identificationType: 'Cédula',
+            recordNumber: `HC-${Date.now()}`,
+            userId: user.id,
+            diagnosis: '',
+            treatment: '',
+            notes: '',
+          };
+
+          const created = await createHistory(draftData);
+          if (created && created.id) {
+            setCurrentHistoryId(created.id);
+            setFormData(prev => ({
+              ...prev,
+              patientName: created.patientName || patientName,
+              identificationNumber: created.identificationNumber || identificationNumber,
+              recordNumber: created.recordNumber || prev.recordNumber,
+            }));
+            setShowConsent(true);
+          } else {
+            throw new Error('No se pudo crear el borrador de la historia');
+          }
+        } catch (error) {
+          console.error('Error creando borrador:', error);
+          setDraftError('No se pudo iniciar el proceso. Intente nuevamente.');
+        } finally {
+          setIsCreatingDraft(false);
+        }
+      };
+      createDraft();
+    }
+  }, [historyId, currentHistoryId, user, initialPatientName, initialPatientDocument]);
+
+  // Efecto para asegurar que los datos del paciente tengan valores antes de mostrar el consentimiento
+  useEffect(() => {
+    if (showConsent && currentHistoryId) {
+      // Si por alguna razón los datos están vacíos, asignar valores por defecto
+      if (!formData.patientName || formData.patientName.trim() === '') {
+        setFormData(prev => ({ ...prev, patientName: 'Paciente' }));
+      }
+      if (!formData.identificationNumber || formData.identificationNumber.trim() === '') {
+        setFormData(prev => ({ ...prev, identificationNumber: 'Pendiente' }));
+      }
+    }
+  }, [showConsent, currentHistoryId, formData.patientName, formData.identificationNumber]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
-
     if (formErrors[name]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -355,10 +422,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
       const start = target.selectionStart;
       const end = target.selectionEnd;
       const value = target.value;
-
       target.value = value.substring(0, start) + "\n" + value.substring(end);
       target.selectionStart = target.selectionEnd = start + 1;
-
       setFormData(prev => ({ ...prev, evolution: target.value }));
     }
   };
@@ -370,34 +435,32 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
   const validateSection = (section: string) => {
     const errors: Record<string, string> = {};
-
     if (section === 'personal') {
       if (!formData.patientName) errors.patientName = 'Nombre completo es requerido';
       if (!formData.identificationType) errors.identificationType = 'Tipo de identificación es requerido';
       if (!formData.identificationNumber) errors.identificationNumber = 'Número de identificación es requerido';
       if (!formData.recordNumber) errors.recordNumber = 'Número de registro es requerido';
     }
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!user) {
       alert('No se ha identificado al usuario. Por favor inicie sesión.');
       return;
     }
+    if (!currentHistoryId) {
+      alert('Error: No se ha identificado la historia clínica.');
+      return;
+    }
 
     setIsLoading(true);
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: _, userId: __, createdAt: ___, updatedAt: ____, ...dataWithoutSystemFields } = formData;
-
     const dataToSend = {
       ...dataWithoutSystemFields,
-      ...(!historyId && { userId: user.id }),
       age: formData.age ? Number(formData.age) : null,
       birthDate: formData.birthDate instanceof Date ? formData.birthDate.toISOString() : null,
       admissionDate: formData.admissionDate instanceof Date ? formData.admissionDate.toISOString() : null,
@@ -405,29 +468,9 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     };
 
     try {
-      if (historyId) {
-        if (!historyId) {
-          throw new Error('ID de historia clínica no válido');
-        }
-        await updateHistory(historyId, dataToSend);
-        alert('Historia clínica actualizada exitosamente');
-        onSuccess(); // Cierra el formulario y refresca
-      } else {
-        if (!dataToSend.patientName || !dataToSend.identificationNumber) {
-          throw new Error('Nombre del paciente y número de identificación son requeridos');
-        }
-        // createHistory debe devolver el objeto creado con su id
-        const created = await createHistory(dataToSend as unknown as CreateHistoryData);
-        alert('Historia clínica creada exitosamente');
-
-        if (created && created.id) {
-          setNewRecordId(created.id);
-          setShowConsent(true);
-        } else {
-          // Si no hay ID, igual cerramos (fallback)
-          onSuccess();
-        }
-      }
+      await updateHistory(currentHistoryId, dataToSend);
+      alert('Historia clínica guardada exitosamente');
+      onSuccess();
     } catch (error) {
       console.error('Error guardando historia:', error);
       const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al guardar la historia clínica';
@@ -439,14 +482,11 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
   const handleConsentSuccess = () => {
     setShowConsent(false);
-    setNewRecordId(null);
-    onSuccess(); // Cierra el formulario y refresca la lista
   };
 
   const handleConsentCancel = () => {
     setShowConsent(false);
-    setNewRecordId(null);
-    // Opcional: preguntar si desea continuar sin firmar
+    onCancel?.();
   };
 
   const formatDateForInput = (date: Date | null | undefined) => {
@@ -478,21 +518,17 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
     if (direction === 'next') {
       if (validateSection(activeSection)) {
         const nextSection = sectionItems[currentSectionIndex + 1]?.id;
-        if (nextSection) {
-          setActiveSection(nextSection);
-        }
+        if (nextSection) setActiveSection(nextSection);
       }
     } else {
       const prevSection = sectionItems[currentSectionIndex - 1]?.id;
-      if (prevSection) {
-        setActiveSection(prevSection);
-      }
+      if (prevSection) setActiveSection(prevSection);
     }
   };
 
   const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
     <div className="flex items-center mb-6">
-      <div className="bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] p-3 rounded-xl mr-3">
+      <div className="bg-linear-to-r from-[#bec5a4] to-[#a0a78c] p-3 rounded-xl mr-3">
         <div className="text-white text-xl">{icon}</div>
       </div>
       <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
@@ -504,15 +540,13 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
       <label className={`block text-sm font-medium mb-1 text-gray-800 ${type === 'checkbox' ? 'ml-2' : ''}`}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-
       {type === 'textarea' ? (
         <textarea
           name={name}
           value={formData[name as keyof MedicalRecordFormData] as string || ''}
           onChange={handleChange}
           rows={3}
-          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'
-            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       ) : type === 'checkbox' ? (
         <input
@@ -527,11 +561,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           type="date"
           name={name}
           value={formatDateForInput(formData[name as keyof MedicalRecordFormData] as Date | null)}
-          onChange={(e) => {
-            handleDateChange(name, e.target.value);
-          }}
-          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'
-            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+          onChange={(e) => handleDateChange(name, e.target.value)}
+          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       ) : (
         <input
@@ -539,529 +570,550 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
           name={name}
           value={formData[name as keyof MedicalRecordFormData] as string || ''}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'
-            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+          className={`w-full px-4 py-3 border ${formErrors[name] ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
         />
       )}
-
-      {formErrors[name] && (
-        <p className="mt-1 text-sm text-red-600">{formErrors[name]}</p>
-      )}
+      {formErrors[name] && <p className="mt-1 text-sm text-red-600">{formErrors[name]}</p>}
     </div>
   );
 
-  return (
-    <>
-      {/* Formulario principal */}
+  // Si se está creando el borrador, mostramos un indicador de carga
+  if (isCreatingDraft) {
+    return (
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-        <div className="bg-gradient-to-b from-white to-[#f8fafc] rounded-3xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] bg-clip-text text-transparent">
-                {historyId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
-              </h1>
-              <p className="text-gray-700 mt-1">
-                {sectionItems[currentSectionIndex]?.label}
-              </p>
-            </div>
-            <button
-              onClick={onCancel}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              <FaTimes className="text-gray-800 text-xl" />
-            </button>
+        <div className="bg-white rounded-3xl p-8 shadow-2xl">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-4"></div>
+            <p className="text-gray-800 font-medium">Preparando formulario...</p>
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          {isFormLoading ? (
-            <div className="flex flex-col items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-4"></div>
-              <p className="text-gray-800 font-medium">Cargando información...</p>
+  if (draftError) {
+    return (
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+        <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md">
+          <h3 className="text-xl font-bold text-red-600 mb-4">Error</h3>
+          <p className="text-gray-700 mb-6">{draftError}</p>
+          <button
+            onClick={onCancel}
+            className="w-full py-2 bg-[#bec5a4] text-white rounded-xl hover:bg-[#a0a78c]"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar consentimiento si corresponde
+  if (showConsent && currentHistoryId) {
+    return (
+      <InformedConsent
+        medicalRecordId={currentHistoryId}
+        patientName={formData.patientName || 'Paciente'}
+        patientDocument={formData.identificationNumber || 'Pendiente'}
+        onSuccess={handleConsentSuccess}
+        onCancel={handleConsentCancel}
+      />
+    );
+  }
+
+  // Formulario principal
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-linear-to-b from-white to-[#f8fafc] rounded-3xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+          <div>
+            <h1 className="text-3xl font-bold bg-linear-to-r from-[#bec5a4] to-[#a0a78c] bg-clip-text text-transparent">
+              {currentHistoryId ? 'Editar Historia Clínica' : 'Nueva Historia Clínica'}
+            </h1>
+            <p className="text-gray-700 mt-1">
+              {sectionItems[currentSectionIndex]?.label}
+            </p>
+          </div>
+          <button onClick={onCancel} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+            <FaTimes className="text-gray-800 text-xl" />
+          </button>
+        </div>
+
+        {isFormLoading ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#bec5a4] mb-4"></div>
+            <p className="text-gray-800 font-medium">Cargando información...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Barra de progreso */}
+            <div className="mb-8">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-800">Paso {currentSectionIndex + 1} de {sectionItems.length}</span>
+                <span className="text-sm font-medium text-gray-800">
+                  {Math.round(((currentSectionIndex + 1) / sectionItems.length) * 100)}% completado
+                </span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-linear-to-r from-[#bec5a4] to-[#a0a78c]"
+                  style={{ width: `${((currentSectionIndex + 1) / sectionItems.length) * 100}%` }}
+                ></div>
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Barra de progreso */}
-              <div className="mb-8">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-gray-800">
-                    Paso {currentSectionIndex + 1} de {sectionItems.length}
-                  </span>
-                  <span className="text-sm font-medium text-gray-800">
-                    {Math.round(((currentSectionIndex + 1) / sectionItems.length) * 100)}% completado
-                  </span>
-                </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#bec5a4] to-[#a0a78c]"
-                    style={{ width: `${((currentSectionIndex + 1) / sectionItems.length) * 100}%` }}
-                  ></div>
+
+            {/* Sección 1: Información personal */}
+            {(activeSection === 'personal') && (
+              <div>
+                <SectionHeader icon={<FaUser />} title="Información Personal" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    {renderField("Nombre completo *", "patientName", "text", true)}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="mb-5">
+                        <label className="block text-sm font-medium mb-1 text-gray-800">
+                          Tipo de identificación *
+                        </label>
+                        <select
+                          name="identificationType"
+                          value={formData.identificationType}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 border ${formErrors.identificationType ? 'border-red-500' : 'border-gray-200'
+                            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+                        >
+                          <option value="Cédula">Cédula</option>
+                          <option value="Pasaporte">Pasaporte</option>
+                          <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
+                          <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+                          <option value="Registro Civil">Registro Civil</option>
+                        </select>
+                        {formErrors.identificationType && (
+                          <p className="mt-1 text-sm text-red-600">{formErrors.identificationType}</p>
+                        )}
+                      </div>
+                      {renderField("Número *", "identificationNumber", "text", true)}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-800">
+                          Fecha de nacimiento
+                        </label>
+                        <input
+                          type="date"
+                          name="birthDate"
+                          value={formatDateForInput(formData.birthDate) || ''}
+                          onChange={(e) => {
+                            handleDateChange("birthDate", e.target.value);
+                          }}
+                          className={`w-full px-4 py-3 border ${formErrors.birthDate ? 'border-red-500' : 'border-gray-200'
+                            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-800">
+                          Edad
+                        </label>
+                        <input
+                          type="number"
+                          name="age"
+                          value={formData.age || ''}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 border ${formErrors.age ? 'border-red-500' : 'border-gray-200'
+                            } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+                        />
+                      </div>
+                    </div>
+
+                    {renderField("Número de registro *", "recordNumber", "text", true)}
+                    <label className="block text-sm font-medium mb-1 text-gray-800" htmlFor="educationLevel">Nivel educativo</label>
+                    <select
+                      name="educationLevel"
+                      value={formData.educationLevel || ''}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border ${formErrors.educationLevel ? 'border-red-500' : 'border-gray-200'
+                        } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+                    >
+                      <option value="">Seleccione un nivel educativo</option>
+                      <option value="Primaria">Primaria</option>
+                      <option value="Secundaria">Secundaria</option>
+                      <option value="Universidad">Universidad</option>
+                      <option value="Postgrado">Postgrado</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    {renderField("Ocupación", "occupation", "text")}
+                    {renderField("Lugar de nacimiento", "birthPlace", "text")}
+                    {renderField("Nacionalidad", "nationality", "text")}
+                    {renderField("Religión", "religion", "text")}
+                    {renderField("Dirección", "address", "text")}
+                    {renderField("Barrio", "neighborhood", "text")}
+                    {renderField("Ciudad", "city", "text")}
+                  </div>
+
+                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {renderField("Departamento", "state", "text")}
+                    {renderField("Fecha de ingreso", "admissionDate", "date")}
+                    {renderField("Otro teléfono", "phone", "text")}
+                    {renderField("Celular", "cellPhone", "text")}
+                    {renderField("Email", "email", "email")}
+                    {renderField("EPS", "eps", "text")}
+                    <div className="flex items-center mt-6">
+                      <input
+                        type="checkbox"
+                        name="isBeneficiary"
+                        checked={formData.isBeneficiary || false}
+                        onChange={handleChange}
+                        className="h-5 w-5 text-[#bec5a4] rounded-lg focus:ring-[#bec5a4]"
+                      />
+                      <label className="text-sm font-medium ml-2 text-gray-800">¿Es beneficiario?</label>
+                    </div>
+                    {renderField("Referido por", "referredBy", "text")}
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* Sección 1: Información personal */}
-              {(activeSection === 'personal') && (
-                <div>
-                  <SectionHeader icon={<FaUser />} title="Información Personal" />
+            {/* Sección 2: Responsables (solo para menores) */}
+            {(activeSection === 'guardians' && showGuardiansInfo) && (
+              <div>
+                <SectionHeader icon={<FaIdCard />} title="Responsables" />
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-linear-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 1</h3>
+                    {renderField("Nombre completo", "guardian1Name")}
+                    {renderField("Parentesco", "guardian1Relationship")}
+                    {renderField("Teléfono", "guardian1Phone")}
+                    {renderField("Ocupación", "guardian1Occupation")}
+                  </div>
+
+                  <div className="bg-linear-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 2</h3>
+                    {renderField("Nombre completo", "guardian2Name")}
+                    {renderField("Parentesco", "guardian2Relationship")}
+                    {renderField("Teléfono", "guardian2Phone")}
+                    {renderField("Ocupación", "guardian2Occupation")}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mensaje para adultos en sección de responsables */}
+            {(activeSection === 'guardians' && !showGuardiansInfo) && (
+              <div className="bg-linear-to-b from-[#f8fafc] to-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                <div className="flex items-center">
+                  <div className="bg-[#bec5a4]/20 p-3 rounded-full mr-4">
+                    <FaUser className="text-[#bec5a4] text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800">Paciente mayor de edad</h3>
+                    <p className="text-gray-700 mt-1">
+                      El paciente es mayor de 18 años, por lo que la información de responsables no es requerida.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sección 3: Profesional */}
+            {(activeSection === 'professional') && (
+              <div>
+                <SectionHeader icon={<FaStethoscope />} title="Profesional a Cargo" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {renderField("Nombre del profesional", "attendedBy")}
+                  {renderField("Número de licencia", "licenseNumber")}
+
+                  <div className="md:col-span-2 bg-linear-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">Información Adicional</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-800">Especialidad</label>
+                        <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
+                          Psicología Clínica
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-800">Años de experiencia</label>
+                        <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
+                          8 años
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sección 4: Antecedentes personales */}
+            {(activeSection === 'personalHistory') && (
+              <div>
+                <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Patológicos", "personalPathological", "textarea")}
+                  {renderField("Quirúrgicos", "personalSurgical", "textarea")}
+                  {renderField("Psicopatológicos", "personalPsychopathological", "textarea")}
+                  {renderField("Historia traumática", "traumaHistory", "textarea")}
+                  {renderField("Estado del sueño", "sleepStatus", "textarea")}
+                  {renderField("Uso de sustancias", "substanceUse", "textarea")}
+                  {renderField("Otros", "personalOther", "textarea")}
+
+                  {/* Selector de patología y nivel de severidad */}
+                  <div className="bg-linear-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">Severidad de Patología</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-800">
+                          Patología Principal
+                        </label>
+                        <select
+                          name="diagnosis"
+                          value={formData.diagnosis}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
+                        >
+                          <option value="">Seleccione una patología</option>
+                          {DIAGNOSIS_OPTIONS.map(group => (
+                            <optgroup label={group.category} key={group.category}>
+                              {group.options.map(option => (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-800">
+                          Nivel de Severidad (1-10)
+                        </label>
+                        <div className="flex items-center">
+                          <input
+                            type="range"
+                            name="pathologySeverity"
+                            min="1"
+                            max="10"
+                            value={formData.pathologySeverity || 1}
+                            onChange={handleChange}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                          <span className="ml-4 w-10 text-center font-bold text-gray-800">
+                            {formData.pathologySeverity || 1}
+                          </span>
+                        </div>
+                        <div className="mt-2 text-sm text-gray-600 flex justify-between">
+                          <span>1 - Mínimo</span>
+                          <span>10 - Crítico</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sección 5: Antecedentes familiares */}
+            {(activeSection === 'familyHistory') && (
+              <div>
+                <SectionHeader icon={<FaClipboardList />} title="Antecedentes Familiares" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Patológicos", "familyPathological", "textarea")}
+                  {renderField("Quirúrgicos", "familySurgical", "textarea")}
+                  {renderField("Psicopatológicos", "familyPsychopathological", "textarea")}
+                  {renderField("Traumáticos", "familyTraumatic", "textarea")}
+                  {renderField("Uso de sustancias", "familySubstanceUse", "textarea")}
+                  {renderField("Otros", "familyOther", "textarea")}
+                </div>
+              </div>
+            )}
+
+            {/* Sección 6: Desarrollo */}
+            {(activeSection === 'development') && (
+              <div>
+                <SectionHeader icon={<FaFlask />} title="Datos del Desarrollo" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Embarazo", "pregnancyInfo", "textarea")}
+                  {renderField("Parto", "deliveryInfo", "textarea")}
+                  {renderField("Desarrollo psicomotor", "psychomotorDevelopment", "textarea")}
+                  {renderField("Dinámica familiar", "familyDynamics", "textarea")}
+                </div>
+              </div>
+            )}
+
+            {/* Sección 7: Información clínica */}
+            {(activeSection === 'clinical') && (
+              <div>
+                <SectionHeader icon={<FaFileMedical />} title="Información Clínica" />
+
+                <div className="grid grid-cols-1 gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      {renderField("Nombre completo *", "patientName", "text", true)}
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="mb-5">
-                          <label className="block text-sm font-medium mb-1 text-gray-800">
-                            Tipo de identificación *
-                          </label>
-                          <select
-                            name="identificationType"
-                            value={formData.identificationType}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 border ${formErrors.identificationType ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
-                          >
-                            <option value="Cédula">Cédula</option>
-                            <option value="Pasaporte">Pasaporte</option>
-                            <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
-                            <option value="Cédula de Extranjería">Cédula de Extranjería</option>
-                            <option value="Registro Civil">Registro Civil</option>
-                          </select>
-                          {formErrors.identificationType && (
-                            <p className="mt-1 text-sm text-red-600">{formErrors.identificationType}</p>
-                          )}
-                        </div>
-                        {renderField("Número *", "identificationNumber", "text", true)}
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-1 text-gray-800">
-                            Fecha de nacimiento
-                          </label>
-                          <input
-                            type="date"
-                            name="birthDate"
-                            value={formatDateForInput(formData.birthDate) || ''}
-                            onChange={(e) => {
-                              handleDateChange("birthDate", e.target.value);
-                            }}
-                            className={`w-full px-4 py-3 border ${formErrors.birthDate ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1 text-gray-800">
-                            Edad
-                          </label>
-                          <input
-                            type="number"
-                            name="age"
-                            value={formData.age || ''}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 border ${formErrors.age ? 'border-red-500' : 'border-gray-200'
-                              } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
-                          />
-                        </div>
-                      </div>
-
-                      {renderField("Número de registro *", "recordNumber", "text", true)}
-                      <label className="block text-sm font-medium mb-1 text-gray-800" htmlFor="educationLevel">Nivel educativo</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-800">
+                        Motivo de consulta
+                      </label>
                       <select
-                        name="educationLevel"
-                        value={formData.educationLevel || ''}
+                        name="consultationReason"
+                        value={formData.consultationReason || ''}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 border ${formErrors.educationLevel ? 'border-red-500' : 'border-gray-200'
-                          } rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800`}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
                       >
-                        <option value="">Seleccione un nivel educativo</option>
-                        <option value="Primaria">Primaria</option>
-                        <option value="Secundaria">Secundaria</option>
-                        <option value="Universidad">Universidad</option>
-                        <option value="Postgrado">Postgrado</option>
+                        <option value="">Seleccione un motivo</option>
+                        {DIAGNOSIS_OPTIONS.map(group => (
+                          <optgroup label={group.category} key={group.category}>
+                            {group.options.map(option => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
                       </select>
                     </div>
 
                     <div>
-                      {renderField("Ocupación", "occupation", "text")}
-                      {renderField("Lugar de nacimiento", "birthPlace", "text")}
-                      {renderField("Nacionalidad", "nationality", "text")}
-                      {renderField("Religión", "religion", "text")}
-                      {renderField("Dirección", "address", "text")}
-                      {renderField("Barrio", "neighborhood", "text")}
-                      {renderField("Ciudad", "city", "text")}
-                    </div>
-
-                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {renderField("Departamento", "state", "text")}
-                      {renderField("Fecha de ingreso", "admissionDate", "date")}
-                      {renderField("Otro teléfono", "phone", "text")}
-                      {renderField("Celular", "cellPhone", "text")}
-                      {renderField("Email", "email", "email")}
-                      {renderField("EPS", "eps", "text")}
-                      <div className="flex items-center mt-6">
-                        <input
-                          type="checkbox"
-                          name="isBeneficiary"
-                          checked={formData.isBeneficiary || false}
-                          onChange={handleChange}
-                          className="h-5 w-5 text-[#bec5a4] rounded-lg focus:ring-[#bec5a4]"
-                        />
-                        <label className="text-sm font-medium ml-2 text-gray-800">¿Es beneficiario?</label>
-                      </div>
-                      {renderField("Referido por", "referredBy", "text")}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 2: Responsables (solo para menores) */}
-              {(activeSection === 'guardians' && showGuardiansInfo) && (
-                <div>
-                  <SectionHeader icon={<FaIdCard />} title="Responsables" />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 1</h3>
-                      {renderField("Nombre completo", "guardian1Name")}
-                      {renderField("Parentesco", "guardian1Relationship")}
-                      {renderField("Teléfono", "guardian1Phone")}
-                      {renderField("Ocupación", "guardian1Occupation")}
-                    </div>
-
-                    <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="font-bold text-lg text-gray-800 mb-5 border-b pb-3">Responsable 2</h3>
-                      {renderField("Nombre completo", "guardian2Name")}
-                      {renderField("Parentesco", "guardian2Relationship")}
-                      {renderField("Teléfono", "guardian2Phone")}
-                      {renderField("Ocupación", "guardian2Occupation")}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Mensaje para adultos en sección de responsables */}
-              {(activeSection === 'guardians' && !showGuardiansInfo) && (
-                <div className="bg-gradient-to-b from-[#f8fafc] to-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <div className="bg-[#bec5a4]/20 p-3 rounded-full mr-4">
-                      <FaUser className="text-[#bec5a4] text-xl" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-800">Paciente mayor de edad</h3>
-                      <p className="text-gray-700 mt-1">
-                        El paciente es mayor de 18 años, por lo que la información de responsables no es requerida.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 3: Profesional */}
-              {(activeSection === 'professional') && (
-                <div>
-                  <SectionHeader icon={<FaStethoscope />} title="Profesional a Cargo" />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {renderField("Nombre del profesional", "attendedBy")}
-                    {renderField("Número de licencia", "licenseNumber")}
-
-                    <div className="md:col-span-2 bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
-                      <h3 className="font-bold text-lg text-gray-800 mb-4">Información Adicional</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-800">Especialidad</label>
-                          <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
-                            Psicología Clínica
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-800">Años de experiencia</label>
-                          <div className="px-4 py-3 border border-gray-200 rounded-xl bg-[#f8fafc] text-gray-800">
-                            8 años
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 4: Antecedentes personales */}
-              {(activeSection === 'personalHistory') && (
-                <div>
-                  <SectionHeader icon={<FaNotesMedical />} title="Antecedentes Personales" />
-
-                  <div className="grid grid-cols-1 gap-6">
-                    {renderField("Patológicos", "personalPathological", "textarea")}
-                    {renderField("Quirúrgicos", "personalSurgical", "textarea")}
-                    {renderField("Psicopatológicos", "personalPsychopathological", "textarea")}
-                    {renderField("Historia traumática", "traumaHistory", "textarea")}
-                    {renderField("Estado del sueño", "sleepStatus", "textarea")}
-                    {renderField("Uso de sustancias", "substanceUse", "textarea")}
-                    {renderField("Otros", "personalOther", "textarea")}
-
-                    {/* Selector de patología y nivel de severidad */}
-                    <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-4">
-                      <h3 className="font-bold text-lg text-gray-800 mb-4">Severidad de Patología</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium mb-1 text-gray-800">
-                            Patología Principal
-                          </label>
-                          <select
-                            name="diagnosis"
-                            value={formData.diagnosis}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
-                          >
-                            <option value="">Seleccione una patología</option>
-                            {DIAGNOSIS_OPTIONS.map(group => (
-                              <optgroup label={group.category} key={group.category}>
-                                {group.options.map(option => (
-                                  <option key={option} value={option}>
-                                    {option}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium mb-1 text-gray-800">
-                            Nivel de Severidad (1-10)
-                          </label>
-                          <div className="flex items-center">
-                            <input
-                              type="range"
-                              name="pathologySeverity"
-                              min="1"
-                              max="10"
-                              value={formData.pathologySeverity || 1}
-                              onChange={handleChange}
-                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                            />
-                            <span className="ml-4 w-10 text-center font-bold text-gray-800">
-                              {formData.pathologySeverity || 1}
-                            </span>
-                          </div>
-                          <div className="mt-2 text-sm text-gray-600 flex justify-between">
-                            <span>1 - Mínimo</span>
-                            <span>10 - Crítico</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 5: Antecedentes familiares */}
-              {(activeSection === 'familyHistory') && (
-                <div>
-                  <SectionHeader icon={<FaClipboardList />} title="Antecedentes Familiares" />
-
-                  <div className="grid grid-cols-1 gap-6">
-                    {renderField("Patológicos", "familyPathological", "textarea")}
-                    {renderField("Quirúrgicos", "familySurgical", "textarea")}
-                    {renderField("Psicopatológicos", "familyPsychopathological", "textarea")}
-                    {renderField("Traumáticos", "familyTraumatic", "textarea")}
-                    {renderField("Uso de sustancias", "familySubstanceUse", "textarea")}
-                    {renderField("Otros", "familyOther", "textarea")}
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 6: Desarrollo */}
-              {(activeSection === 'development') && (
-                <div>
-                  <SectionHeader icon={<FaFlask />} title="Datos del Desarrollo" />
-
-                  <div className="grid grid-cols-1 gap-6">
-                    {renderField("Embarazo", "pregnancyInfo", "textarea")}
-                    {renderField("Parto", "deliveryInfo", "textarea")}
-                    {renderField("Desarrollo psicomotor", "psychomotorDevelopment", "textarea")}
-                    {renderField("Dinámica familiar", "familyDynamics", "textarea")}
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 7: Información clínica */}
-              {(activeSection === 'clinical') && (
-                <div>
-                  <SectionHeader icon={<FaFileMedical />} title="Información Clínica" />
-
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-800">
-                          Motivo de consulta
-                        </label>
-                        <select
-                          name="consultationReason"
-                          value={formData.consultationReason || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
-                        >
-                          <option value="">Seleccione un motivo</option>
-                          {DIAGNOSIS_OPTIONS.map(group => (
-                            <optgroup label={group.category} key={group.category}>
-                              {group.options.map(option => (
-                                <option key={option} value={option}>
-                                  {option}
-                                </option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-800">
-                          Diagnóstico
-                        </label>
-                        <select
-                          name="diagnosis"
-                          value={formData.diagnosis || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
-                        >
-                          <option value="">Seleccione un diagnóstico</option>
-                          {DIAGNOSIS_OPTIONS.map(group => (
-                            <optgroup label={group.category} key={group.category}>
-                              {group.options.map(option => (
-                                <option key={option} value={option}>
-                                  {option}
-                                </option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    {renderField("Historia del problema", "problemHistory", "textarea")}
-                    {renderField("Expectativas de terapia", "therapyExpectations", "textarea")}
-                    {renderField("Examen mental", "mentalExam", "textarea")}
-                    {renderField("Evaluación psicológica", "psychologicalAssessment", "textarea")}
-                    {renderField("Objetivos terapéuticos", "therapeuticGoals", "textarea")}
-                    {renderField("Plan de tratamiento", "treatmentPlan", "textarea")}
-                    {renderField("Información de referencia", "referralInfo", "textarea")}
-                    {renderField("Recomendaciones", "recommendations", "textarea")}
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 8: Evolución */}
-              {(activeSection === 'evolution') && (
-                <div>
-                  <SectionHeader icon={<FaHospital />} title="Evolución" />
-
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="mb-5">
                       <label className="block text-sm font-medium mb-1 text-gray-800">
-                        Registros de evolución
+                        Diagnóstico
                       </label>
-                      <textarea
-                        name="evolution"
-                        value={formData.evolution || ''}
-                        onChange={handleEvolutionChange}
-                        onKeyDown={handleKeyDown}
-                        rows={8}
+                      <select
+                        name="diagnosis"
+                        value={formData.diagnosis || ''}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
-                      />
-                      <p className="mt-1 text-sm text-gray-600">
-                        Presiona Shift + Enter para nueva línea, solo el botón Guardar envía el formulario
-                      </p>
+                      >
+                        <option value="">Seleccione un diagnóstico</option>
+                        {DIAGNOSIS_OPTIONS.map(group => (
+                          <optgroup label={group.category} key={group.category}>
+                            {group.options.map(option => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {renderField("Historia del problema", "problemHistory", "textarea")}
+                  {renderField("Expectativas de terapia", "therapyExpectations", "textarea")}
+                  {renderField("Examen mental", "mentalExam", "textarea")}
+                  {renderField("Evaluación psicológica", "psychologicalAssessment", "textarea")}
+                  {renderField("Objetivos terapéuticos", "therapeuticGoals", "textarea")}
+                  {renderField("Plan de tratamiento", "treatmentPlan", "textarea")}
+                  {renderField("Información de referencia", "referralInfo", "textarea")}
+                  {renderField("Recomendaciones", "recommendations", "textarea")}
+                </div>
+              </div>
+            )}
+
+            {/* Sección 8: Evolución */}
+            {(activeSection === 'evolution') && (
+              <div>
+                <SectionHeader icon={<FaHospital />} title="Evolución" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="mb-5">
+                    <label className="block text-sm font-medium mb-1 text-gray-800">
+                      Registros de evolución
+                    </label>
+                    <textarea
+                      name="evolution"
+                      value={formData.evolution || ''}
+                      onChange={handleEvolutionChange}
+                      onKeyDown={handleKeyDown}
+                      rows={8}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
+                    />
+                    <p className="mt-1 text-sm text-gray-600">
+                      Presiona Shift + Enter para nueva línea, solo el botón Guardar envía el formulario
+                    </p>
+                  </div>
+
+                  <div className="bg-linear-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">Resumen del Paciente</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
+                        <div className="text-sm text-gray-700">Sesiones completadas</div>
+                        <div className="text-2xl font-bold text-gray-800">12</div>
+                      </div>
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
+                        <div className="text-sm text-gray-700">Progreso</div>
+                        <div className="text-2xl font-bold text-gray-800">75%</div>
+                      </div>
+                      <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
+                        <div className="text-sm text-gray-700">Última sesión</div>
+                        <div className="text-lg font-bold text-gray-800">15/06/2023</div>
+                      </div>
                     </div>
 
-                    <div className="bg-gradient-to-b from-[#f8fafc] to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                      <h3 className="font-bold text-lg text-gray-800 mb-4">Resumen del Paciente</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
-                          <div className="text-sm text-gray-700">Sesiones completadas</div>
-                          <div className="text-2xl font-bold text-gray-800">12</div>
-                        </div>
-                        <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
-                          <div className="text-sm text-gray-700">Progreso</div>
-                          <div className="text-2xl font-bold text-gray-800">75%</div>
-                        </div>
-                        <div className="bg-[#bec5a4]/10 p-3 rounded-lg">
-                          <div className="text-sm text-gray-700">Última sesión</div>
-                          <div className="text-lg font-bold text-gray-800">15/06/2023</div>
-                        </div>
+                    <div className="mt-4">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm text-gray-800">Estado del tratamiento</span>
+                        <span className="text-sm font-medium text-gray-800">Activo</span>
                       </div>
-
-                      <div className="mt-4">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm text-gray-800">Estado del tratamiento</span>
-                          <span className="text-sm font-medium text-gray-800">Activo</span>
-                        </div>
-                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-[#bec5a4] to-[#a0a78c]" style={{ width: '75%' }}></div>
-                        </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-linear-to-r from-[#bec5a4] to-[#a0a78c]" style={{ width: '75%' }}></div>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Navegación entre secciones */}
-              <div className="flex justify-between mt-10">
-                <button
-                  type="button"
-                  onClick={() => navigateToSection('prev')}
-                  disabled={isFirstSection}
-                  className={`flex items-center px-5 py-2.5 rounded-xl ${isFirstSection
+            {/* Navegación entre secciones */}
+            <div className="flex justify-between mt-10">
+              <button
+                type="button"
+                onClick={() => navigateToSection('prev')}
+                disabled={isFirstSection}
+                className={`flex items-center px-5 py-2.5 rounded-xl ${
+                  isFirstSection
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50'
-                    }`}
+                }`}
+              >
+                <FaArrowLeft className="mr-2" />
+                Anterior
+              </button>
+              {isLastSection ? (
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex items-center px-6 py-3 bg-linear-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
                 >
-                  <FaArrowLeft className="mr-2" />
-                  Anterior
+                  <FaSave className="mr-2" />
+                  {isLoading ? 'Guardando...' : 'Guardar Historia'}
                 </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => navigateToSection('next')}
+                  className="flex items-center px-6 py-3 bg-linear-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
+                >
+                  Siguiente
+                  <FaArrowRight className="ml-2" />
+                </button>
+              )}
+            </div>
+          </form>
+        )}
 
-                {isLastSection ? (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                    className="flex items-center px-6 py-3 bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
-                  >
-                    <FaSave className="mr-2" />
-                    {isLoading ? 'Guardando...' : 'Guardar Historia'}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => navigateToSection('next')}
-                    className="flex items-center px-6 py-3 bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
-                  >
-                    Siguiente
-                    <FaArrowRight className="ml-2" />
-                  </button>
-                )}
-              </div>
-            </form>
-          )}
-
-          {/* Pie de página */}
-          <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-            <p>SanaTú © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
-            <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos</p>
-          </div>
+        {/* Pie de página */}
+        <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
+          <p>SanaTú © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
+          <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos</p>
         </div>
       </div>
-
-      {/* Modal de consentimiento (solo después de crear nueva historia) */}
-      {showConsent && newRecordId && (
-        <InformedConsent
-          medicalRecordId={newRecordId}
-          patientName={formData.patientName || ''}
-          patientDocument={formData.identificationNumber || ''}
-          onSuccess={handleConsentSuccess}
-          onCancel={handleConsentCancel}
-        />
-      )}
-    </>
+    </div>
   );
 };
 

@@ -302,7 +302,7 @@ const CalendarDashboardPsychologist = () => {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-lg font-serif text-[#2c3e50]">Mentalmente</h3>
+            <h3 className="text-lg font-serif text-[#2c3e50]">SanaTú</h3>
           </div>
           <p className="text-xs text-[#95a5a6] max-w-2xl mx-auto">
             Plataforma de gestión clínica premium para profesionales de la salud mental.

@@ -53,7 +53,7 @@ const ConsentsPage = () => {
     setIsLoading(true);
     try {
       // CORREGIDO: usar plural /api/consents
-      const response = await fetch('/api/consents');
+      const response = await fetch('/api/consent');
       if (!response.ok) throw new Error('Error al cargar consentimientos');
       const data = await response.json();
       setConsents(data.data);

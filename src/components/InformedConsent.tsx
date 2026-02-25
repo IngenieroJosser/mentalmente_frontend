@@ -4,25 +4,41 @@ import React, { useRef, useState } from 'react';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
 interface InformedConsentProps {
-  medicalRecordId?: number; // Si ya existe la historia, pasamos el ID
-  patientName: string;
-  patientDocument: string;
-  onSuccess?: () => void;
-  onCancel?: () => void;
+  medicalRecordId?: number;               // Si ya existe la historia, se pasa el ID
+  patientName?: string;                    // Nombre del paciente (solo se usa si hay medicalRecordId)
+  patientDocument?: string;                 // Documento del paciente (solo se usa si hay medicalRecordId)
+  onSuccess?: () => void;                   // Callback al guardar exitosamente (modo con ID)
+  onCancel?: () => void;                     // Callback al cancelar
+  onSubmit?: (data: {                       // Callback al enviar en modo sin ID
+    patientName: string;
+    patientDocument: string;
+    signatureBase64: string;
+  }) => void;
+  initialName?: string;                      // Valor inicial para el campo nombre (modo sin ID)
+  initialDocument?: string;                   // Valor inicial para el campo documento (modo sin ID)
 }
 
 const InformedConsent: React.FC<InformedConsentProps> = ({
   medicalRecordId,
-  patientName,
-  patientDocument,
+  patientName: propPatientName,
+  patientDocument: propPatientDocument,
   onSuccess,
   onCancel,
+  onSubmit,
+  initialName = '',
+  initialDocument = '',
 }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localName, setLocalName] = useState(initialName);
+  const [localDocument, setLocalDocument] = useState(initialDocument);
   const [signature, setSignature] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
+  // Determinar si estamos en modo con ID (solo firma) o sin ID (con campos)
+  const isExistingRecord = !!medicalRecordId;
+
+  // Funciones del canvas
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -77,27 +93,45 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
       alert('Por favor, firme el documento');
       return;
     }
-    if (!medicalRecordId) {
-      alert('No se ha asociado a una historia clínica');
-      return;
-    }
+
     setIsSubmitting(true);
+
     try {
-      const response = await fetch('/api/consent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          medicalRecordId,
-          signedByName: patientName,
-          signedByDocument: patientDocument,
-          signatureBase64: signature,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Error al guardar el consentimiento');
+      if (isExistingRecord) {
+        // Modo con ID: enviar a la API
+        const response = await fetch('/api/consent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            medicalRecordId,
+            signedByName: propPatientName,
+            signedByDocument: propPatientDocument,
+            signatureBase64: signature,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al guardar el consentimiento');
+        }
+
+        alert('Consentimiento guardado exitosamente');
+        if (onSuccess) onSuccess();
+      } else {
+        // Modo sin ID: validar campos
+        if (!localName.trim() || !localDocument.trim()) {
+          alert('Debe ingresar nombre y documento del paciente');
+          setIsSubmitting(false);
+          return;
+        }
+
+        if (onSubmit) {
+          onSubmit({
+            patientName: localName,
+            patientDocument: localDocument,
+            signatureBase64: signature,
+          });
+        }
       }
-      alert('Consentimiento guardado exitosamente');
-      if (onSuccess) onSuccess();
     } catch (error) {
       console.error(error);
       alert('Error al guardar el consentimiento');
@@ -119,14 +153,14 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
         </div>
 
         <div className="space-y-6">
-          {/* Texto del consentimiento con datos del paciente */}
+          {/* Texto del consentimiento con datos del paciente (solo mostramos los valores, no son editables aquí) */}
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
             <h3 className="text-center font-bold text-lg mb-4">SANATÚ SAS – CONSENTIMIENTO INFORMADO</h3>
             <p><strong>FECHA:</strong> ____ / ____ / 20____</p>
             <p><strong>CIUDAD:</strong> Quibdó, Chocó</p>
             <p>
-              Yo, <strong>{patientName}</strong>, mayor de edad, identificado(a) con la cédula número{' '}
-              <strong>{patientDocument}</strong>, por medio de este documento declaro que acepto de manera voluntaria
+              Yo, <strong>{isExistingRecord ? propPatientName : localName || '____________________'}</strong>, mayor de edad, identificado(a) con la cédula número{' '}
+              <strong>{isExistingRecord ? propPatientDocument : localDocument || '____________________'}</strong>, por medio de este documento declaro que acepto de manera voluntaria
               recibir atención psicológica por parte de SANATÚ SAS (NIT 902010331-8).
             </p>
             <p>Entiendo y acepto que:</p>
@@ -147,9 +181,43 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
             <p className="mt-4">Al firmar, confirmo que he leído (o me han leído) y comprendido este documento y que estoy de acuerdo con lo aquí escrito.</p>
           </div>
 
+          {/* Campos de nombre y documento SOLO si no hay medicalRecordId */}
+          {!isExistingRecord && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-800">
+                  Nombre del paciente <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={localName}
+                  onChange={(e) => setLocalName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-white text-gray-800"
+                  placeholder="Ej. Juan Pérez"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-800">
+                  Documento de identidad <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={localDocument}
+                  onChange={(e) => setLocalDocument(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-white text-gray-800"
+                  placeholder="Ej. 123456789"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
           {/* Firma del paciente */}
           <div>
-            <label className="block text-sm font-medium mb-2">Firma del paciente / consultante</label>
+            <label className="block text-sm font-medium mb-2 text-gray-800">
+              Firma del paciente / consultante
+            </label>
             <div className="border border-gray-300 rounded-xl p-2 bg-white">
               <canvas
                 ref={canvasRef}
@@ -187,7 +255,7 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
             )}
           </div>
 
-          {/* Firma del profesional (se puede agregar después) */}
+          {/* Firma del profesional (estática) */}
           <div className="border-t pt-4">
             <p className="text-center text-gray-600">
               _____________________________________
