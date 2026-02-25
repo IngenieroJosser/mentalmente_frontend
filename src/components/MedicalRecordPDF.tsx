@@ -474,6 +474,7 @@ const MedicalRecordPDF: React.FC<Props> = ({ record, baseUrl }) => {
           <Text style={styles.footerName}>Liyiveth Quintero García</Text>
           <Text style={styles.footerText}>Psicóloga - TP No. 229742</Text>
           <Text style={styles.footerText}>SanaTú SAS</Text>
+          <Text style={styles.footerText}>Toda la información contenida en esta historia clínica es confidencial, bajo la Ley 1090 de 2006 y la Resolución 1995 de 1999</Text>
         </View>
 
         {/* Número de página */}
