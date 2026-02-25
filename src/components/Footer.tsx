@@ -49,7 +49,7 @@ const Footer = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-light text-gray-900">SanaTú</h3>
+                <h3 className="text-2xl font-light text-gray-900">Sana<span className="text-[#bec5a4]">Tú</span></h3>
                 <p className="text-gray-500 text-sm font-light mt-1">
                   Psicología & Bienestar Integral
                 </p>
