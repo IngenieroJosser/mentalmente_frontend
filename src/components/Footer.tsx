@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { 
-  Heart, 
-  Lock, 
-  Phone, 
-  Mail, 
+import {
+  Heart,
+  Lock,
+  Phone,
+  Mail,
   MapPin,
   ArrowUp,
   Sparkles
@@ -39,17 +39,17 @@ const Footer = () => {
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center">
                 <div className="w-8 h-8 rounded-full bg-[#bec5a4] flex items-center justify-center">
-                  <Image 
-                    src="/logo-sana-tu.png" 
-                    alt="SanaTú Quingar" 
-                    width={32} 
-                    height={32} 
+                  <Image
+                    src="/logo-sana-tu.png"
+                    alt="SanaTú"
+                    width={32}
+                    height={32}
                     className="object-contain"
                   />
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-light text-gray-900">SanaTú Quingar</h3>
+                <h3 className="text-2xl font-light text-gray-900">SanaTú</h3>
                 <p className="text-gray-500 text-sm font-light mt-1">
                   Psicología & Bienestar Integral
                 </p>
@@ -108,7 +108,7 @@ const Footer = () => {
           {/* Columna 3: Contacto */}
           <div className="space-y-8">
             <h4 className="text-lg font-light text-gray-900">Contacto</h4>
-            
+
             <div className="space-y-6">
               <a
                 href={`https://wa.me/3113266223`}
@@ -126,7 +126,7 @@ const Footer = () => {
               </a>
 
               <a
-                href="mailto:hola@sanatuquingar.com"
+                href="mailto:sanatuquingar@gmail.com"
                 className="flex items-center space-x-4 group"
               >
                 <div className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center group-hover:border-[#bec5a4] transition-colors">
@@ -134,7 +134,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-light text-gray-900">Email</p>
-                  <p className="text-gray-500 text-sm font-light">hola@sanatuquingar.com</p>
+                  <p className="text-gray-500 text-sm font-light">sanatuquingar@gmail.com</p>
                 </div>
               </a>
 
@@ -167,7 +167,7 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0">
           <div className="text-center lg:text-left">
             <p className="text-sm text-gray-500 font-light">
-              © {currentYear} SanaTú Quingar. Todos los derechos reservados.
+              © {currentYear} SanaTú. Todos los derechos reservados.
             </p>
             <p className="text-xs text-gray-400 font-light mt-2">
               Psicología profesional con enfoque humanista y estratégico
@@ -186,16 +186,6 @@ const Footer = () => {
             </button>
 
             <div className="hidden lg:block h-8 w-px bg-gray-200" />
-
-            <div className="flex items-center space-x-1">
-              <span className="text-xs text-gray-400 font-light tracking-wider">
-                DISEÑADO CON
-              </span>
-              <Heart className="w-4 h-4 text-gray-400" />
-              <span className="text-xs text-gray-400 font-light tracking-wider">
-                POR Luis Carlos Chaverra Córdoba | Todos los derechos reservados
-              </span>
-            </div>
           </div>
         </div>
       </div>

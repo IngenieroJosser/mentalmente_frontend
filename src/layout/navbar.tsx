@@ -51,7 +51,7 @@ const Header = () => {
 
   const handleContactClick = () => {
     const phoneNumber = '+573113266223';
-    const message = encodeURIComponent('Hola SanaTú Quingar, vi tu página y me gustaría recibir información de tus servicios');
+    const message = encodeURIComponent('Hola SanaTú, vi tu página y me gustaría recibir información de tus servicios');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
@@ -147,7 +147,7 @@ const Header = () => {
                     <Sparkle className="w-3 h-3 text-[#bec5a4] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                   <div className="h-px w-full bg-gradient-to-r from-gray-300/50 to-transparent" />
-                  <span className="text-[10px] tracking-[0.3em] text-gray-500 font-light uppercase mt-1">QUINGAR</span>
+                  <span className="text-[10px] tracking-[0.3em] text-gray-500 font-light uppercase mt-1"></span>
                 </div>
               </motion.div>
             </Link>
@@ -322,7 +322,7 @@ const Header = () => {
                       </div>
                       <div>
                         <h3 className="text-sm tracking-widest font-light text-gray-900">MENÚ</h3>
-                        <p className="text-[10px] text-gray-500 tracking-widest">SANATÚ QUINGAR</p>
+                        <p className="text-[10px] text-gray-500 tracking-widest">SANATÚ</p>
                       </div>
                     </div>
                     <button
@@ -433,8 +433,8 @@ const Header = () => {
                 <motion.div
                   animate={{ scale: isActive ? 1.2 : 1 }}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive
-                      ? 'bg-[#bec5a4]'
-                      : 'bg-gray-300 group-hover:bg-gray-400'
+                    ? 'bg-[#bec5a4]'
+                    : 'bg-gray-300 group-hover:bg-gray-400'
                     }`}
                 />
                 {/* Tooltip */}

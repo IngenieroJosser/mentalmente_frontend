@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  FileText, 
-  Search, 
+import {
+  FileText,
+  Search,
   PlusCircle,
   ChevronDown,
   Edit,
@@ -54,7 +54,7 @@ const DashboardManagementMentalmentePage = () => {
   // Función para traducir roles
   const translateRole = useCallback((role: string) => {
     if (!role) return 'Usuario';
-    switch(role.toUpperCase()) {
+    switch (role.toUpperCase()) {
       case 'MANAGEMENT':
         return 'Gestión/Administración';
       case 'PSYCHOLOGIST':
@@ -84,7 +84,7 @@ const DashboardManagementMentalmentePage = () => {
       if (!response.ok) {
         throw new Error('Error al cargar historias clínicas');
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error en fetchHistories:', error);
@@ -94,7 +94,7 @@ const DashboardManagementMentalmentePage = () => {
 
   const loadHistories = useCallback(async () => {
     if (!authChecked && !isAuthenticated) return;
-    
+
     setIsLoading(true);
     try {
       const result = await fetchHistories(currentPage, limit, searchTerm);
@@ -104,17 +104,17 @@ const DashboardManagementMentalmentePage = () => {
     } catch (error) {
       console.error('Error cargando historias:', error);
       setClinicalHistories([]);
-      
+
       // Definir un tipo para errores con mensaje
       interface ErrorWithMessage {
         message: string;
       }
-      
+
       const err = error as ErrorWithMessage;
-      
+
       // Si hay error de autenticación, redirigir al login
-      if (err.message && (err.message.includes('401') || err.message.includes('403'))) { 
-        router.push('/login'); 
+      if (err.message && (err.message.includes('401') || err.message.includes('403'))) {
+        router.push('/login');
       }
     } finally {
       setIsLoading(false);
@@ -126,16 +126,16 @@ const DashboardManagementMentalmentePage = () => {
     const checkAuth = () => {
       const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
       const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
-      
+
       console.log('Auth check - Token:', token ? 'Presente' : 'Ausente');
       console.log('Auth check - User data:', userData ? 'Presente' : 'Ausente');
-      
+
       if (!token || !userData) {
         console.log('No autenticado, redirigiendo a /login');
         router.push('/login');
         return false;
       }
-      
+
       setAuthChecked(true);
       return true;
     };
@@ -162,7 +162,7 @@ const DashboardManagementMentalmentePage = () => {
     if (confirm('¿Estás seguro de eliminar esta historia clínica?')) {
       try {
         const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
-        
+
         const response = await fetch(`/api/medical-records?id=${id}`, {
           method: 'DELETE',
           headers: {
@@ -224,7 +224,7 @@ const DashboardManagementMentalmentePage = () => {
       <div className="flex justify-center items-center h-screen bg-gray-50">
         <div className="text-center">
           <p className="text-gray-700 mb-4">No tienes acceso a esta página</p>
-          <button 
+          <button
             onClick={() => router.push('/login')}
             className="bg-[#bec5a4] text-white px-4 py-2 rounded-lg"
           >
@@ -238,7 +238,7 @@ const DashboardManagementMentalmentePage = () => {
   // Obtener usuario de localStorage como fallback
   const getUserData = () => {
     if (authUser) return authUser;
-    
+
     try {
       const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
       if (userData) {
@@ -247,7 +247,7 @@ const DashboardManagementMentalmentePage = () => {
     } catch (error) {
       console.error('Error parsing user data:', error);
     }
-    
+
     return null;
   };
 
@@ -272,29 +272,28 @@ const DashboardManagementMentalmentePage = () => {
                 </div>
                 <div>
                   <h1 className="font-bold">SanaTú</h1>
-                  <p className="text-xs text-white/80">Quingar</p>
+                  <p className="text-xs text-white/80"></p>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsMenuOpen(false)} 
+              <button
+                onClick={() => setIsMenuOpen(false)}
                 className="text-white text-xl"
                 aria-label="Close menu"
               >
                 &times;
               </button>
             </div>
-            
+
             <nav className="py-5">
               <ul>
                 {menuItems.map((item) => (
                   <li key={item.id}>
                     <Link
                       href={item.path}
-                      className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                        pathname === item.path
+                      className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${pathname === item.path
                           ? 'bg-white/10 border-l-4 border-white'
                           : 'hover:bg-white/5'
-                      }`}
+                        }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.icon}
@@ -318,21 +317,20 @@ const DashboardManagementMentalmentePage = () => {
           </div>
           <div>
             <h1 className="font-bold text-lg">SanaTú</h1>
-            <p className="text-sm text-white/80">Quingar</p>
+            <p className="text-sm text-white/80"></p>
           </div>
         </div>
-        
+
         <nav className="flex-1 py-5">
           <ul>
             {menuItems.map((item) => (
               <li key={item.id}>
                 <Link
                   href={item.path}
-                  className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${
-                    pathname === item.path
+                  className={`w-full flex items-center space-x-3 px-5 py-3 transition-colors ${pathname === item.path
                       ? 'bg-white/10 border-l-4 border-white'
                       : 'hover:bg-white/5'
-                  }`}
+                    }`}
                 >
                   {item.icon}
                   <span className="text-white">{item.label}</span>
@@ -341,7 +339,7 @@ const DashboardManagementMentalmentePage = () => {
             ))}
           </ul>
         </nav>
-        
+
         <div className="p-5 border-t border-white/20">
           <div className="flex items-center space-x-3 w-full text-left p-3 bg-white/10 rounded-lg">
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
@@ -364,7 +362,7 @@ const DashboardManagementMentalmentePage = () => {
         {/* Header */}
         <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <button 
+            <button
               onClick={() => setIsMenuOpen(true)}
               className="md:hidden mr-3 text-gray-700"
               aria-label='Menú'
@@ -372,10 +370,10 @@ const DashboardManagementMentalmentePage = () => {
               <Menu size={24} />
             </button>
             <h1 className="text-xl font-bold text-gray-800 hidden md:inline-block">
-              Panel de Administración - SanaTú Quingar
+              Panel de Administración - SanaTú
             </h1>
           </div>
-          
+
           <div className="relative flex-1 max-w-xl mx-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
@@ -387,9 +385,9 @@ const DashboardManagementMentalmentePage = () => {
               aria-label="Buscar historias clínicas"
             />
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <button 
+            <button
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
               className="p-2 rounded-full hover:bg-gray-100 relative"
               aria-label="Notificaciones"
@@ -397,9 +395,9 @@ const DashboardManagementMentalmentePage = () => {
               <Bell size={20} className="text-gray-700" />
               <span className="absolute top-1 right-1 bg-[#bec5a4] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
-            
+
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center space-x-2"
                 aria-label="Perfil de usuario"
@@ -414,7 +412,7 @@ const DashboardManagementMentalmentePage = () => {
                 </span>
                 <ChevronDown size={16} className="text-gray-600" />
               </button>
-              
+
               {/* Profile Menu */}
               {isProfileOpen && (
                 <div className="absolute right-0 top-12 mt-2 w-56 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
@@ -426,13 +424,13 @@ const DashboardManagementMentalmentePage = () => {
                     <p className="text-xs text-gray-500 mt-1">{user?.correo}</p>
                   </div>
                   <div className="py-2">
-                    <button 
+                    <button
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
                       onClick={() => router.push('/management-dashboard/settings')}
                     >
                       <Settings size={16} className="mr-2 text-gray-700" /> Configuración
                     </button>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-gray-800"
                     >
@@ -455,7 +453,7 @@ const DashboardManagementMentalmentePage = () => {
                   ¡Bienvenido, {user?.usuario || 'Administrador'}! 👋
                 </h2>
                 <p className="text-white/90 max-w-2xl">
-                  Panel de administración del sistema SanaTú Quingar. 
+                  Panel de administración del sistema SanaTú.
                   Gestiona usuarios, historias clínicas y configuraciones del sistema.
                 </p>
               </div>
@@ -469,21 +467,21 @@ const DashboardManagementMentalmentePage = () => {
               <p className="text-gray-700">Optimiza tu tiempo con nuestro sistema digital</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button 
+              <button
                 className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center hover:border-[#bec5a4] hover:text-[#bec5a4] transition-colors"
                 aria-label="Filtros"
               >
                 <Filter size={16} className="mr-2" />
                 Filtros
               </button>
-              <button 
+              <button
                 className="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center hover:border-[#bec5a4] hover:text-[#bec5a4] transition-colors"
                 aria-label="Exportar datos"
               >
                 <Download size={16} className="mr-2" />
                 Exportar
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setEditingHistory(null);
                   setShowForm(true);
@@ -511,17 +509,17 @@ const DashboardManagementMentalmentePage = () => {
                   </button>
                 ))}
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-700">Vista:</span>
-                <button 
+                <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#bec5a4] text-white' : 'bg-gray-100 text-gray-700 hover:bg-[#bec5a4]/20 hover:text-[#bec5a4]'}`}
                   aria-label="Vista de cuadrícula"
                 >
                   <LayoutGrid size={18} />
                 </button>
-                <button 
+                <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#bec5a4] text-white' : 'bg-gray-100 text-gray-700 hover:bg-[#bec5a4]/20 hover:text-[#bec5a4]'}`}
                   aria-label="Vista de lista"
@@ -540,7 +538,7 @@ const DashboardManagementMentalmentePage = () => {
           ) : clinicalHistories.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-gray-700">No se encontraron historias clínicas</p>
-              <button 
+              <button
                 onClick={() => setShowForm(true)}
                 className="mt-4 bg-[#bec5a4] hover:bg-[#a0a78c] text-white px-4 py-2 rounded-lg flex items-center mx-auto"
               >
@@ -561,7 +559,7 @@ const DashboardManagementMentalmentePage = () => {
                         </div>
                       </div>
                       <div className="relative">
-                        <button 
+                        <button
                           className="text-gray-500 hover:text-[#bec5a4]"
                           aria-label="Opciones"
                         >
@@ -570,15 +568,15 @@ const DashboardManagementMentalmentePage = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="p-5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-700">Última actualización:</span>
                       <span className="font-medium text-gray-800">{formatDate(history.updatedAt.toString())}</span>
                     </div>
-                    
+
                     <div className="flex justify-between mt-4">
-                      <button 
+                      <button
                         onClick={() => handleViewDetails(history)}
                         className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg"
                         aria-label="Ver detalles"
@@ -586,7 +584,7 @@ const DashboardManagementMentalmentePage = () => {
                         Ver detalles
                       </button>
                       <div className="flex space-x-2">
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingHistory(history.id);
                             setShowForm(true);
@@ -596,7 +594,7 @@ const DashboardManagementMentalmentePage = () => {
                         >
                           <Edit size={14} className="mr-1" /> Editar
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(history.id)}
                           className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg flex items-center"
                           aria-label="Eliminar historia"
@@ -632,32 +630,32 @@ const DashboardManagementMentalmentePage = () => {
                       <td className="py-4 px-4 text-sm text-gray-800">{formatDate(history.updatedAt.toString())}</td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
-                          <button 
+                          <button
                             onClick={() => handleViewDetails(history)}
-                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]"
                             aria-label="Ver detalles"
                           >
                             <FileText size={16} />
                           </button>
-                          <button 
+                          <button
                             onClick={() => {
                               setEditingHistory(history.id);
                               setShowForm(true);
                             }}
-                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]"
                             aria-label="Editar historia"
                           >
                             <Edit size={16} />
                           </button>
-                          <button 
+                          <button
                             onClick={() => handleDelete(history.id)}
-                            className="p-1.5 text-gray-600 hover:text-red-600" 
+                            className="p-1.5 text-gray-600 hover:text-red-600"
                             aria-label="Eliminar historia"
                           >
                             <Trash2 size={16} />
                           </button>
-                          <button 
-                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]" 
+                          <button
+                            className="p-1.5 text-gray-600 hover:text-[#bec5a4]"
                             aria-label="Imprimir historia"
                           >
                             <Printer size={16} />
@@ -678,7 +676,7 @@ const DashboardManagementMentalmentePage = () => {
                 Mostrando {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalRecords)} de {totalRecords} registros
               </div>
               <div className="flex space-x-2">
-                <button 
+                <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(p => p - 1)}
                   className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-white hover:bg-[#a0a78c]'}`}
@@ -689,7 +687,7 @@ const DashboardManagementMentalmentePage = () => {
                 <span className="px-3 py-1 bg-white border border-gray-300 rounded text-gray-800">
                   Página {currentPage} de {totalPages}
                 </span>
-                <button 
+                <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(p => p + 1)}
                   className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-[#bec5a4] text-white hover:bg-[#a0a78c]'}`}
@@ -705,14 +703,14 @@ const DashboardManagementMentalmentePage = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
             <div className="flex justify-between items-center mb-5">
               <h2 className="font-semibold text-lg text-gray-800">Plantillas de Historias Clínicas</h2>
-              <button 
+              <button
                 className="text-sm text-[#bec5a4] hover:text-[#a0a78c] font-medium transition-colors"
                 aria-label="Ver todas las plantillas"
               >
                 Ver todas
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {templates.map(template => (
                 <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#bec5a4] transition-colors">
@@ -721,7 +719,7 @@ const DashboardManagementMentalmentePage = () => {
                   </div>
                   <h3 className="font-bold mb-1 text-lg text-gray-800">{template.name}</h3>
                   <p className="text-sm text-gray-700">{template.category}</p>
-                  <button 
+                  <button
                     className="mt-3 text-sm w-full bg-[#bec5a4] hover:bg-[#a0a78c] text-white py-1.5 rounded-lg transition-colors"
                     aria-label={`Usar plantilla ${template.name}`}
                   >
@@ -748,9 +746,9 @@ const DashboardManagementMentalmentePage = () => {
 
       {/* Details Modal */}
       {showDetailsModal && selectedRecord && (
-        <MedicalRecordDetailsModal 
-          record={selectedRecord} 
-          onClose={() => setShowDetailsModal(false)} 
+        <MedicalRecordDetailsModal
+          record={selectedRecord}
+          onClose={() => setShowDetailsModal(false)}
         />
       )}
     </div>

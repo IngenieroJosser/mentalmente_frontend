@@ -7,18 +7,18 @@ export default function SpinnerPDF() {
       {/* Animated Orbital System */}
       <div className="relative mb-8 w-44 h-44">
         {/* Outer orbit - verde claro */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 rounded-full border-2 border-[#bec5a4]/30"
-          animate={{ 
+          animate={{
             rotate: 360,
           }}
-          transition={{ 
-            duration: 12, 
+          transition={{
+            duration: 12,
             ease: "linear",
             repeat: Infinity
           }}
         >
-          <motion.div 
+          <motion.div
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#bec5a4] shadow-[0_0_15px_3px_rgba(190,197,164,0.7)]"
             animate={{
               rotate: -360
@@ -30,20 +30,20 @@ export default function SpinnerPDF() {
             }}
           />
         </motion.div>
-        
+
         {/* Middle orbit - verde claro más oscuro */}
-        <motion.div 
+        <motion.div
           className="absolute inset-4 rounded-full border-2 border-[#9fa68c]/30"
-          animate={{ 
+          animate={{
             rotate: -360,
           }}
-          transition={{ 
-            duration: 8, 
+          transition={{
+            duration: 8,
             ease: "linear",
             repeat: Infinity
           }}
         >
-          <motion.div 
+          <motion.div
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#9fa68c] shadow-[0_0_10px_3px_rgba(159,166,140,0.7)]"
             animate={{
               rotate: 360
@@ -55,20 +55,20 @@ export default function SpinnerPDF() {
             }}
           />
         </motion.div>
-        
+
         {/* Inner orbit - blend */}
-        <motion.div 
+        <motion.div
           className="absolute inset-8 rounded-full border-2 border-[#bec5a4]/20"
-          animate={{ 
+          animate={{
             rotate: 360,
           }}
-          transition={{ 
-            duration: 6, 
+          transition={{
+            duration: 6,
             ease: "linear",
             repeat: Infinity
           }}
         >
-          <motion.div 
+          <motion.div
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#bec5a4] to-[#8e957a] shadow-[0_0_8px_2px_rgba(190,197,164,0.5)]"
             animate={{
               rotate: -360
@@ -80,7 +80,7 @@ export default function SpinnerPDF() {
             }}
           />
         </motion.div>
-        
+
         {/* Central logo with gradient glow */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-16 h-16 z-10">
@@ -88,7 +88,7 @@ export default function SpinnerPDF() {
             <div className="absolute inset-0 flex items-center justify-center">
               <Image
                 src="/logo-sana-tu.png"
-                alt="SanaTú Quingar"
+                alt="SanaTú"
                 width={64}
                 height={64}
                 className="object-contain opacity-90"
@@ -97,7 +97,7 @@ export default function SpinnerPDF() {
             </div>
           </div>
         </div>
-        
+
         {/* Floating particles */}
         {[...Array(8)].map((_, i) => (
           <motion.div
@@ -120,26 +120,26 @@ export default function SpinnerPDF() {
           />
         ))}
       </div>
-      
+
       {/* Animated text */}
       <div className="mt-6 text-center max-w-md">
-        <motion.p 
+        <motion.p
           className="text-xl font-light text-slate-100 tracking-wide"
-          animate={{ 
+          animate={{
             opacity: [0.8, 1, 0.8],
           }}
-          transition={{ 
-            duration: 2.5, 
-            repeat: Infinity 
+          transition={{
+            duration: 2.5,
+            repeat: Infinity
           }}
         >
           Generando PDF
           <motion.span
-            animate={{ 
+            animate={{
               opacity: [0, 1, 0],
             }}
-            transition={{ 
-              duration: 1.5, 
+            transition={{
+              duration: 1.5,
               repeat: Infinity,
               repeatDelay: 0.5
             }}
@@ -147,29 +147,29 @@ export default function SpinnerPDF() {
             ...
           </motion.span>
         </motion.p>
-        
-        <motion.p 
+
+        <motion.p
           className="mt-4 text-slate-300 text-sm font-medium tracking-wider"
-          animate={{ 
+          animate={{
             y: [0, -3, 0],
           }}
-          transition={{ 
-            duration: 4, 
+          transition={{
+            duration: 4,
             repeat: Infinity,
             ease: "easeInOut"
           }}
         >
-          SanaTú Quingar - Transformando vidas
+          SanaTú - Transformando vidas
         </motion.p>
-        
+
         {/* Subtle brand gradient line */}
-        <motion.div 
+        <motion.div
           className="mt-4 mx-auto h-0.5 w-32 rounded-full bg-gradient-to-r from-transparent via-[#bec5a4] to-transparent"
-          animate={{ 
+          animate={{
             opacity: [0.3, 0.8, 0.3],
           }}
-          transition={{ 
-            duration: 3, 
+          transition={{
+            duration: 3,
             repeat: Infinity,
             ease: "easeInOut"
           }}

@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  UserPlus, 
-  Mail, 
-  Lock, 
-  User, 
+import {
+  UserPlus,
+  Mail,
+  Lock,
+  User,
   ChevronRight,
   Shield,
   Eye,
@@ -66,14 +66,14 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       toast.error('Por favor corrige los errores en el formulario');
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -88,23 +88,23 @@ export default function RegisterPage() {
           role: 'USER' // Rol fijo
         })
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
-        const errorMessage = data.details 
+        const errorMessage = data.details
           ? `${data.message}: ${data.details}`
           : data.message || 'Error en el registro';
         throw new Error(errorMessage);
       }
-  
+
       if (!data.user || !data.token) {
         throw new Error('La respuesta del servidor no contiene los datos esperados');
       }
-  
+
       localStorage.setItem('sanatu_token', data.token);
       localStorage.setItem('sanatu_user', JSON.stringify(data.user));
-  
+
       toast.success('¡Registro exitoso! Redirigiendo...', {
         position: "top-center",
         autoClose: 2000,
@@ -113,22 +113,22 @@ export default function RegisterPage() {
           router.push('/reception-dashboard');
         }
       });
-  
+
     } catch (error) {
       console.error('Register error:', error);
-      
+
       interface ErrorWithMessage {
         message: string;
       }
-      
+
       const err = error as ErrorWithMessage;
-      
+
       let errorMessage = err.message || 'Error en el registro';
-      
+
       if (errorMessage.includes('Database Error') || errorMessage.includes('Prisma')) {
         errorMessage = 'Error de conexión con la base de datos. Por favor, intenta nuevamente.';
       }
-      
+
       toast.error(errorMessage, {
         position: "top-center"
       });
@@ -148,7 +148,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-white to-gray-50">
       <ToastContainer />
-      
+
       <div className="w-full max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -165,13 +165,13 @@ export default function RegisterPage() {
                     <ChevronRight className="w-4 h-4 rotate-180 mr-2" />
                     Volver al inicio
                   </Link>
-                  
+
                   <div className="mb-8">
                     <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mb-6">
                       <UserPlus className="w-8 h-8" />
                     </div>
                     <h1 className="text-3xl font-light mb-4">
-                      Únete a <span className="font-normal">SanaTú Quingar</span>
+                      Únete a <span className="font-normal">SanaTú</span>
                     </h1>
                     <p className="text-white/80 font-light">
                       Crea tu cuenta para acceder al sistema de gestión de historias clínicas
@@ -243,9 +243,8 @@ export default function RegisterPage() {
                         name="usuario"
                         value={formData.usuario}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${
-                          errors.usuario ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${errors.usuario ? 'border-red-300' : 'border-gray-300'
+                          }`}
                         placeholder="ej: Josser"
                       />
                     </div>
@@ -271,9 +270,8 @@ export default function RegisterPage() {
                         name="correo"
                         value={formData.correo}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${
-                          errors.correo ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${errors.correo ? 'border-red-300' : 'border-gray-300'
+                          }`}
                         placeholder="ej: cordobarivasjoss@sanatu.com"
                       />
                     </div>
@@ -318,9 +316,8 @@ export default function RegisterPage() {
                         name="contrasena"
                         value={formData.contrasena}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${
-                          errors.contrasena ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${errors.contrasena ? 'border-red-300' : 'border-gray-300'
+                          }`}
                         placeholder="Mínimo 6 caracteres"
                       />
                       <button
@@ -357,9 +354,8 @@ export default function RegisterPage() {
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${
-                          errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#bec5a4]/30 focus:border-[#bec5a4] outline-none transition-all ${errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                          }`}
                         placeholder="Repite tu contraseña"
                       />
                       <button
@@ -412,11 +408,10 @@ export default function RegisterPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all duration-300 ${
-                        loading
+                      className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all duration-300 ${loading
                           ? 'bg-[#bec5a4]/80 cursor-not-allowed'
                           : 'bg-[#bec5a4] hover:bg-[#a0a78c] shadow-sm hover:shadow'
-                      }`}
+                        }`}
                     >
                       {loading ? (
                         <>
@@ -450,7 +445,7 @@ export default function RegisterPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500 font-light">
-            © {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.
+            © {new Date().getFullYear()} SanaTú. Todos los derechos reservados.
           </p>
           <p className="text-xs text-gray-400 font-light mt-1">
             Sistema seguro de gestión de historias clínicas

@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { 
-  FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaMapMarkerAlt, 
+import {
+  FaUserInjured, FaIdCard, FaCalendarAlt, FaPhone, FaMapMarkerAlt,
   FaHospital, FaVenusMars, FaHistory, FaEdit, FaTrash, FaTimes,
   FaSearch, FaFilter, FaChartLine, FaHeartbeat, FaUsers
 } from 'react-icons/fa';
@@ -27,10 +27,10 @@ const PatientReceptionDashboard = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       if (!user || !user.id) return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const response = await fetch(`/api/reception-dash?userId=${user.id}&limit=1000`);
         if (!response.ok) {
@@ -51,8 +51,8 @@ const PatientReceptionDashboard = () => {
 
   const filteredPatients = patients.filter(patient => {
     const matchesSearch = patient.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          patient.identificationNumber.includes(searchTerm);
-    
+      patient.identificationNumber.includes(searchTerm);
+
     if (activeTab === 'beneficiaries') {
       return matchesSearch && patient.isBeneficiary;
     }
@@ -92,7 +92,7 @@ const PatientReceptionDashboard = () => {
 
   const handleSavePatient = async () => {
     if (!editingPatient) return;
-    
+
     try {
       const updateData = {
         patientName: editingPatient.patientName,
@@ -155,29 +155,29 @@ const PatientReceptionDashboard = () => {
         recommendations: editingPatient.recommendations,
         evolution: editingPatient.evolution,
       };
-  
+
       const response = await fetch(`/api/reception-dash/patient?userId=${editingPatient.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Error al actualizar el paciente');
       }
-      
-      const updatedPatients = patients.map(p => 
+
+      const updatedPatients = patients.map(p =>
         p.id === editingPatient.id ? editingPatient : p
       );
-      
+
       setPatients(updatedPatients);
       toast.success('Paciente actualizado con éxito');
       setEditingPatient(null);
     } catch (err: unknown) {
       console.error('Error al guardar:', err);
-      const errorMessage = err instanceof Error 
-        ? err.message 
+      const errorMessage = err instanceof Error
+        ? err.message
         : 'Error al actualizar el paciente';
       toast.error(errorMessage);
     }
@@ -185,17 +185,17 @@ const PatientReceptionDashboard = () => {
 
   const handleDeletePatient = async () => {
     if (!patientToDelete) return;
-    
+
     try {
       const response = await fetch(`/api/psychologist-dash/patient?id=${patientToDelete.id}`, {
         method: 'DELETE'
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Error al eliminar el paciente');
       }
-      
+
       const updatedPatients = patients.filter(p => p.id !== patientToDelete.id);
       setPatients(updatedPatients);
       toast.success('Paciente eliminado con éxito');
@@ -203,8 +203,8 @@ const PatientReceptionDashboard = () => {
       setPatientToDelete(null);
     } catch (err: unknown) {
       console.error('Error al eliminar:', err);
-      const errorMessage = err instanceof Error 
-        ? err.message 
+      const errorMessage = err instanceof Error
+        ? err.message
         : 'Error al eliminar el paciente';
       toast.error(errorMessage);
     }
@@ -212,9 +212,9 @@ const PatientReceptionDashboard = () => {
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (!editingPatient) return;
-    
+
     const { name, value, type } = e.target;
-    
+
     setEditingPatient({
       ...editingPatient,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
@@ -251,7 +251,7 @@ const PatientReceptionDashboard = () => {
             <h2 className="text-2xl font-bold text-[#2c3e50]">Error de conexión</h2>
             <p className="text-[#7f8c8d] mt-2">{error}</p>
           </div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="w-full py-3 px-4 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white font-medium rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#bec5a4]/20"
           >
@@ -300,21 +300,19 @@ const PatientReceptionDashboard = () => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === 'all'
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'all'
                     ? 'bg-[#bec5a4] text-white shadow-md shadow-[#bec5a4]/30'
                     : 'bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#e8e8e8]'
-                }`}
+                  }`}
               >
                 Todos
               </button>
               <button
                 onClick={() => setActiveTab('beneficiaries')}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === 'beneficiaries'
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'beneficiaries'
                     ? 'bg-[#bec5a4] text-white shadow-md shadow-[#bec5a4]/30'
                     : 'bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#e8e8e8]'
-                }`}
+                  }`}
               >
                 Beneficiarios
               </button>
@@ -333,12 +331,12 @@ const PatientReceptionDashboard = () => {
             </div>
             <h3 className="text-2xl font-light text-[#2c3e50] mb-2">No se encontraron pacientes</h3>
             <p className="text-[#7f8c8d] max-w-md mx-auto">
-              {searchTerm 
+              {searchTerm
                 ? `No hay pacientes que coincidan con "${searchTerm}"`
                 : 'Comienza agregando un nuevo paciente al sistema.'}
             </p>
             {searchTerm && (
-              <button 
+              <button
                 onClick={() => setSearchTerm('')}
                 className="mt-6 px-6 py-3 bg-[#bec5a4] text-white rounded-xl hover:bg-[#aab38c] transition-all shadow-md shadow-[#bec5a4]/20"
               >
@@ -415,11 +413,10 @@ const PatientReceptionDashboard = () => {
 
                   {/* Estado y acciones */}
                   <div className="mt-6 pt-4 border-t border-[#bec5a4]/20 flex items-center justify-between">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      patient.isBeneficiary 
-                        ? 'bg-[#bec5a4]/10 text-[#2c3e50] border border-[#bec5a4]/30' 
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${patient.isBeneficiary
+                        ? 'bg-[#bec5a4]/10 text-[#2c3e50] border border-[#bec5a4]/30'
                         : 'bg-[#ecf0f1] text-[#7f8c8d]'
-                    }`}>
+                      }`}>
                       {patient.isBeneficiary ? 'Beneficiario' : 'Particular'}
                     </span>
                     <div className="flex space-x-2">
@@ -479,7 +476,7 @@ const PatientReceptionDashboard = () => {
             <div>
               <div className="text-sm uppercase tracking-wider text-[#95a5a6]">Edad promedio</div>
               <div className="text-3xl font-light text-[#2c3e50]">
-                {patients.length > 0 
+                {patients.length > 0
                   ? Math.round(patients.reduce((sum, p) => sum + (p.age || 0), 0) / patients.length)
                   : 0} años
               </div>
@@ -502,19 +499,19 @@ const PatientReceptionDashboard = () => {
             Transformando la atención psicológica con tecnología de vanguardia.
           </p>
           <div className="mt-4 text-xs text-[#bdc3c7]">
-            © {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.
+            © {new Date().getFullYear()} SanaTú. Todos los derechos reservados.
           </div>
         </div>
       </div>
 
       {/* Modal de detalles de historia clínica */}
       {isDetailModalOpen && selectedPatient && (
-        <MedicalRecordDetailsModal 
-          record={selectedPatient as unknown as MedicalRecordWithUser} 
+        <MedicalRecordDetailsModal
+          record={selectedPatient as unknown as MedicalRecordWithUser}
           onClose={closeModals}
         />
       )}
-      
+
       {/* Modal de edición de paciente (completo) */}
       {editingPatient && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -526,7 +523,7 @@ const PatientReceptionDashboard = () => {
                   <FaTimes size={20} />
                 </button>
               </div>
-              
+
               <form onSubmit={(e) => { e.preventDefault(); handleSavePatient(); }} className="space-y-5">
                 {/* Nombre completo */}
                 <div>
@@ -540,7 +537,7 @@ const PatientReceptionDashboard = () => {
                     required
                   />
                 </div>
-                
+
                 {/* Tipo y número de identificación */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -571,7 +568,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Fecha de nacimiento y edad */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -595,7 +592,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Escolaridad y ocupación */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -619,7 +616,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Lugar de nacimiento y nacionalidad */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -643,7 +640,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Religión */}
                 <div>
                   <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Religión</label>
@@ -655,7 +652,7 @@ const PatientReceptionDashboard = () => {
                     className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
                   />
                 </div>
-                
+
                 {/* Dirección completa */}
                 <div>
                   <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Dirección</label>
@@ -667,7 +664,7 @@ const PatientReceptionDashboard = () => {
                     className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
                   />
                 </div>
-                
+
                 {/* Ciudad, departamento, barrio */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
@@ -701,7 +698,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Teléfono, celular, email */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
@@ -735,7 +732,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* EPS y fecha de ingreso */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -759,7 +756,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Beneficiario y remitido por */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex items-center">
@@ -785,7 +782,7 @@ const PatientReceptionDashboard = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Responsable 1 */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Responsable 1</h4>
@@ -832,7 +829,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Responsable 2 */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Responsable 2</h4>
@@ -879,7 +876,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Profesional a cargo */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Profesional a cargo</h4>
@@ -906,7 +903,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Antecedentes personales */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Antecedentes Personales</h4>
@@ -983,7 +980,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Antecedentes familiares */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Antecedentes Familiares</h4>
@@ -1050,7 +1047,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Desarrollo */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Desarrollo</h4>
@@ -1097,7 +1094,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Información clínica */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
                   <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Información Clínica</h4>
@@ -1214,7 +1211,7 @@ const PatientReceptionDashboard = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-8 flex justify-end space-x-4">
                   <button
                     type="button"

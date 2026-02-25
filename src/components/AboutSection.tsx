@@ -24,7 +24,7 @@ const AboutSection = () => {
     >
       {/* Fondo con efecto de gradiente sutil */}
       <div className="absolute inset-0 bg-gradient-to-br from-white via-[#f8fafc] to-white" />
-      
+
       {/* Elementos decorativos de fondo */}
       <div className="absolute top-1/4 -left-24 w-96 h-96 bg-[#bec5a4]/5 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 -right-24 w-96 h-96 bg-[#bec5a4]/3 rounded-full blur-3xl" />
@@ -40,7 +40,7 @@ const AboutSection = () => {
             <div className="relative group">
               {/* Marco decorativo */}
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#bec5a4]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               {/* Contenedor principal de la imagen */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-gray-100 to-gray-200">
                 {/* Imagen de perfil optimizada */}
@@ -53,11 +53,11 @@ const AboutSection = () => {
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
-                  
+
                   {/* Overlay sutil para mejor contraste */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
                 </div>
-                
+
                 {/* Texto superpuesto */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent">
                   <div className="space-y-3">
@@ -67,7 +67,7 @@ const AboutSection = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Sello de credibilidad */}
                 <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-100">
                   <div className="flex items-center space-x-2">
@@ -109,11 +109,11 @@ const AboutSection = () => {
                   Perfil Profesional
                 </span>
               </div>
-              
+
               <h2 className="text-4xl lg:text-5xl font-light tracking-tight text-gray-900">
                 Liyiveth <span className="text-[#bec5a4]">Quintero García</span>
               </h2>
-              
+
               <div className="h-px w-full bg-gradient-to-r from-[#bec5a4]/30 via-gray-300/50 to-transparent" />
             </div>
 
@@ -156,7 +156,7 @@ const AboutSection = () => {
                   <span className="text-xs font-light text-white">Propósito</span>
                 </div>
                 <p className="text-gray-700 font-light leading-relaxed italic">
-                  En <span className="text-[#bec5a4] font-normal">SanaTú Quingar</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: &quot;Sanar es volverte habitable y seguro para ti mismo&quot;.
+                  En <span className="text-[#bec5a4] font-normal">SanaTú</span>, mi propósito es ayudarte a fortalecer tu carácter y autonomía emocional. Parto de una premisa clara: &quot;Sanar es volverte habitable y seguro para ti mismo&quot;.
                 </p>
               </motion.div>
 
@@ -184,10 +184,10 @@ const AboutSection = () => {
                 <span className="border-b border-transparent group-hover:border-[#bec5a4] transition-all duration-300">
                   Iniciar un proceso de transformación
                 </span>
-                <svg 
-                  className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -209,15 +209,15 @@ const AboutSection = () => {
       {/* Navegación entre secciones */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <div className="flex items-center space-x-8">
-          <a 
-            href="#inicio" 
+          <a
+            href="#inicio"
             className="text-xs tracking-widest font-light text-gray-400 hover:text-[#bec5a4] transition-colors duration-300"
           >
             Inicio
           </a>
           <div className="h-px w-8 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-          <a 
-            href="#servicios" 
+          <a
+            href="#servicios"
             className="text-xs tracking-widest font-light text-gray-400 hover:text-[#bec5a4] transition-colors duration-300"
           >
             Servicios

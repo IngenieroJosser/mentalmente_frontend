@@ -18,20 +18,20 @@ export default function SanatuLogin() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    
-    const particles: Array<{x: number, y: number, size: number, speed: number}> = [];
-    
+
+    const particles: Array<{ x: number, y: number, size: number, speed: number }> = [];
+
     for (let i = 0; i < 20; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -40,30 +40,30 @@ export default function SanatuLogin() {
         speed: Math.random() * 0.3 + 0.05
       });
     }
-    
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       particles.forEach((particle) => {
         particle.y -= particle.speed;
-        
+
         if (particle.y < -10) {
           particle.y = canvas.height + 10;
           particle.x = Math.random() * canvas.width;
         }
-        
+
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = '#bec5a4';
         ctx.globalAlpha = 0.1;
         ctx.fill();
       });
-      
+
       requestAnimationFrame(animate);
     };
-    
+
     const animationId = requestAnimationFrame(animate);
-    
+
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resizeCanvas);
@@ -73,11 +73,11 @@ export default function SanatuLogin() {
   const getRedirectPathByRole = (role: string) => {
     console.log('DEBUG - Role recibido:', role);
     if (!role) return '/dashboard';
-    
+
     const normalizedRole = role.toString().toUpperCase().trim();
     console.log('DEBUG - Role normalizado:', normalizedRole);
-    
-    switch(normalizedRole) {
+
+    switch (normalizedRole) {
       case 'PSYCHOLOGIST':
         return '/psychologist-dashboard';
       case 'MANAGEMENT':
@@ -92,56 +92,56 @@ export default function SanatuLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!credentials.email || !credentials.password) {
       toast.error('Por favor completa todos los campos');
       return;
     }
-  
+
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(credentials)
       });
-  
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || data.error || 'Error en el inicio de sesión');
       }
-  
+
       if (!data.success || !data.token || !data.user) {
         throw new Error('Estructura de respuesta inválida');
       }
-  
+
       console.log('Login exitoso - Usuario:', data.user);
       console.log('Rol:', data.user.role);
-  
+
       // Guardar en ambos storages para mayor compatibilidad
       localStorage.setItem('sanatu_token', data.token);
       localStorage.setItem('sanatu_user', JSON.stringify(data.user));
-      
+
       if (rememberMe) {
         sessionStorage.setItem('sanatu_token', data.token);
         sessionStorage.setItem('sanatu_user', JSON.stringify(data.user));
       }
-      
+
       toast.success(`¡Bienvenido/a ${data.user.usuario} a SanaTú!`, {
         position: "top-center",
         autoClose: 1500
       });
-  
+
       const redirectPath = getRedirectPathByRole(data.user.role);
       console.log('Redirigiendo a:', redirectPath);
-  
+
       // Usar window.location para forzar recarga completa
       setTimeout(() => {
         window.location.href = redirectPath;
       }, 1500);
-      
+
     } catch (error) {
       console.error('Login error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error en el inicio de sesión';
@@ -166,9 +166,9 @@ export default function SanatuLogin() {
       <div className="absolute bottom-10 right-10 opacity-5">
         <Heart className="h-24 w-24 text-[#bec5a4]" strokeWidth={1} />
       </div>
-      
+
       <ToastContainer position="top-center" autoClose={5000} />
-      
+
       <div className="relative z-10 w-full max-w-4xl flex flex-col lg:flex-row rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white">
         {/* Panel izquierdo */}
         <div className="w-full lg:w-1/2 p-8 md:p-10 flex flex-col justify-between bg-gradient-to-br from-white to-gray-50/50">
@@ -198,13 +198,13 @@ export default function SanatuLogin() {
                 </div>
               </div>
               <h1 className="text-2xl font-light text-gray-900 text-center mb-2">
-                Sana<span className="text-[#bec5a4]">Tú</span> Quingar
+                Sana<span className="text-[#bec5a4]">Tú</span>
               </h1>
               <p className="text-gray-500 text-sm text-center font-light">
                 Psicología & Bienestar Integral
               </p>
             </div>
-            
+
             <div className="mt-10">
               <div className="flex items-center justify-center mb-8">
                 <div className="h-px w-12 bg-gradient-to-r from-transparent to-gray-300" />
@@ -213,7 +213,7 @@ export default function SanatuLogin() {
                 </span>
                 <div className="h-px w-12 bg-gradient-to-r from-gray-300 to-transparent" />
               </div>
-              
+
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center">
@@ -236,7 +236,7 @@ export default function SanatuLogin() {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-8 pt-8 border-t border-gray-100">
             <div className="flex items-center">
               <ShieldCheck className="h-4 w-4 text-[#bec5a4] mr-3" />
@@ -246,7 +246,7 @@ export default function SanatuLogin() {
             </div>
           </div>
         </div>
-        
+
         {/* Panel derecho */}
         <div className="w-full lg:w-1/2 p-8 md:p-10 bg-white">
           <div className="text-center mb-8">
@@ -258,19 +258,18 @@ export default function SanatuLogin() {
             <h2 className="text-2xl font-light text-gray-900">Acceso Profesional</h2>
             <p className="text-gray-500 font-light mt-2">Ingresa a tu cuenta segura</p>
           </div>
-          
+
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="relative">
-              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${
-                activeField === 'email' ? 'text-[#bec5a4]' : 'text-gray-400'
-              }`}>
+              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${activeField === 'email' ? 'text-[#bec5a4]' : 'text-gray-400'
+                }`}>
                 <UserCircle className="h-5 w-5" />
               </div>
               <input
                 type="email"
                 required
                 value={credentials.email}
-                onChange={(e) => setCredentials({...credentials, email: e.target.value})}
+                onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                 onFocus={() => setActiveField('email')}
                 onBlur={() => setActiveField('')}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 outline-none transition-all bg-white text-gray-800 placeholder-gray-400 font-light"
@@ -278,11 +277,10 @@ export default function SanatuLogin() {
                 autoComplete="username"
               />
             </div>
-            
+
             <div className="relative">
-              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${
-                activeField === 'password' ? 'text-[#bec5a4]' : 'text-gray-400'
-              }`}>
+              <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-all ${activeField === 'password' ? 'text-[#bec5a4]' : 'text-gray-400'
+                }`}>
                 <Lock className="h-5 w-5" />
               </div>
               <input
@@ -290,7 +288,7 @@ export default function SanatuLogin() {
                 type={showPassword ? "text" : "password"}
                 required
                 value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 onFocus={() => setActiveField('password')}
                 onBlur={() => setActiveField('')}
                 className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 outline-none transition-all bg-white text-gray-800 placeholder-gray-400 font-light"
@@ -306,7 +304,7 @@ export default function SanatuLogin() {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="relative flex items-center">
@@ -317,9 +315,8 @@ export default function SanatuLogin() {
                     onChange={() => setRememberMe(!rememberMe)}
                     className="sr-only"
                   />
-                  <div className={`w-4 h-4 rounded border border-gray-300 flex items-center justify-center transition-colors ${
-                    rememberMe ? 'bg-[#bec5a4] border-[#bec5a4]' : 'bg-white'
-                  }`}>
+                  <div className={`w-4 h-4 rounded border border-gray-300 flex items-center justify-center transition-colors ${rememberMe ? 'bg-[#bec5a4] border-[#bec5a4]' : 'bg-white'
+                    }`}>
                     {rememberMe && (
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -335,13 +332,12 @@ export default function SanatuLogin() {
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
-            
+
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all ${
-                isLoading ? 'bg-[#bec5a4]/80 cursor-not-allowed' : 'bg-[#bec5a4] hover:bg-[#a0a78c]'
-              }`}
+              className={`w-full py-3 px-6 rounded-lg font-light text-white flex items-center justify-center transition-all ${isLoading ? 'bg-[#bec5a4]/80 cursor-not-allowed' : 'bg-[#bec5a4] hover:bg-[#a0a78c]'
+                }`}
             >
               {isLoading ? (
                 <span className="flex items-center">
@@ -359,7 +355,7 @@ export default function SanatuLogin() {
               )}
             </button>
           </form>
-          
+
           <div className="mt-6 pt-6 border-t border-gray-100">
             <div className="flex items-center justify-center space-x-2">
               <ShieldCheck className="h-4 w-4 text-[#bec5a4]" />
@@ -368,9 +364,9 @@ export default function SanatuLogin() {
           </div>
         </div>
       </div>
-      
+
       <div className="absolute bottom-4 left-0 right-0 text-center text-xs text-gray-400 font-light px-4">
-        © {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.
+        © {new Date().getFullYear()} SanaTú. Todos los derechos reservados.
       </div>
     </div>
   );

@@ -2,9 +2,9 @@
 
 import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
-import { 
-  FaTimes, FaPrint, FaUser, FaNotesMedical, FaHistory, 
-  FaStethoscope, FaUsers, FaCheckCircle, 
+import {
+  FaTimes, FaPrint, FaUser, FaNotesMedical, FaHistory,
+  FaStethoscope, FaUsers, FaCheckCircle,
   FaExclamationTriangle, FaPhone, FaIdCard, FaBuilding
 } from 'react-icons/fa';
 import { MedicalRecordDetailsModalProps } from '@/lib/type';
@@ -19,26 +19,26 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  const [pdfStatus, setPdfStatus] = useState<{success: boolean; message: string} | null>(null);
+  const [pdfStatus, setPdfStatus] = useState<{ success: boolean; message: string } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
     setPdfStatus(null);
-  
+
     try {
       const blob = await pdf(
         <MedicalRecordPDF record={record} baseUrl={window.location.origin} />
       ).toBlob();
-  
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `Historia_Clinica_${record.identificationNumber || 'sin_numero'}.pdf`;
       link.click();
-  
+
       setTimeout(() => URL.revokeObjectURL(url), 100);
-  
+
       setPdfStatus({ success: true, message: 'PDF generado con éxito' });
     } catch (error) {
       console.error('Error generando PDF:', error);
@@ -61,9 +61,9 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b-2 border-[#bec5a4]">
       {/* Logo a la izquierda */}
       <div className="flex items-center mb-4 md:mb-0">
-        <Image 
-          src="/logo-sana-tu.png" 
-          alt="SanaTú Quingar" 
+        <Image
+          src="/logo-sana-tu.png"
+          alt="SanaTú"
           width={80}  // Ajusta según necesites, equivalente a h-20 w-auto
           height={80}
           className="h-20 w-auto mr-4"
@@ -81,7 +81,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         />
         <div>
           <h1 className="text-3xl font-serif text-[#2c3e50] tracking-tight">
-            Sana<span className="font-semibold text-[#bec5a4]">Tú</span> Quingar
+            Sana<span className="font-semibold text-[#bec5a4]">Tú</span>
           </h1>
           <p className="text-sm text-[#7f8c8d]">Centro de Psicología Integral</p>
         </div>
@@ -118,7 +118,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         <p className="text-xs text-[#95a5a6]">SanaTú SAS</p>
       </div>
       <div className="mt-4 text-xs text-[#95a5a6]">
-        © {new Date().getFullYear()} SanaTú Quingar - Sistema de Historias Clínicas Digitales
+        © {new Date().getFullYear()} SanaTú - Sistema de Historias Clínicas Digitales
       </div>
     </div>
   );
@@ -195,11 +195,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-t-lg transition-all ${
-                  activeTab === tab.id 
-                    ? 'bg-[#bec5a4] text-white shadow-md' 
+                className={`flex items-center gap-2 px-4 py-2 rounded-t-lg transition-all ${activeTab === tab.id
+                    ? 'bg-[#bec5a4] text-white shadow-md'
                     : 'text-[#7f8c8d] hover:text-[#2c3e50] hover:bg-[#f2f2f2]'
-                }`}
+                  }`}
               >
                 <span className="text-sm">{tab.icon}</span>
                 <span className="text-sm font-medium">{tab.label}</span>
@@ -320,7 +319,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
                       {['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'].map((mes, idx) => (
                         <div key={mes} className="flex-1 flex flex-col items-center">
                           <div className="text-xs text-[#7f8c8d] mb-2">{mes}</div>
-                          <div 
+                          <div
                             className="w-full bg-gradient-to-t from-[#bec5a4] to-[#a0a78c] rounded-t"
                             style={{ height: `${(idx + 1) * 15}%` }}
                           />
@@ -391,11 +390,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
         {/* Estado de generación */}
         {pdfStatus && (
-          <div className={`m-4 p-3 rounded-lg flex items-center ${
-            pdfStatus.success 
-              ? 'bg-green-100 border border-green-300 text-green-700' 
+          <div className={`m-4 p-3 rounded-lg flex items-center ${pdfStatus.success
+              ? 'bg-green-100 border border-green-300 text-green-700'
               : 'bg-red-100 border border-red-300 text-red-700'
-          }`}>
+            }`}>
             {pdfStatus.success ? (
               <FaCheckCircle className="mr-2 text-green-600" />
             ) : (

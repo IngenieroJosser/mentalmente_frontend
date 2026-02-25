@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { 
-  FaChartLine, FaUserFriends, FaUsers, FaCalendarAlt, FaHeartbeat, 
+import {
+  FaChartLine, FaUserFriends, FaUsers, FaCalendarAlt, FaHeartbeat,
   FaBrain, FaVenusMars, FaFileMedical
 } from 'react-icons/fa';
 import {
@@ -75,10 +75,10 @@ const ReportDashboardPsychologist = () => {
   useEffect(() => {
     const fetchReportData = async () => {
       if (!user || !user.id) return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const response = await fetch(`/api/psychologist-dash/report?userId=${user.id}&range=${timeRange}`);
         if (!response.ok) {
@@ -110,7 +110,7 @@ const ReportDashboardPsychologist = () => {
   // Preparar datos para gráficos
   const prepareChartData = () => {
     const labels = reportData.map(r => r.month);
-    
+
     return {
       patientsData: {
         labels,
@@ -328,7 +328,7 @@ const ReportDashboardPsychologist = () => {
             </div>
             <h2 className="text-xl font-semibold text-[#2d3748] mb-2">Error de conexión</h2>
             <p className="text-[#718096] mb-6">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-6 py-2.5 bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white rounded-xl hover:from-[#aab38c] hover:to-[#bec5a4] transition-all shadow-md shadow-[#bec5a4]/30"
             >
@@ -353,41 +353,38 @@ const ReportDashboardPsychologist = () => {
               Estadísticas avanzadas para medir nuestro impacto en la transformación de vidas.
             </p>
           </div>
-          
+
           <div className="mt-4 md:mt-0 flex items-center space-x-2 bg-white p-1 rounded-xl shadow-sm border border-[#bec5a4]/20">
-            <button 
+            <button
               onClick={() => setTimeRange('3m')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                timeRange === '3m' 
-                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${timeRange === '3m'
+                  ? 'bg-[#bec5a4] text-white shadow-sm'
                   : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
-              }`}
+                }`}
             >
               3 meses
             </button>
-            <button 
+            <button
               onClick={() => setTimeRange('6m')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                timeRange === '6m' 
-                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${timeRange === '6m'
+                  ? 'bg-[#bec5a4] text-white shadow-sm'
                   : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
-              }`}
+                }`}
             >
               6 meses
             </button>
-            <button 
+            <button
               onClick={() => setTimeRange('1y')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                timeRange === '1y' 
-                  ? 'bg-[#bec5a4] text-white shadow-sm' 
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${timeRange === '1y'
+                  ? 'bg-[#bec5a4] text-white shadow-sm'
                   : 'text-[#718096] hover:text-[#2d3748] hover:bg-[#f2f2f2]'
-              }`}
+                }`}
             >
               1 año
             </button>
           </div>
         </div>
-        
+
         {/* Tarjetas de estadísticas resumidas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-5 flex items-center">
@@ -427,7 +424,7 @@ const ReportDashboardPsychologist = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Evolución de pacientes */}
@@ -451,7 +448,7 @@ const ReportDashboardPsychologist = () => {
               }} />
             </div>
           </div>
-          
+
           {/* Tipos de terapia */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
@@ -473,7 +470,7 @@ const ReportDashboardPsychologist = () => {
               }} />
             </div>
           </div>
-          
+
           {/* Diagnósticos principales */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
@@ -495,7 +492,7 @@ const ReportDashboardPsychologist = () => {
               }} />
             </div>
           </div>
-          
+
           {/* Distribución por género */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
@@ -517,7 +514,7 @@ const ReportDashboardPsychologist = () => {
               }} />
             </div>
           </div>
-          
+
           {/* Distribución por edad */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6">
             <div className="flex items-center mb-4">
@@ -539,7 +536,7 @@ const ReportDashboardPsychologist = () => {
               }} />
             </div>
           </div>
-          
+
           {/* Tasa de satisfacción */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#bec5a4]/20 p-6 flex flex-col justify-center">
             <div className="flex items-center mb-4">
@@ -549,9 +546,9 @@ const ReportDashboardPsychologist = () => {
               <h3 className="text-lg font-medium text-[#2d3748]">Satisfacción de Pacientes</h3>
             </div>
             <div className="text-center">
-              <div className="radial-progress text-[#bec5a4] mx-auto" 
-                style={{ 
-                  '--value': summaryData.satisfactionRate, 
+              <div className="radial-progress text-[#bec5a4] mx-auto"
+                style={{
+                  '--value': summaryData.satisfactionRate,
                   '--size': '10rem',
                   '--thickness': '0.8rem'
                 } as React.CSSProperties}>
@@ -565,7 +562,7 @@ const ReportDashboardPsychologist = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Footer */}
         <div className="text-center py-6 border-t border-[#bec5a4]/20">
           <div className="flex items-center justify-center mb-3">
@@ -574,13 +571,13 @@ const ReportDashboardPsychologist = () => {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <span className="text-lg font-serif text-[#2d3748]">SanaTú Guingar</span>
+            <span className="text-lg font-serif text-[#2d3748]">SanaTú</span>
           </div>
           <p className="text-xs text-[#a0aec0]">Transformando la atención psicológica con estándares de calidad y ética.</p>
-          <p className="text-xs text-[#a0aec0] mt-1">© {new Date().getFullYear()} SanaTú Quingar. Todos los derechos reservados.</p>
+          <p className="text-xs text-[#a0aec0] mt-1">© {new Date().getFullYear()} SanaTú. Todos los derechos reservados.</p>
         </div>
       </div>
-      
+
       {/* Estilos para el radial progress */}
       <style jsx>{`
         .radial-progress {

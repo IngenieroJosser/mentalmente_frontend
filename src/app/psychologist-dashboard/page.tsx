@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  User, Calendar, FileText, BarChart3, 
+import {
+  User, Calendar, FileText, BarChart3,
   LogOut, Bell, Search,
   Users, Clock, Activity, TrendingUp
 } from 'lucide-react';
@@ -25,10 +25,10 @@ export default function PsychologistDashboard() {
     // Obtener datos del usuario de ambos almacenamientos
     const userData = localStorage.getItem('sanatu_user') || sessionStorage.getItem('sanatu_user');
     const token = localStorage.getItem('sanatu_token') || sessionStorage.getItem('sanatu_token');
-    
+
     console.log('Dashboard - Token encontrado:', !!token);
     console.log('Dashboard - UserData encontrado:', !!userData);
-    
+
     if (!token || !userData) {
       console.log('Dashboard - Sin token o userData, redirigiendo a login');
       router.push('/login');
@@ -75,7 +75,7 @@ export default function PsychologistDashboard() {
                   <span className="text-white font-bold text-lg">ST</span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">SanaTú Quingar</h1>
+                  <h1 className="text-xl font-bold text-gray-900">SanaTú</h1>
                   <p className="text-sm text-gray-500">Panel del Psicólogo</p>
                 </div>
               </div>
@@ -90,11 +90,11 @@ export default function PsychologistDashboard() {
                   className="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-[#bec5a4] focus:border-transparent"
                 />
               </div>
-              
+
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <Bell size={20} className="text-gray-600" />
               </button>
-              
+
               <div className="relative group">
                 <button className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-[#bec5a4] rounded-full flex items-center justify-center">
@@ -104,22 +104,22 @@ export default function PsychologistDashboard() {
                     {user?.usuario || 'Usuario'}
                   </span>
                 </button>
-                
+
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden group-hover:block z-10">
                   <div className="py-2">
-                    <button 
+                    <button
                       onClick={() => router.push('/psychologist-dashboard/profile')}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
                     >
                       Mi Perfil
                     </button>
-                    <button 
+                    <button
                       onClick={() => router.push('/psychologist-dashboard/settings')}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
                     >
                       Configuración
                     </button>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 flex items-center"
                     >
@@ -142,11 +142,11 @@ export default function PsychologistDashboard() {
               ¡Bienvenido/a, {user?.usuario || 'Psicólogo'}!
             </h2>
             <p className="opacity-90">
-              Hoy es {new Date().toLocaleDateString('es-ES', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              Hoy es {new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}
             </p>
           </div>
@@ -218,7 +218,7 @@ export default function PsychologistDashboard() {
               <div className="bg-white rounded-xl p-6 shadow-sm border">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <button 
+                  <button
                     onClick={() => router.push('/psychologist-dashboard/patients')}
                     className="p-4 border rounded-lg hover:border-[#bec5a4] hover:bg-[#bec5a4]/10 transition-colors text-left"
                   >
@@ -226,8 +226,8 @@ export default function PsychologistDashboard() {
                     <p className="font-medium text-gray-900">Gestionar Pacientes</p>
                     <p className="text-sm text-gray-500">Ver y editar pacientes</p>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => router.push('/psychologist-dashboard/calendar')}
                     className="p-4 border rounded-lg hover:border-[#bec5a4] hover:bg-[#bec5a4]/10 transition-colors text-left"
                   >
@@ -235,8 +235,8 @@ export default function PsychologistDashboard() {
                     <p className="font-medium text-gray-900">Calendario</p>
                     <p className="text-sm text-gray-500">Gestionar citas</p>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => router.push('/psychologist-dashboard/records')}
                     className="p-4 border rounded-lg hover:border-[#bec5a4] hover:bg-[#bec5a4]/10 transition-colors text-left"
                   >
@@ -244,8 +244,8 @@ export default function PsychologistDashboard() {
                     <p className="font-medium text-gray-900">Historias Clínicas</p>
                     <p className="text-sm text-gray-500">Ver todas las historias</p>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => router.push('/psychologist-dashboard/reports')}
                     className="p-4 border rounded-lg hover:border-[#bec5a4] hover:bg-[#bec5a4]/10 transition-colors text-left"
                   >
@@ -280,7 +280,7 @@ export default function PsychologistDashboard() {
                   </div>
                 ))}
               </div>
-              <button 
+              <button
                 onClick={() => router.push('/psychologist-dashboard/calendar')}
                 className="w-full mt-4 py-2 border border-[#bec5a4] text-[#bec5a4] rounded-lg hover:bg-[#bec5a4]/10 transition-colors"
               >
@@ -327,7 +327,7 @@ export default function PsychologistDashboard() {
       <footer className="border-t bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-center text-sm text-gray-500">
-            © {new Date().getFullYear()} SanaTú Quingar - Panel del Psicólogo
+            © {new Date().getFullYear()} SanaTú - Panel del Psicólogo
           </p>
         </div>
       </footer>

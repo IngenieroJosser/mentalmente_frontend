@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { 
-  Search, 
-  AlertCircle, 
+import {
+  Search,
+  AlertCircle,
   ArrowLeft,
   Brain,
   Heart
@@ -49,16 +49,16 @@ export default function NotFound() {
           <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6">
             Página no encontrada
           </h1>
-          
+
           <div className="h-px w-24 bg-gradient-to-r from-transparent via-[#bec5a4] to-transparent mx-auto mb-8" />
-          
+
           <p className="text-xl text-gray-600 font-light leading-relaxed mb-8 max-w-md mx-auto">
             La página que buscas no existe o ha sido movida a otra ubicación.
           </p>
-          
+
           <div className="inline-flex items-center space-x-2 text-gray-500 font-light">
             <Heart className="h-4 w-4" />
-            <span className="text-sm">SanaTú Quingar</span>
+            <span className="text-sm">SanaTú</span>
           </div>
         </motion.div>
 
@@ -82,7 +82,7 @@ export default function NotFound() {
                             translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             </motion.button>
           </Link>
-          
+
           <Link href="#buscar">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -105,7 +105,7 @@ export default function NotFound() {
           className="mb-20"
         >
           <p className="text-gray-500 font-light mb-6">También puedes visitar:</p>
-          
+
           <div className="flex flex-wrap justify-center gap-6">
             {[
               { label: 'Inicio', href: '/' },
@@ -139,7 +139,7 @@ export default function NotFound() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Buscar en SanaTú Quingar..."
+              placeholder="Buscar en SanaTú..."
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl 
                        focus:border-[#bec5a4] focus:ring-1 focus:ring-[#bec5a4]/30 
                        outline-none transition-all font-light placeholder-gray-400"
@@ -156,8 +156,8 @@ export default function NotFound() {
         >
           <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
             Si crees que esto es un error, por favor contáctanos a{' '}
-            <a href="mailto:hola@sanatuquingar.com" className="text-[#bec5a4] hover:underline">
-              hola@sanatuquingar.com
+            <a href="mailto:sanatuquingar@gmail.com" className="text-[#bec5a4] hover:underline">
+              sanatuquingar@gmail.com
             </a>
           </p>
         </motion.div>
@@ -189,7 +189,7 @@ export default function NotFound() {
       {/* Footer */}
       <footer className="absolute bottom-8 w-full text-center">
         <p className="text-xs text-gray-400 font-light">
-          © {new Date().getFullYear()} SanaTú Quingar. Psicología & Bienestar Integral.
+          © {new Date().getFullYear()} SanaTú. Psicología & Bienestar Integral.
         </p>
         <div className="h-px w-16 bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-2" />
       </footer>

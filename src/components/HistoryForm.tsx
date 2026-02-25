@@ -1011,8 +1011,8 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
                   onClick={() => navigateToSection('prev')}
                   disabled={isFirstSection}
                   className={`flex items-center px-5 py-2.5 rounded-xl ${isFirstSection
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50'
                     }`}
                 >
                   <FaArrowLeft className="mr-2" />
@@ -1045,7 +1045,7 @@ const HistoryForm: React.FC<HistoryFormProps> = ({ historyId, onSuccess, onCance
 
           {/* Pie de página */}
           <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-            <p>SanaTú Quingar © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
+            <p>SanaTú © {new Date().getFullYear()} - Sistema de Historias Clínicas Digitales</p>
             <p className="mt-1">Todos los datos ingresados son confidenciales y protegidos</p>
           </div>
         </div>
