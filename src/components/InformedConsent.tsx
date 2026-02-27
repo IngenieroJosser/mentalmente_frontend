@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { FaCheck, FaTimes, FaDownload, FaUpload } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaDownload } from 'react-icons/fa';
 
 type ConsentMethod = 'signature' | 'upload';
 
