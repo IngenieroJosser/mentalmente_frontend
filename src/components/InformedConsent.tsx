@@ -1,21 +1,23 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaDownload, FaUpload } from 'react-icons/fa';
+
+type ConsentMethod = 'signature' | 'upload';
 
 interface InformedConsentProps {
-  medicalRecordId?: number;               // Si ya existe la historia, se pasa el ID
-  patientName?: string;                    // Nombre del paciente (solo se usa si hay medicalRecordId)
-  patientDocument?: string;                 // Documento del paciente (solo se usa si hay medicalRecordId)
-  onSuccess?: () => void;                   // Callback al guardar exitosamente (modo con ID)
-  onCancel?: () => void;                     // Callback al cancelar
-  onSubmit?: (data: {                       // Callback al enviar en modo sin ID
+  medicalRecordId?: number;
+  patientName?: string;
+  patientDocument?: string;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  onSubmit?: (data: {
     patientName: string;
     patientDocument: string;
     signatureBase64: string;
   }) => void;
-  initialName?: string;                      // Valor inicial para el campo nombre (modo sin ID)
-  initialDocument?: string;                   // Valor inicial para el campo documento (modo sin ID)
+  initialName?: string;
+  initialDocument?: string;
 }
 
 const InformedConsent: React.FC<InformedConsentProps> = ({
@@ -28,17 +30,19 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
   initialName = '',
   initialDocument = '',
 }) => {
+  const [method, setMethod] = useState<ConsentMethod>('signature');
   const [localName, setLocalName] = useState(initialName);
   const [localDocument, setLocalDocument] = useState(initialDocument);
   const [signature, setSignature] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Determinar si estamos en modo con ID (solo firma) o sin ID (con campos)
   const isExistingRecord = !!medicalRecordId;
 
-  // Funciones del canvas
+  // Canvas drawing functions (same as before)
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -88,10 +92,23 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
     setSignature(dataUrl);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!signature) {
-      alert('Por favor, firme el documento');
-      return;
+    if (method === 'signature') {
+      if (!signature) {
+        alert('Por favor, firme el documento');
+        return;
+      }
+    } else {
+      if (!file) {
+        alert('Por favor, seleccione un archivo');
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -99,21 +116,33 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
     try {
       if (isExistingRecord) {
         // Modo con ID: enviar a la API
-        const response = await fetch('/api/consent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            medicalRecordId,
-            signedByName: propPatientName,
-            signedByDocument: propPatientDocument,
-            signatureBase64: signature,
-          }),
-        });
+        if (method === 'signature') {
+          // Enviar como JSON
+          const response = await fetch('/api/consent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              medicalRecordId,
+              signedByName: propPatientName,
+              signedByDocument: propPatientDocument,
+              signatureBase64: signature,
+            }),
+          });
+          if (!response.ok) throw new Error('Error al guardar el consentimiento');
+        } else {
+          // Enviar como multipart/form-data
+          const formData = new FormData();
+          formData.append('medicalRecordId', String(medicalRecordId));
+          formData.append('signedByName', propPatientName || '');
+          formData.append('signedByDocument', propPatientDocument || '');
+          formData.append('file', file as Blob);
 
-        if (!response.ok) {
-          throw new Error('Error al guardar el consentimiento');
+          const response = await fetch('/api/consent', {
+            method: 'POST',
+            body: formData,
+          });
+          if (!response.ok) throw new Error('Error al subir el archivo');
         }
-
         alert('Consentimiento guardado exitosamente');
         if (onSuccess) onSuccess();
       } else {
@@ -123,13 +152,25 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
           setIsSubmitting(false);
           return;
         }
-
-        if (onSubmit) {
-          onSubmit({
-            patientName: localName,
-            patientDocument: localDocument,
-            signatureBase64: signature,
-          });
+        if (method === 'signature') {
+          if (!signature) {
+            alert('Debe firmar el documento');
+            setIsSubmitting(false);
+            return;
+          }
+          if (onSubmit) {
+            onSubmit({
+              patientName: localName,
+              patientDocument: localDocument,
+              signatureBase64: signature,
+            });
+          }
+        } else {
+          // Modo sin ID y con archivo: no implementado aún, pero podríamos subir el archivo también
+          // Por ahora, simplemente mostramos alerta de que no está soportado
+          alert('Modo sin ID con archivo no soportado en esta versión');
+          setIsSubmitting(false);
+          return;
         }
       }
     } catch (error) {
@@ -147,13 +188,47 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
           <h2 className="text-2xl font-bold bg-gradient-to-r from-[#bec5a4] to-[#a0a78c] bg-clip-text text-transparent">
             Consentimiento Informado
           </h2>
-          <button onClick={onCancel} className="p-2 rounded-full hover:bg-gray-100">
-            <FaTimes className="text-gray-600" />
+          <div className="flex gap-2">
+            <a
+              href="/SANATÚ SAS – CONSENTIMIENTO INFORMADO (1).docx"
+              download
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition-colors"
+              title="Descargar plantilla para diligenciar"
+            >
+              <FaDownload />
+            </a>
+            <button onClick={onCancel} className="p-2 rounded-full hover:bg-gray-100">
+              <FaTimes className="text-gray-600" />
+            </button>
+          </div>
+        </div>
+
+        {/* Selector de método */}
+        <div className="flex border-b border-gray-200 mb-6">
+          <button
+            className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+              method === 'signature'
+                ? 'border-b-2 border-[#bec5a4] text-[#bec5a4]'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setMethod('signature')}
+          >
+            Firma digital
+          </button>
+          <button
+            className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+              method === 'upload'
+                ? 'border-b-2 border-[#bec5a4] text-[#bec5a4]'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setMethod('upload')}
+          >
+            Subir archivo firmado
           </button>
         </div>
 
         <div className="space-y-6">
-          {/* Texto del consentimiento con datos del paciente (solo mostramos los valores, no son editables aquí) */}
+          {/* Texto del consentimiento (siempre visible) */}
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
             <h3 className="text-center font-bold text-lg mb-4">SANATÚ SAS – CONSENTIMIENTO INFORMADO</h3>
             <p><strong>FECHA:</strong> ____ / ____ / 20____</p>
@@ -165,18 +240,10 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
             </p>
             <p>Entiendo y acepto que:</p>
             <ol className="list-decimal pl-5 space-y-2">
-              <li>
-                <strong>Privacidad:</strong> Todo lo que hablemos es confidencial (secreto profesional). Nadie más sabrá lo que se diga en consulta, a menos que mi vida o la de alguien más esté en peligro grave, según lo manda la ley colombiana.
-              </li>
-              <li>
-                <strong>Voluntad:</strong> Puedo hacer las preguntas que quiera sobre mi proceso y puedo decidir no continuar con la terapia en el momento que lo desee.
-              </li>
-              <li>
-                <strong>Trato Digno:</strong> Recibiré una atención respetuosa, profesional y enfocada en mi bienestar.
-              </li>
-              <li>
-                <strong>Uso de Datos:</strong> Autorizo a SANATÚ SAS para usar mis datos básicos (nombre, teléfono) únicamente para contacto de citas y registro médico, cumpliendo con la ley de protección de datos.
-              </li>
+              <li><strong>Privacidad:</strong> Todo lo que hablemos es confidencial...</li>
+              <li><strong>Voluntad:</strong> Puedo hacer las preguntas que quiera...</li>
+              <li><strong>Trato Digno:</strong> Recibiré una atención respetuosa...</li>
+              <li><strong>Uso de Datos:</strong> Autorizo a SANATÚ SAS para usar mis datos básicos...</li>
             </ol>
             <p className="mt-4">Al firmar, confirmo que he leído (o me han leído) y comprendido este documento y que estoy de acuerdo con lo aquí escrito.</p>
           </div>
@@ -213,47 +280,69 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
             </div>
           )}
 
-          {/* Firma del paciente */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-800">
-              Firma del paciente / consultante
-            </label>
-            <div className="border border-gray-300 rounded-xl p-2 bg-white">
-              <canvas
-                ref={canvasRef}
-                width={500}
-                height={200}
-                className="w-full h-40 border border-gray-200 rounded-lg cursor-crosshair touch-none"
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                onTouchStart={startDrawing}
-                onTouchMove={draw}
-                onTouchEnd={stopDrawing}
-                onTouchCancel={stopDrawing}
-              />
+          {/* Contenido según método */}
+          {method === 'signature' ? (
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-800">
+                Firma del paciente / consultante
+              </label>
+              <div className="border border-gray-300 rounded-xl p-2 bg-white">
+                <canvas
+                  ref={canvasRef}
+                  width={500}
+                  height={200}
+                  className="w-full h-40 border border-gray-200 rounded-lg cursor-crosshair touch-none"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                  onTouchCancel={stopDrawing}
+                />
+              </div>
+              <div className="flex justify-between mt-2">
+                <button
+                  type="button"
+                  onClick={clearSignature}
+                  className="text-sm text-gray-600 hover:text-gray-800 flex items-center"
+                >
+                  <FaTimes className="mr-1" /> Limpiar
+                </button>
+                <button
+                  type="button"
+                  onClick={saveSignature}
+                  className="text-sm bg-[#bec5a4] text-white px-3 py-1 rounded-lg hover:bg-[#a0a78c] flex items-center"
+                >
+                  <FaCheck className="mr-1" /> Guardar firma
+                </button>
+              </div>
+              {signature && (
+                <p className="text-sm text-green-600 mt-2">✓ Firma guardada</p>
+              )}
             </div>
-            <div className="flex justify-between mt-2">
-              <button
-                type="button"
-                onClick={clearSignature}
-                className="text-sm text-gray-600 hover:text-gray-800 flex items-center"
-              >
-                <FaTimes className="mr-1" /> Limpiar
-              </button>
-              <button
-                type="button"
-                onClick={saveSignature}
-                className="text-sm bg-[#bec5a4] text-white px-3 py-1 rounded-lg hover:bg-[#a0a78c] flex items-center"
-              >
-                <FaCheck className="mr-1" /> Guardar firma
-              </button>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-800">
+                Subir archivo del consentimiento firmado (PDF, imagen)
+              </label>
+              <div className="border border-gray-300 rounded-xl p-4 bg-white">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept=".pdf,.jpg,.jpeg,.png,.docx"
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#bec5a4] file:text-white hover:file:bg-[#a0a78c]"
+                />
+                {file && (
+                  <p className="text-sm text-green-600 mt-2">
+                    ✓ Archivo seleccionado: {file.name}
+                  </p>
+                )}
+              </div>
             </div>
-            {signature && (
-              <p className="text-sm text-green-600 mt-2">✓ Firma guardada</p>
-            )}
-          </div>
+          )}
 
           {/* Firma del profesional (estática) */}
           <div className="border-t pt-4">

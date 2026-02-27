@@ -8,7 +8,11 @@ import {
   FaSearch,
   FaEye,
   FaTimes,
-} from 'react-icons/fa'; // Eliminamos FaDownload porque no se usa
+  FaDownload,
+  FaFilePdf,
+  FaFileImage,
+  FaFileWord,
+} from 'react-icons/fa'; // Importamos iconos adicionales
 import Image from 'next/image';
 
 interface ConsentRecord {
@@ -17,6 +21,7 @@ interface ConsentRecord {
   signedByDocument: string;
   documentSnapshot: string;
   signatureBase64: string | null;
+  pdfUrl: string | null; // Nuevo campo
   signedAt: string;
   medicalRecord: {
     id: number;
@@ -52,7 +57,6 @@ const ConsentsPage = () => {
   const fetchConsents = async () => {
     setIsLoading(true);
     try {
-      // CORREGIDO: usar plural /api/consents
       const response = await fetch('/api/consent');
       if (!response.ok) throw new Error('Error al cargar consentimientos');
       const data = await response.json();
@@ -85,6 +89,24 @@ const ConsentsPage = () => {
   const handleView = (consent: ConsentRecord) => {
     setSelectedConsent(consent);
     setShowModal(true);
+  };
+
+  // Función para obtener el icono según la extensión del archivo
+  const getFileIcon = (url: string) => {
+    const ext = url.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'pdf':
+        return <FaFilePdf className="text-red-500" size={20} />;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return <FaFileImage className="text-blue-500" size={20} />;
+      case 'docx':
+      case 'doc':
+        return <FaFileWord className="text-blue-700" size={20} />;
+      default:
+        return <FaDownload className="text-gray-500" size={20} />;
+    }
   };
 
   if (!isAuthenticated) {
@@ -228,6 +250,7 @@ const ConsentsPage = () => {
                   </div>
                 </div>
 
+                {/* Documento snapshot */}
                 <div>
                   <p className="text-xs text-[#95a5a6] uppercase mb-2">Documento firmado</p>
                   <div
@@ -236,10 +259,10 @@ const ConsentsPage = () => {
                   />
                 </div>
 
+                {/* Mostrar firma digital si existe */}
                 {selectedConsent.signatureBase64 && (
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-2">Firma del paciente</p>
-                    {/* La firma en base64 es una imagen pequeña; no afecta LCP significativamente */}
                     <Image
                       src={selectedConsent.signatureBase64}
                       alt="Firma"
@@ -247,6 +270,27 @@ const ConsentsPage = () => {
                       height={80}
                       className="max-h-32 border border-gray-200 rounded-lg p-2 bg-white object-contain"
                     />
+                  </div>
+                )}
+
+                {/* Mostrar archivo adjunto si existe pdfUrl */}
+                {selectedConsent.pdfUrl && (
+                  <div>
+                    <p className="text-xs text-[#95a5a6] uppercase mb-2">Archivo adjunto</p>
+                    <div className="flex items-center space-x-3 p-4 bg-[#f9f9f9] rounded-xl border border-gray-200">
+                      {getFileIcon(selectedConsent.pdfUrl)}
+                      <span className="text-sm text-gray-700 truncate flex-1">
+                        {selectedConsent.pdfUrl.split('/').pop()}
+                      </span>
+                      <a
+                        href={selectedConsent.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-[#bec5a4] text-white rounded-lg hover:bg-[#a0a78c] transition-colors text-sm flex items-center"
+                      >
+                        <FaDownload className="mr-2" /> Ver archivo
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>
