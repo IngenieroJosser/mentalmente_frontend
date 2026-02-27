@@ -38,7 +38,7 @@ const Footer = () => {
           <div className="space-y-8">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-[#bec5a4] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center">
                   <Image
                     src="/logo-sana-tu.png"
                     alt="SanaTú"
@@ -63,7 +63,7 @@ const Footer = () => {
             <div className="pt-8 border-t border-gray-100">
               <div className="flex items-center space-x-2 text-gray-500">
                 <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-light">
+                <span className="text font-bold text-[#bec5a4]">
                   &quot;Sanar es volverte habitable y seguro para ti mismo&quot;
                 </span>
               </div>
