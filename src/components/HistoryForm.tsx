@@ -379,7 +379,7 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
       };
       createDraft();
     }
-  }, [historyId, currentHistoryId, user, initialPatientName, initialPatientDocument]);
+  }, [historyId, currentHistoryId, user, initialPatientName, initialPatientDocument, isCreatingDraft]);
 
   // Efecto para asegurar que los datos del paciente tengan valores antes de mostrar el consentimiento
   useEffect(() => {
