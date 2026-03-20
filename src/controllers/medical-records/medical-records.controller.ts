@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { MedicalRecord } from '@prisma/client';
 
 export class MedicalRecordsController {
-  static async create(data: Omit<MedicalRecord, 'id' | 'createdAt' | 'updatedAt'>) {
+  static async create(data: Omit<MedicalRecord, 'id' | 'createdAt' | 'updatedAt'>) { 
     try {
       const medicalRecord = await prisma.medicalRecord.create({
         data: {
