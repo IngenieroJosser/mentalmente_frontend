@@ -222,15 +222,14 @@ const DashboardReceptionMentalmentePage = () => {
         <div className="p-8 flex flex-col items-center border-b border-gray-100">
           <div className="relative w-20 h-20 mb-4">
             <Image
-              src="/logo-sana-tu.png"
+              src="/arco-logo-footer.png"
               alt="SanaTú"
               fill
               className="object-contain"
               priority
             />
           </div>
-          <h1 className="text-xl font-bold text-gray-800">SanaTú</h1>
-          <p className="text-sm text-gray-500 mt-1">Historias Clínicas Digitales</p>
+          <p className="text-sm text-gray-500 mt-1">Liyiveth Quintero Garcia</p>
         </div>
 
         <nav className="flex-1 py-8 px-4">
