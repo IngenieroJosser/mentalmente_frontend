@@ -174,7 +174,7 @@ const DashboardReceptionMentalmentePage = () => {
               <div className="flex items-center space-x-3">
                 <div className="relative w-10 h-10">
                   <Image
-                    src="/logo-sana-tu.png"
+                    src="/arco-logo-footer.png"
                     alt="SanaTú"
                     fill
                     className="object-contain"
