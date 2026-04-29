@@ -62,7 +62,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
       {/* Logo a la izquierda */}
       <div className="flex items-center mb-4 md:mb-0">
         <Image
-          src="/logo-sana-tu.png"
+          src="/arco-logo-footer.png"
           alt="SanaTú"
           width={80}  // Ajusta según necesites, equivalente a h-20 w-auto
           height={80}
@@ -81,9 +81,9 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         />
         <div>
           <h1 className="text-3xl font-serif text-[#2c3e50] tracking-tight">
-            Sana<span className="font-semibold text-[#bec5a4]">Tú</span>
+            Liyiveth Quintero García
           </h1>
-          <p className="text-sm text-[#7f8c8d]">Centro de Psicología Integral</p>
+          <p className="text-sm text-[#7f8c8d]">Psicóloga - Atención psicológica</p>
         </div>
       </div>
 
@@ -91,11 +91,11 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
       <div className="text-right border-l-2 border-[#bec5a4] pl-6">
         <div className="flex items-center justify-end mb-2">
           <FaBuilding className="text-[#bec5a4] mr-2" size={16} />
-          <span className="font-serif text-[#2c3e50] text-lg">SANATÚ SAS</span>
+          <span className="font-serif text-[#2c3e50] text-lg">Colombia</span>
         </div>
         <div className="flex items-center justify-end mb-1">
           <FaIdCard className="text-[#bec5a4] mr-2" size={14} />
-          <span className="text-sm text-[#7f8c8d]">NIT 902010331-8</span>
+          <span className="text-sm text-[#7f8c8d]">liyiveth@gmail.com</span>
         </div>
         <div className="flex items-center justify-end mb-1">
           <FaPhone className="text-[#bec5a4] mr-2" size={14} />
@@ -115,10 +115,10 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
       <div className="flex flex-col items-center">
         <p className="font-serif text-lg text-[#2c3e50]">Liyiveth Quintero García</p>
         <p className="text-sm text-[#7f8c8d] mb-2">Psicóloga - TP No. 229742</p>
-        <p className="text-xs text-[#95a5a6]">SanaTú SAS</p>
+        {/* <p className="text-xs text-[#95a5a6]">SanaTú SAS</p> */}
       </div>
       <div className="mt-4 text-xs text-[#95a5a6]">
-        © {new Date().getFullYear()} SanaTú - Sistema de Historias Clínicas Digitales
+        © {new Date().getFullYear()} La información contenida en este documento es confidencial y está sujeta a reserva profesional según la Ley 1090 de 2006 (Código Deontológico y Bioético del Psicólogo) y la Ley 1581 de 2012 (Protección de Datos Personales).
       </div>
     </div>
   );

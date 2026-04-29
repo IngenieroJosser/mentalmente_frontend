@@ -38,7 +38,7 @@ const PrintableHistory: React.FC<PrintableHistoryProps> = ({ record }) => {
                 HISTORIA CLÍNICA PSICOLÓGICA
               </h1>
               <p className="text-center text-sm text-[#c77914] font-medium mt-1">
-                MentalMente - Centro de Psicología Integral
+                SANATÚ SAS - Centro de Psicología Integral
               </p>
             </div>
           </div>

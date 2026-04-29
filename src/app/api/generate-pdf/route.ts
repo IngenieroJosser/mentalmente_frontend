@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     drawText(firstPage, 'SANATÚ SAS', 50, baseY, undefined, undefined, BLACK);
     drawText(firstPage, 'NIT 902010331-8', 50, baseY - 15, undefined, undefined, BLACK);
     drawText(firstPage, 'Tel: 3113266223', 50, baseY - 30, undefined, undefined, BLACK);
-    drawText(firstPage, 'Liyiveth Quintero García', 50, baseY - 45, undefined, undefined, BLACK);
+    drawText(firstPage, 'Psic. Liyiveth Quintero García', 50, baseY - 45, undefined, undefined, BLACK);
     drawText(firstPage, 'Psicóloga - TP No. 229742', 50, baseY - 60, undefined, undefined, BLACK);
     drawLine(firstPage, 50, baseY - 70, 550, baseY - 70, 1);
 
