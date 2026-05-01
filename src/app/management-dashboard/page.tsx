@@ -271,7 +271,7 @@ const DashboardManagementMentalmentePage = () => {
                   <Brain className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold">SanaTú</h1>
+                  <h1 className="font-bold">Bienvenid@</h1>
                   <p className="text-xs text-white/80"></p>
                 </div>
               </div>
@@ -312,12 +312,12 @@ const DashboardManagementMentalmentePage = () => {
         <div className="p-5 flex items-center space-x-3 border-b border-white/20">
           <div className="flex items-center justify-center">
             <div className="bg-white/20 p-3 rounded-xl flex items-center justify-center border border-white/30">
-              <Brain className="w-8 h-8 text-white" />
+              <Brain className="w-4 h-4 text-white" />
             </div>
           </div>
           <div>
-            <h1 className="font-bold text-lg">SanaTú</h1>
-            <p className="text-sm text-white/80"></p>
+            <h1 className="font-bold text-lg">Bienvenid@ {user?.usuario}</h1>
+            <p className="text-sm text-white/80">{translateRole(user?.role || '')}</p>
           </div>
         </div>
 

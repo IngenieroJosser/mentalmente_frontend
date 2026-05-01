@@ -127,12 +127,12 @@ const AboutSection = () => {
               <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
                 <span className="text-sm font-light text-gray-700">Psicóloga</span>
               </div>
-              {/* <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
-                <span className="text-sm font-light text-gray-700">Atención a la Primera Infancia</span>
+              <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
+                <span className="text-sm font-light text-gray-700">Atención Psicológica Online y Presencial.</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-[#bec5a4]/10 border border-[#bec5a4]/20">
-                <span className="text-sm font-light text-gray-700">Alta Gerencia en Proyectos Sociales</span>
-              </div> */}
+                <span className="text-sm font-light text-gray-700">Quibidó</span>
+              </div>
             </motion.div>
 
             {/* Descripción profesional */}
@@ -143,7 +143,7 @@ const AboutSection = () => {
                 transition={{ delay: 0.3 }}
                 className="text-lg text-gray-700 font-light leading-relaxed"
               >
-                Soy <span className="text-[#bec5a4] font-normal">Liyiveth Quintero García</span>, A través de mi Método SanaTú, acompaño a personas que se sienten atrapadas en el vacío emocional de la era digital. Mi enfoque no es poner etiquetas, sino devolverte la autonomía. Entiendo profundamente la frustración y el reto de reconstruirse, y he dedicado mi práctica profesional a perfeccionar métodos de liberación para que logres una seguridad interna que no dependa de situaciones externas.
+                Brindo un espacio seguro y profesional para el cuidado de tu salud mental. Si te encuentras en Quibdó, podemos coordinar sesiones presenciales; si estás en cualquier otra parte del mundo, mi servicio de psicología virtual está diseñado para ofrecerte la misma calidad y calidez desde la comodidad de tu hogar.
               </motion.p>
 
               <motion.div
@@ -156,7 +156,7 @@ const AboutSection = () => {
                   <span className="text-xs font-light text-white">Propósito</span>
                 </div>
                 <p className="text-gray-700 font-light leading-relaxed italic">
-                  En <span className="text-[#bec5a4] font-normal">SanaTú</span>, es acompañarte a transformar la sensación de incompetencia en una competencia real. Con mi método SanaTú, no busco calmar tus síntomas; busco que recuperes el dominio de tu vida, aprendas a gestionar el vacío de la era digital y construyas una seguridad interna que no dependa de los resultados inmediatos ni de la aprobación externa.
+                  Transformar la frustración y la sensación de incompetencia  en competencia real. No busco calmar síntomas; busco que recuperes el dominio de tu vida y que  aprendas a gestionar el vacío de la era digital y construyas una seguridad interna que no dependa de los resultados inmediatos ni de la aprobación externa.
                 </p>
               </motion.div>
             </div>
@@ -169,9 +169,9 @@ const AboutSection = () => {
               className="pt-8"
             >
               <a
-                className="inline-flex items-center group text-[#bec5a4] font-light tracking-wide"
+                className="inline-flex items-center group text-[#4e2418] font-bold tracking-wide"
               >
-                <span className="border-b border-transparent group-hover:border-[#bec5a4] transition-all duration-300">
+                <span className="border-b border-transparent group-hover:border-[#e4f4ae] transition-all duration-300">
                   ¿Sientes que te esfuerzas al máximo, pero nada es suficiente? Te ayudo a vencer la sensación de incompetencia, gestionar la frustración y recuperar el control frente a las pantallas. <br />
                   {/* <br /> */}
                   Psicóloga con experticia en el tratamiento de la frustración y adicciones no sustanciales (redes sociales y juegos).

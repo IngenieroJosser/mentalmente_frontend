@@ -91,7 +91,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
       <div className="text-right border-l-2 border-[#bec5a4] pl-6">
         <div className="flex items-center justify-end mb-2">
           <FaBuilding className="text-[#bec5a4] mr-2" size={16} />
-          <span className="font-serif text-[#2c3e50] text-lg">Colombia</span>
+          <span className="font-serif text-[#2c3e50] text-lg">Quibdó, Chocó, Colombia</span>
         </div>
         <div className="flex items-center justify-end mb-1">
           <FaIdCard className="text-[#bec5a4] mr-2" size={14} />

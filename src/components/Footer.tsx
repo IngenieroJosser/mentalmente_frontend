@@ -133,7 +133,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-gray-700 text-sm font-light">Ubicación</p>
-                  <p className="text-gray-400 text-xs">Colombia</p>
+                  <p className="text-gray-400 text-xs">Quibdó - Chocó, Colombia</p>
                 </div>
               </div>
             </div>
