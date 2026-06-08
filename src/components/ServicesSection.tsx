@@ -332,17 +332,17 @@ const ServicesSection = () => {
                 className="absolute w-[2px] h-[2px] rounded-full"
                 style={{
                   backgroundColor: services.find((s) => s.id === hoveredCard)?.color,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
+                  left: `${(i * 13 + 7) % 100}%`,
+                  top: `${(i * 17 + 11) % 100}%`,
                 }}
                 animate={{
                   y: [0, -20, 0],
                   opacity: [0, 0.8, 0],
                 }}
                 transition={{
-                  duration: 2 + Math.random(),
+                  duration: 2 + (i % 3) * 0.5,
                   repeat: Infinity,
-                  delay: Math.random() * 2,
+                  delay: i * 0.25,
                 }}
               />
             ))}

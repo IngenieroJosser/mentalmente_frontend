@@ -71,9 +71,9 @@ const Header = () => {
             key={i}
             className="absolute w-[1px] h-[1px] bg-[#bec5a4] rounded-full"
             style={{
-              left: `${(i * 12.5) + Math.sin(Date.now() * 0.001 + i) * 5}%`,
-              top: `${Math.cos(Date.now() * 0.001 + i) * 20 + 50}%`,
-              boxShadow: `0 0 ${8 + Math.sin(Date.now() * 0.002 + i) * 4}px ${2 + Math.sin(Date.now() * 0.002 + i)}px rgba(190, 197, 164, 0.4)`
+              left: `${(i * 12.5) + Math.sin(i * 0.8) * 5}%`,
+              top: `${Math.cos(i * 0.8) * 20 + 50}%`,
+              boxShadow: `0 0 ${8 + Math.sin(i * 1.2) * 4}px ${2 + Math.sin(i * 1.2)}px rgba(190, 197, 164, 0.4)`
             }}
             animate={{
               y: [0, -20, 0],

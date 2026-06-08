@@ -81,7 +81,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${sora.className} antialiased`}>
+      <body className={`${sora.className} antialiased`} suppressHydrationWarning>
         <AuthProvider>
           <ClientLayout>
             {children}
