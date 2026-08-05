@@ -153,11 +153,11 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 border-t border-gray-100 pt-8">
           <div className="text-center lg:text-left">
             <p className="text-xs text-gray-400 font-light">
-              © {currentYear} Psicóloga Liyiveth Quintero García. Todos los
+              © {currentYear} SanaTú - Psicóloga Liyiveth Quintero García. Todos los
               derechos reservados.
             </p>
             <p className="text-xs text-gray-300 font-light mt-1">
-              Ansiedad Relacional y Manejo del Estrés
+              Orientación psicológica | Psicoeducación | Primeros Auxilios Psicológicos
             </p>
           </div>
 

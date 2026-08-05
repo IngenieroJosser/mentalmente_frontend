@@ -33,28 +33,20 @@ const HeroSection = () => {
             <div className="flex items-center justify-center space-x-4">
               <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#bec5a4]/40" />
               <span className="text-sm tracking-[0.25em] font-light text-[#bec5a4] uppercase">
-                Psicóloga experta en Ansiedad Relacional y Manejo del estrés
+                Orientación Psicológica
               </span>
               <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#bec5a4]/40" />
             </div>
-
-            <blockquote className="text-gray-500 font-light italic text-sm lg:text-base max-w-2xl mx-auto leading-relaxed">
-              &ldquo;El odio despierta rencillas; Pero el amor cubrirá todas las faltas.&rdquo;
-              <span className="block mt-1 text-[#bec5a4] not-italic text-xs tracking-widest">
-                Proverbios 10:12
-              </span>
-            </blockquote>
           </div>
 
           <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 leading-tight tracking-tight">
-              ¿Sientes que tu mente no se apaga y vives en{' '}
-              <span className="text-[#bec5a4]">modo supervivencia?</span>
+              Cada persona vive sus <br/>
+              <span className="text-[#bec5a4]">propios procesos.</span>
             </h1>
 
             <p className="text-lg lg:text-xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
-              Te ayudo a recuperar la paz, sanar tus vínculos y regular tu sistema nervioso
-              a través de la psicoterapia y el diálogo clínico.
+              Mi propósito es brindarte orientación psicológica para que puedas afrontarlos con mayor tranquilidad y confianza.
             </p>
           </div>
 
@@ -67,7 +59,7 @@ const HeroSection = () => {
                      shadow-lg hover:shadow-xl"
           >
             <Calendar className="w-5 h-5" />
-            <span>Quiero agendar mi cita</span>
+            <span>Agenda tu orientación</span>
             <ChevronRight className="w-5 h-5" />
           </motion.button>
         </motion.div>

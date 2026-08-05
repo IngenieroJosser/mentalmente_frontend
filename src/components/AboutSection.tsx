@@ -126,11 +126,7 @@ const AboutSection = () => {
                 transition={{ delay: 0.3 }}
                 className="text-lg text-gray-700 font-light leading-relaxed"
               >
-                Psicóloga. Sé perfectamente lo que es sentir que la mente no se apaga, que el cuerpo se
-                acelera ante la incertidumbre y que el corazón se asfixia cuando un vínculo afectivo se
-                rompe o nos cierran la puerta en la cara. He vivido de cerca el impacto de ver cómo una
-                crisis de pareja, una separación o un bloqueo en redes sociales pueden desmoronar el mundo
-                de una persona y activar una alarma de estrés insoportable.
+                Hola, soy Liyiveth Quintero García, psicóloga. Elegí esta profesión porque creo en el valor de la escucha, el respeto y la capacidad que tienen las personas para desarrollar recursos que les permitan afrontar las dificultades de la vida.
               </motion.p>
 
               <motion.p
@@ -139,9 +135,16 @@ const AboutSection = () => {
                 transition={{ delay: 0.35 }}
                 className="text-lg text-gray-700 font-light leading-relaxed"
               >
-                Fue precisamente esa vivencia la que me llevó a enfocar mi práctica clínica en el abordaje
-                de la Ansiedad Relacional y el Manejo del Estrés. Entendí que la desregulación emocional no
-                es debilidad; es un sistema nervioso en modo supervivencia buscando respuestas.
+                A través de SanaTú quiero ofrecerte un espacio donde puedas hablar con tranquilidad sobre aquello que estás viviendo, recibir orientación profesional y adquirir herramientas que favorezcan tu bienestar emocional. Mi forma de trabajar se basa en la empatía, el respeto, la confidencialidad y el compromiso con cada persona que deposita su confianza en mí.
+              </motion.p>
+              
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.38 }}
+                className="text-lg text-gray-700 font-light leading-relaxed"
+              >
+                Creo que una orientación oportuna puede brindar claridad, fortalecer la toma de decisiones y contribuir al desarrollo de habilidades para afrontar los desafíos cotidianos. Cada persona tiene una historia diferente y merece ser escuchada sin prejuicios. Por eso procuro que cada encuentro sea un espacio seguro, humano y respetuoso.
               </motion.p>
 
               <motion.div
@@ -151,13 +154,50 @@ const AboutSection = () => {
                 className="relative p-6 rounded-xl bg-gradient-to-br from-white to-gray-50/50 border border-gray-100 shadow-sm"
               >
                 <div className="absolute -top-3 left-8 px-3 py-1 bg-[#bec5a4] rounded-full">
-                  <span className="text-xs font-light text-white">Mi misión</span>
+                  <span className="text-xs font-light text-white uppercase">Mi enfoque profesional</span>
                 </div>
+                <p className="text-gray-700 font-light leading-relaxed mt-2">
+                  Está orientado a brindar orientación psicológica, psicoeducación y Primeros Auxilios Psicológicos, promoviendo el bienestar emocional mediante herramientas prácticas para afrontar los desafíos de la vida cotidiana.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.45 }}
+                className="space-y-4"
+              >
+                <h3 className="text-xl font-light text-gray-900 mt-8 mb-4">Mi compromiso contigo</h3>
+                <p className="text-gray-700 font-light">Cuando solicitas una orientación conmigo puedes esperar:</p>
+                <ul className="space-y-2 text-gray-700 font-light">
+                  <li className="flex items-start">
+                    <span className="text-[#bec5a4] mr-2">✔</span> Un espacio donde serás escuchado(a) con respeto.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#bec5a4] mr-2">✔</span> Una atención ética y confidencial.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#bec5a4] mr-2">✔</span> Información clara y comprensible.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#bec5a4] mr-2">✔</span> Herramientas prácticas para afrontar la situación que estás viviendo.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#bec5a4] mr-2">✔</span> Un acompañamiento profesional centrado en tus necesidades.
+                  </li>
+                </ul>
+              </motion.div>
+
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="space-y-4"
+              >
+                <h3 className="text-xl font-light text-gray-900 mt-8 mb-4">¿Por qué elegir SanaTú?</h3>
                 <p className="text-gray-700 font-light leading-relaxed">
-                  Mi propósito en este espacio no es juzgar su dolor ni su necesidad de control. Mi misión
-                  es poner a su servicio la ciencia, la empatía y la conversación terapéutica para ayudarle
-                  a apagar esa alarma, recuperar su dignidad, establecer límites firmes y reconstruir su paz
-                  interior. Estoy aquí para acompañarle a transformar el caos en calma.
+                  Porque encontrarás una atención basada en la cercanía, el respeto y la escucha profesional.
+                  Mi propósito no es juzgarte ni decirte cómo debes vivir tu vida. Quiero ayudarte a comprender mejor lo que estás viviendo, identificar recursos personales y encontrar estrategias que favorezcan tu bienestar emocional. Cada orientación está enfocada en brindarte herramientas útiles que puedas aplicar en tu vida cotidiana.
                 </p>
               </motion.div>
             </div>

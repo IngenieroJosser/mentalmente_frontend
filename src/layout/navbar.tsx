@@ -19,7 +19,7 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['inicio', 'sobre-mi', 'servicios', 'contacto'];
+      const sections = ['inicio', 'sobre-mi', 'ayuda', 'talleres', 'agenda', 'faq', 'contacto'];
       const current = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
@@ -58,7 +58,10 @@ const Header = () => {
   const navItems = [
     { label: 'Inicio', href: '#inicio', id: 'inicio' },
     { label: 'Sobre mí', href: '#sobre-mi', id: 'sobre-mi' },
-    { label: 'Servicios', href: '#servicios', id: 'servicios' },
+    { label: '¿Cómo puedo ayudarte?', href: '#ayuda', id: 'ayuda' },
+    { label: 'Talleres', href: '#talleres', id: 'talleres' },
+    { label: 'Agenda', href: '#agenda', id: 'agenda' },
+    { label: 'FAQ', href: '#faq', id: 'faq' },
     { label: 'Contacto', href: '#contacto', id: 'contacto' },
   ];
 

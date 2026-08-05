@@ -42,18 +42,18 @@ const CallToActionSection = () => {
             <div className="inline-block mb-8">
               <div className="h-px w-16 bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-4" />
               <span className="text-xs tracking-widest font-light text-gray-500 uppercase">
-                Contacto
+                Agenda tu orientación
               </span>
               <div className="h-px w-16 bg-gradient-to-r from-transparent via-gray-300 to-transparent mt-4" />
             </div>
 
-            <h2 className="text-5xl lg:text-6xl font-light text-gray-900 mb-8 leading-tight">
-              Estoy aquí para<br />
-              <span className="text-[#bec5a4]">acompañarte</span>
+            <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-8 leading-tight">
+              Dar el primer paso <br />
+              <span className="text-[#bec5a4]">puede generar dudas</span>
             </h2>
 
-            <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto">
-              Escríbeme directamente por WhatsApp y empecemos tu proceso de sanación
+            <p className="text-lg text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+              Si sientes que necesitas un espacio para hablar, aclarar una situación o fortalecer herramientas para afrontar un momento difícil, estaré disponible para acompañarte. Será un gusto escucharte.
             </p>
           </motion.div>
 
@@ -79,13 +79,13 @@ const CallToActionSection = () => {
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#bec5a4]" />
                       <span className="text-gray-700 font-light">
-                        Terapia virtual desde cualquier lugar
+                        Modalidad de Atención Virtual
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#bec5a4]" />
                       <span className="text-gray-700 font-light">
-                        Atención domiciliaria en Quibdó - Chocó
+                        Atención Domiciliaria
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -130,13 +130,11 @@ const CallToActionSection = () => {
                 <div className="bg-gradient-to-b from-white to-gray-50/30 border border-gray-200 rounded-2xl p-8 h-full">
                   <div className="mb-8">
                     <h4 className="text-lg font-light text-gray-900 mb-4">
-                      Enfoque:
+                      Mi Compromiso:
                     </h4>
                     <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
                       <p className="text-gray-600 font-light italic leading-relaxed">
-                        Ansiedad Relacional y Manejo del Estrés. Acompañamiento para quienes viven en
-                        modo supervivencia, con insomnio, sobrepensamiento y dolor por rupturas,
-                        separaciones o bloqueos emocionales en sus vínculos.
+                        Brindar orientación psicológica, psicoeducación y Primeros Auxilios Psicológicos, promoviendo el bienestar emocional mediante herramientas prácticas.
                       </p>
                     </div>
                   </div>
@@ -148,10 +146,10 @@ const CallToActionSection = () => {
                       whileTap={{ scale: 0.98 }}
                       className="w-full py-4 bg-[#bec5a4] text-white rounded-xl font-light tracking-wide
                                hover:bg-[#a0a78c] transition-colors duration-300 flex items-center
-                               justify-center space-x-3"
+                               justify-center space-x-3 shadow-md hover:shadow-lg"
                     >
                       <MessageCircle className="w-5 h-5" />
-                      <span>Iniciar mi terapia virtual o domiciliaria</span>
+                      <span>Agendar mi orientación</span>
                       <ChevronRight className="w-5 h-5" />
                     </motion.button>
 
