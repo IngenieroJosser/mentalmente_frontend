@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import {
   MessageCircle,
@@ -22,7 +22,7 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
 
 const ServicesSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [, setHoveredCard] = useState<number | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
