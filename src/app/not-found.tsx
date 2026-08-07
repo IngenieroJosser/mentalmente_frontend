@@ -44,7 +44,7 @@ export default function NotFound() {
 
         <div className="mt-20 pt-7 border-t border-[#fefce9]/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] tracking-[.1em] text-[#fefce9]/40">
           <span className="inline-flex items-center gap-2"><Compass size={14} /> Quibdó · Chocó · Colombia</span>
-          <a href="/#contacto" className="inline-flex items-center gap-2 text-[#ebe0ae]">Contactar a SanaTú <ArrowRight size={14} /></a>
+          <Link href="/#contacto" className="inline-flex items-center gap-2 text-[#ebe0ae]">Contactar a SanaTú <ArrowRight size={14} /></Link>
         </div>
       </motion.section>
     </main>
