@@ -145,7 +145,7 @@ const CalendarDashboardPsychologist = () => {
               Calendario de Historias Clínicas
             </h1>
             <p className="text-[#6b7280] mt-2 max-w-2xl">
-              Visualización avanzada de pacientes con tecnología Mentalmente. 
+              Visualización avanzada de pacientes con tecnología SanaTú. 
               Cada día muestra los pacientes atendidos con historias clínicas completadas.
             </p>
           </div>
@@ -305,7 +305,7 @@ const CalendarDashboardPsychologist = () => {
               </svg>
             </div>
             <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#bec5a4] to-[#d4d9c2]">
-              Mentalmente - Transformando la atención psicológica.
+              SanaTú - Transformando la atención psicológica.
             </h3>
           </div>
           <p className="text-[#6b7280] max-w-2xl mx-auto">

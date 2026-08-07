@@ -1,91 +1,61 @@
-import type { Metadata } from "next";
-import { Sora } from 'next/font/google';
-import "./globals.css";
-import ClientLayout from "@/components/ClientLayout";
-import { AuthProvider } from "@/context/AuthContext";
+import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
+import { Manrope } from "next/font/google"
+import './globals.css';
+import ClientLayout from '@/components/ClientLayout';
+import { AuthProvider } from '@/context/AuthContext';
 
-const sora = Sora({
-  subsets: ['latin'],
-  variable: '--font-sora',
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: '--font-manrope',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "SanaTú Quingar – Promoviendo la Salud Mental",
-    template: "%s | SanaTú Quingar"
+    default: 'SanaTú Quingar — Bienestar psicológico',
+    template: '%s | SanaTú Quingar',
   },
-  description: "SanaTú Quingar es una plataforma dedicada a la salud mental. Información, soporte y recursos en español.",
-  metadataBase: new URL("https://www.sanatuquingar.com.co/"),
-  
-  // Favicon e íconos para diferentes dispositivos
+  description: 'Orientación psicológica humana, ética y cercana en Quibdó, Chocó. Atención virtual y domiciliaria.',
+  metadataBase: new URL('https://www.sanatuquingar.com.co/'),
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/android-chrome-192.192', type: 'image/png', sizes: '192x192' },
+      { url: '/android-chrome-192x192.png', type: 'image/png', sizes: '192x192' },
       { url: '/android-chrome-512x512.png', type: 'image/png', sizes: '512x512' },
     ],
-    apple: [
-      { url: '/apple-icon.png', sizes: '180x180' },
-    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
   },
-  
-  // Open Graph (para Facebook, LinkedIn, WhatsApp, etc.)
   openGraph: {
-    title: "SanaTú Quingar – Salud Mental en Español",
-    description: "Información, soporte y recursos en salud mental para la comunidad hispanohablante.",
-    url: "https://www.sanatuquingar.com.co/",
-    siteName: "SanaTú Quingar",
-    images: [
-      {
-        url: "https://www.sanatuquingar.com.co/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "SanaTú Quingar – Salud Mental",
-      },
-    ],
-    locale: "es_CO",
-    type: "website",
+    title: 'SanaTú Quingar — Bienestar psicológico',
+    description: 'Un espacio humano y responsable para comprender tus emociones y fortalecer tus recursos.',
+    url: 'https://www.sanatuquingar.com.co/',
+    siteName: 'SanaTú Quingar',
+    images: [{ url: '/logo-sana-tu-brand.png', width: 689, height: 572, alt: 'SanaTú Quingar' }],
+    locale: 'es_CO',
+    type: 'website',
   },
-  
-  // Twitter Cards
-  twitter: {
-    card: "summary_large_image",
-    title: "SanaTú Quingar – Salud Mental",
-    description: "Desestigmatización y recursos en salud mental",
-    images: ["https://www.sanatuquingar.com.co/og-image.jpg"],
-    site: "@sanatuquingar", // Opcional: tu cuenta de Twitter
-  },
-  
-  // Configuración adicional
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
+    googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-  authors: [{ name: "SanaTú Quingar", url: "https://www.sanatuquingar.com.co" }],
+  authors: [{ name: 'SanaTú Quingar' }],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#414719',
+  colorScheme: 'light',
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${sora.className} antialiased`} suppressHydrationWarning>
+      <body className={`${manrope.variable} antialiased`} suppressHydrationWarning>
         <AuthProvider>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
+          <ClientLayout>{children}</ClientLayout>
         </AuthProvider>
       </body>
     </html>

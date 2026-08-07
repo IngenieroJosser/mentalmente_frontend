@@ -231,8 +231,8 @@ const PatientReceptionDashboard = () => {
           </div>
         </div>
         <div className="text-center mt-8">
-          <h2 className="text-2xl font-light text-[#2c3e50] mb-2">Cargando pacientes</h2>
-          <p className="text-[#7f8c8d]">Preparando información médica...</p>
+          <h2 className="text-2xl font-light text-[#23270A] mb-2">Cargando pacientes</h2>
+          <p className="text-[#5D601E]">Preparando información médica...</p>
         </div>
       </div>
     );
@@ -248,8 +248,8 @@ const PatientReceptionDashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#2c3e50]">Error de conexión</h2>
-            <p className="text-[#7f8c8d] mt-2">{error}</p>
+            <h2 className="text-2xl font-bold text-[#23270A]">Error de conexión</h2>
+            <p className="text-[#5D601E] mt-2">{error}</p>
           </div>
           <button
             onClick={() => window.location.reload()}
@@ -268,18 +268,18 @@ const PatientReceptionDashboard = () => {
         {/* Encabezado principal */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-serif font-light text-[#2c3e50] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-serif font-light text-[#23270A] tracking-tight">
               Panel de Pacientes
             </h1>
-            <p className="text-[#7f8c8d] mt-2 max-w-2xl text-sm">
+            <p className="text-[#5D601E] mt-2 max-w-2xl text-sm">
               Gestión avanzada de pacientes con tecnología SanaTú Guingar Global.
               Visualice, edite y administre toda la información de sus pacientes.
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex items-center space-x-4">
             <div className="bg-white rounded-2xl px-6 py-3 shadow-sm border border-[#bec5a4]/20">
-              <div className="text-xs uppercase tracking-wider text-[#7f8c8d]">Total pacientes</div>
-              <div className="text-3xl font-light text-[#2c3e50]">{patients.length}</div>
+              <div className="text-xs uppercase tracking-wider text-[#5D601E]">Total pacientes</div>
+              <div className="text-3xl font-light text-[#23270A]">{patients.length}</div>
             </div>
           </div>
         </div>
@@ -294,7 +294,7 @@ const PatientReceptionDashboard = () => {
                 placeholder="Buscar por nombre o identificación..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50] placeholder-[#95a5a6]"
+                className="w-full pl-12 pr-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A] placeholder-[#95a5a6]"
               />
             </div>
             <div className="flex items-center space-x-3">
@@ -302,7 +302,7 @@ const PatientReceptionDashboard = () => {
                 onClick={() => setActiveTab('all')}
                 className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'all'
                     ? 'bg-[#bec5a4] text-white shadow-md shadow-[#bec5a4]/30'
-                    : 'bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#e8e8e8]'
+                    : 'bg-[#f2f2f2] text-[#5D601E] hover:bg-[#e8e8e8]'
                   }`}
               >
                 Todos
@@ -311,12 +311,12 @@ const PatientReceptionDashboard = () => {
                 onClick={() => setActiveTab('beneficiaries')}
                 className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'beneficiaries'
                     ? 'bg-[#bec5a4] text-white shadow-md shadow-[#bec5a4]/30'
-                    : 'bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#e8e8e8]'
+                    : 'bg-[#f2f2f2] text-[#5D601E] hover:bg-[#e8e8e8]'
                   }`}
               >
                 Beneficiarios
               </button>
-              <button className="p-2.5 rounded-xl bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#e8e8e8] transition-all">
+              <button className="p-2.5 rounded-xl bg-[#f2f2f2] text-[#5D601E] hover:bg-[#e8e8e8] transition-all">
                 <FaFilter />
               </button>
             </div>
@@ -329,8 +329,8 @@ const PatientReceptionDashboard = () => {
             <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#bec5a4]/10 to-[#aab38c]/10 rounded-3xl flex items-center justify-center mb-6">
               <FaUserInjured className="h-12 w-12 text-[#bec5a4]" />
             </div>
-            <h3 className="text-2xl font-light text-[#2c3e50] mb-2">No se encontraron pacientes</h3>
-            <p className="text-[#7f8c8d] max-w-md mx-auto">
+            <h3 className="text-2xl font-light text-[#23270A] mb-2">No se encontraron pacientes</h3>
+            <p className="text-[#5D601E] max-w-md mx-auto">
               {searchTerm
                 ? `No hay pacientes que coincidan con "${searchTerm}"`
                 : 'Comienza agregando un nuevo paciente al sistema.'}
@@ -358,8 +358,8 @@ const PatientReceptionDashboard = () => {
                       {patient.patientName.charAt(0)}
                     </div>
                     <div className="ml-4 flex-1">
-                      <h3 className="font-serif text-xl font-medium text-[#2c3e50]">{patient.patientName}</h3>
-                      <div className="flex items-center mt-1 text-sm text-[#7f8c8d]">
+                      <h3 className="font-serif text-xl font-medium text-[#23270A]">{patient.patientName}</h3>
+                      <div className="flex items-center mt-1 text-sm text-[#5D601E]">
                         <FaIdCard className="text-[#bec5a4] mr-2" size={12} />
                         <span>{patient.identificationType}: {patient.identificationNumber}</span>
                       </div>
@@ -374,13 +374,13 @@ const PatientReceptionDashboard = () => {
                       <div className="flex items-center text-xs uppercase tracking-wider text-[#95a5a6] mb-1">
                         <FaCalendarAlt className="mr-1 text-[#bec5a4]" size={10} /> Edad
                       </div>
-                      <div className="text-[#2c3e50] font-medium">{patient.age || 'N/A'} años</div>
+                      <div className="text-[#23270A] font-medium">{patient.age || 'N/A'} años</div>
                     </div>
                     <div>
                       <div className="flex items-center text-xs uppercase tracking-wider text-[#95a5a6] mb-1">
                         <FaVenusMars className="mr-1 text-[#bec5a4]" size={10} /> Admisión
                       </div>
-                      <div className="text-[#2c3e50] font-medium text-sm truncate">{formatDate(patient.admissionDate)}</div>
+                      <div className="text-[#23270A] font-medium text-sm truncate">{formatDate(patient.admissionDate)}</div>
                     </div>
                   </div>
 
@@ -389,7 +389,7 @@ const PatientReceptionDashboard = () => {
                       <FaHospital className="text-[#bec5a4] mt-1 mr-3 flex-shrink-0" size={14} />
                       <div>
                         <div className="text-xs uppercase tracking-wider text-[#95a5a6]">EPS</div>
-                        <div className="text-[#2c3e50] font-medium">{patient.eps || 'No registrada'}</div>
+                        <div className="text-[#23270A] font-medium">{patient.eps || 'No registrada'}</div>
                       </div>
                     </div>
 
@@ -397,7 +397,7 @@ const PatientReceptionDashboard = () => {
                       <FaMapMarkerAlt className="text-[#bec5a4] mt-1 mr-3 flex-shrink-0" size={14} />
                       <div>
                         <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Ubicación</div>
-                        <div className="text-[#2c3e50] font-medium">{patient.city || 'N/A'}, {patient.state || 'N/A'}</div>
+                        <div className="text-[#23270A] font-medium">{patient.city || 'N/A'}, {patient.state || 'N/A'}</div>
                       </div>
                     </div>
 
@@ -405,8 +405,8 @@ const PatientReceptionDashboard = () => {
                       <FaPhone className="text-[#bec5a4] mt-1 mr-3 flex-shrink-0" size={14} />
                       <div>
                         <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Contacto</div>
-                        <div className="text-[#2c3e50] font-medium text-sm">{patient.cellPhone || patient.phone || 'N/A'}</div>
-                        {patient.email && <div className="text-[#7f8c8d] text-xs truncate">{patient.email}</div>}
+                        <div className="text-[#23270A] font-medium text-sm">{patient.cellPhone || patient.phone || 'N/A'}</div>
+                        {patient.email && <div className="text-[#5D601E] text-xs truncate">{patient.email}</div>}
                       </div>
                     </div>
                   </div>
@@ -414,29 +414,29 @@ const PatientReceptionDashboard = () => {
                   {/* Estado y acciones */}
                   <div className="mt-6 pt-4 border-t border-[#bec5a4]/20 flex items-center justify-between">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${patient.isBeneficiary
-                        ? 'bg-[#bec5a4]/10 text-[#2c3e50] border border-[#bec5a4]/30'
-                        : 'bg-[#ecf0f1] text-[#7f8c8d]'
+                        ? 'bg-[#bec5a4]/10 text-[#23270A] border border-[#bec5a4]/30'
+                        : 'bg-[#ecf0f1] text-[#5D601E]'
                       }`}>
                       {patient.isBeneficiary ? 'Beneficiario' : 'Particular'}
                     </span>
                     <div className="flex space-x-2">
                       <button
                         onClick={() => openDetailModal(patient)}
-                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#bec5a4] hover:text-white transition-all"
+                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#5D601E] hover:bg-[#bec5a4] hover:text-white transition-all"
                         title="Ver historial clínico"
                       >
                         <FaHistory size={14} />
                       </button>
                       <button
                         onClick={() => openEditModal(patient)}
-                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#7f8c8d] hover:bg-[#bec5a4] hover:text-white transition-all"
+                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#5D601E] hover:bg-[#bec5a4] hover:text-white transition-all"
                         title="Editar paciente"
                       >
                         <FaEdit size={14} />
                       </button>
                       <button
                         onClick={() => openDeleteModal(patient)}
-                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#7f8c8d] hover:bg-red-400 hover:text-white transition-all"
+                        className="p-2 rounded-xl bg-[#f2f2f2] text-[#5D601E] hover:bg-red-400 hover:text-white transition-all"
                         title="Eliminar paciente"
                       >
                         <FaTrash size={14} />
@@ -457,7 +457,7 @@ const PatientReceptionDashboard = () => {
             </div>
             <div>
               <div className="text-sm uppercase tracking-wider text-[#95a5a6]">Pacientes únicos</div>
-              <div className="text-3xl font-light text-[#2c3e50]">{patients.length}</div>
+              <div className="text-3xl font-light text-[#23270A]">{patients.length}</div>
             </div>
           </div>
           <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
@@ -466,7 +466,7 @@ const PatientReceptionDashboard = () => {
             </div>
             <div>
               <div className="text-sm uppercase tracking-wider text-[#95a5a6]">Beneficiarios</div>
-              <div className="text-3xl font-light text-[#2c3e50]">{patients.filter(p => p.isBeneficiary).length}</div>
+              <div className="text-3xl font-light text-[#23270A]">{patients.filter(p => p.isBeneficiary).length}</div>
             </div>
           </div>
           <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
@@ -475,7 +475,7 @@ const PatientReceptionDashboard = () => {
             </div>
             <div>
               <div className="text-sm uppercase tracking-wider text-[#95a5a6]">Edad promedio</div>
-              <div className="text-3xl font-light text-[#2c3e50]">
+              <div className="text-3xl font-light text-[#23270A]">
                 {patients.length > 0
                   ? Math.round(patients.reduce((sum, p) => sum + (p.age || 0), 0) / patients.length)
                   : 0} años
@@ -492,7 +492,7 @@ const PatientReceptionDashboard = () => {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-xl font-serif text-[#2c3e50]">SanaTú Guingar</h3>
+            <h3 className="text-xl font-serif text-[#23270A]">SanaTú Guingar</h3>
           </div>
           <p className="text-sm text-[#95a5a6] max-w-2xl mx-auto">
             Plataforma de gestión clínica premium para profesionales de la salud mental.
@@ -518,8 +518,8 @@ const PatientReceptionDashboard = () => {
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-[#bec5a4]/20">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-serif text-[#2c3e50]">Editar Paciente</h3>
-                <button onClick={closeModals} className="text-[#95a5a6] hover:text-[#2c3e50] transition-colors">
+                <h3 className="text-2xl font-serif text-[#23270A]">Editar Paciente</h3>
+                <button onClick={closeModals} className="text-[#95a5a6] hover:text-[#23270A] transition-colors">
                   <FaTimes size={20} />
                 </button>
               </div>
@@ -527,13 +527,13 @@ const PatientReceptionDashboard = () => {
               <form onSubmit={(e) => { e.preventDefault(); handleSavePatient(); }} className="space-y-5">
                 {/* Nombre completo */}
                 <div>
-                  <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Nombre completo</label>
+                  <label className="block text-sm font-medium text-[#5D601E] mb-2">Nombre completo</label>
                   <input
                     type="text"
                     name="patientName"
                     value={editingPatient.patientName}
                     onChange={handleEditChange}
-                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     required
                   />
                 </div>
@@ -541,12 +541,12 @@ const PatientReceptionDashboard = () => {
                 {/* Tipo y número de identificación */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Tipo de identificación</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Tipo de identificación</label>
                     <select
                       name="identificationType"
                       value={editingPatient.identificationType}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       required
                     >
                       <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
@@ -557,13 +557,13 @@ const PatientReceptionDashboard = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Número de identificación</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Número de identificación</label>
                     <input
                       type="text"
                       name="identificationNumber"
                       value={editingPatient.identificationNumber}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       required
                     />
                   </div>
@@ -572,23 +572,23 @@ const PatientReceptionDashboard = () => {
                 {/* Fecha de nacimiento y edad */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Fecha de nacimiento</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Fecha de nacimiento</label>
                     <input
                       type="date"
                       name="birthDate"
                       value={editingPatient.birthDate || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Edad</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Edad</label>
                     <input
                       type="number"
                       name="age"
                       value={editingPatient.age || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
@@ -596,23 +596,23 @@ const PatientReceptionDashboard = () => {
                 {/* Escolaridad y ocupación */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Escolaridad</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Escolaridad</label>
                     <input
                       type="text"
                       name="educationLevel"
                       value={editingPatient.educationLevel || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Ocupación</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Ocupación</label>
                     <input
                       type="text"
                       name="occupation"
                       value={editingPatient.occupation || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
@@ -620,81 +620,81 @@ const PatientReceptionDashboard = () => {
                 {/* Lugar de nacimiento y nacionalidad */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Lugar de nacimiento</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Lugar de nacimiento</label>
                     <input
                       type="text"
                       name="birthPlace"
                       value={editingPatient.birthPlace || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Nacionalidad</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Nacionalidad</label>
                     <input
                       type="text"
                       name="nationality"
                       value={editingPatient.nationality || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
 
                 {/* Religión */}
                 <div>
-                  <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Religión</label>
+                  <label className="block text-sm font-medium text-[#5D601E] mb-2">Religión</label>
                   <input
                     type="text"
                     name="religion"
                     value={editingPatient.religion || ''}
                     onChange={handleEditChange}
-                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                   />
                 </div>
 
                 {/* Dirección completa */}
                 <div>
-                  <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Dirección</label>
+                  <label className="block text-sm font-medium text-[#5D601E] mb-2">Dirección</label>
                   <input
                     type="text"
                     name="address"
                     value={editingPatient.address || ''}
                     onChange={handleEditChange}
-                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                    className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                   />
                 </div>
 
                 {/* Ciudad, departamento, barrio */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Ciudad</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Ciudad</label>
                     <input
                       type="text"
                       name="city"
                       value={editingPatient.city || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Departamento</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Departamento</label>
                     <input
                       type="text"
                       name="state"
                       value={editingPatient.state || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Barrio</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Barrio</label>
                     <input
                       type="text"
                       name="neighborhood"
                       value={editingPatient.neighborhood || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
@@ -702,33 +702,33 @@ const PatientReceptionDashboard = () => {
                 {/* Teléfono, celular, email */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Teléfono</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Teléfono</label>
                     <input
                       type="text"
                       name="phone"
                       value={editingPatient.phone || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Celular</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Celular</label>
                     <input
                       type="text"
                       name="cellPhone"
                       value={editingPatient.cellPhone || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Email</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Email</label>
                     <input
                       type="email"
                       name="email"
                       value={editingPatient.email || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
@@ -736,23 +736,23 @@ const PatientReceptionDashboard = () => {
                 {/* EPS y fecha de ingreso */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">EPS</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">EPS</label>
                     <input
                       type="text"
                       name="eps"
                       value={editingPatient.eps || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Fecha de ingreso</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Fecha de ingreso</label>
                     <input
                       type="date"
                       name="admissionDate"
                       value={editingPatient.admissionDate || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
@@ -768,63 +768,63 @@ const PatientReceptionDashboard = () => {
                         onChange={handleEditChange}
                         className="form-checkbox h-5 w-5 text-[#bec5a4] bg-[#f9f9f9] border-[#e0e0e0] rounded focus:ring-[#bec5a4]"
                       />
-                      <span className="ml-2 text-sm text-[#2c3e50]">Es beneficiario</span>
+                      <span className="ml-2 text-sm text-[#23270A]">Es beneficiario</span>
                     </label>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Remitido por</label>
+                    <label className="block text-sm font-medium text-[#5D601E] mb-2">Remitido por</label>
                     <input
                       type="text"
                       name="referredBy"
                       value={editingPatient.referredBy || ''}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                      className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                     />
                   </div>
                 </div>
 
                 {/* Responsable 1 */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Responsable 1</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Responsable 1</h4>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Nombre</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Nombre</label>
                       <input
                         type="text"
                         name="guardian1Name"
                         value={editingPatient.guardian1Name || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Parentesco</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Parentesco</label>
                       <input
                         type="text"
                         name="guardian1Relationship"
                         value={editingPatient.guardian1Relationship || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Teléfono</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Teléfono</label>
                       <input
                         type="text"
                         name="guardian1Phone"
                         value={editingPatient.guardian1Phone || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Ocupación</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Ocupación</label>
                       <input
                         type="text"
                         name="guardian1Occupation"
                         value={editingPatient.guardian1Occupation || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -832,46 +832,46 @@ const PatientReceptionDashboard = () => {
 
                 {/* Responsable 2 */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Responsable 2</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Responsable 2</h4>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Nombre</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Nombre</label>
                       <input
                         type="text"
                         name="guardian2Name"
                         value={editingPatient.guardian2Name || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Parentesco</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Parentesco</label>
                       <input
                         type="text"
                         name="guardian2Relationship"
                         value={editingPatient.guardian2Relationship || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Teléfono</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Teléfono</label>
                       <input
                         type="text"
                         name="guardian2Phone"
                         value={editingPatient.guardian2Phone || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Ocupación</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Ocupación</label>
                       <input
                         type="text"
                         name="guardian2Occupation"
                         value={editingPatient.guardian2Occupation || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -879,26 +879,26 @@ const PatientReceptionDashboard = () => {
 
                 {/* Profesional a cargo */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Profesional a cargo</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Profesional a cargo</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Atendido por</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Atendido por</label>
                       <input
                         type="text"
                         name="attendedBy"
                         value={editingPatient.attendedBy || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Número de tarjeta profesional</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Número de tarjeta profesional</label>
                       <input
                         type="text"
                         name="licenseNumber"
                         value={editingPatient.licenseNumber || ''}
                         onChange={handleEditChange}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -906,76 +906,76 @@ const PatientReceptionDashboard = () => {
 
                 {/* Antecedentes personales */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Antecedentes Personales</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Antecedentes Personales</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Patológicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Patológicos</label>
                       <textarea
                         name="personalPathological"
                         value={editingPatient.personalPathological || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Quirúrgicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Quirúrgicos</label>
                       <textarea
                         name="personalSurgical"
                         value={editingPatient.personalSurgical || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Psicopatológicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Psicopatológicos</label>
                       <textarea
                         name="personalPsychopathological"
                         value={editingPatient.personalPsychopathological || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Historia de trauma o abuso</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Historia de trauma o abuso</label>
                       <textarea
                         name="traumaHistory"
                         value={editingPatient.traumaHistory || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Estado del sueño</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Estado del sueño</label>
                       <textarea
                         name="sleepStatus"
                         value={editingPatient.sleepStatus || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Consumo de sustancias psicoactivas</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Consumo de sustancias psicoactivas</label>
                       <textarea
                         name="substanceUse"
                         value={editingPatient.substanceUse || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Otros</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Otros</label>
                       <textarea
                         name="personalOther"
                         value={editingPatient.personalOther || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -983,66 +983,66 @@ const PatientReceptionDashboard = () => {
 
                 {/* Antecedentes familiares */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Antecedentes Familiares</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Antecedentes Familiares</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Patológicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Patológicos</label>
                       <textarea
                         name="familyPathological"
                         value={editingPatient.familyPathological || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Quirúrgicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Quirúrgicos</label>
                       <textarea
                         name="familySurgical"
                         value={editingPatient.familySurgical || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Psicopatológicos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Psicopatológicos</label>
                       <textarea
                         name="familyPsychopathological"
                         value={editingPatient.familyPsychopathological || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Traumáticos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Traumáticos</label>
                       <textarea
                         name="familyTraumatic"
                         value={editingPatient.familyTraumatic || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Consumo de sustancias psicoactivas</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Consumo de sustancias psicoactivas</label>
                       <textarea
                         name="familySubstanceUse"
                         value={editingPatient.familySubstanceUse || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Otros</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Otros</label>
                       <textarea
                         name="familyOther"
                         value={editingPatient.familyOther || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -1050,46 +1050,46 @@ const PatientReceptionDashboard = () => {
 
                 {/* Desarrollo */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Desarrollo</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Desarrollo</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Embarazo</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Embarazo</label>
                       <textarea
                         name="pregnancyInfo"
                         value={editingPatient.pregnancyInfo || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Parto</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Parto</label>
                       <textarea
                         name="deliveryInfo"
                         value={editingPatient.deliveryInfo || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Desarrollo psicomotor</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Desarrollo psicomotor</label>
                       <textarea
                         name="psychomotorDevelopment"
                         value={editingPatient.psychomotorDevelopment || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Dinámica familiar</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Dinámica familiar</label>
                       <textarea
                         name="familyDynamics"
                         value={editingPatient.familyDynamics || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -1097,116 +1097,116 @@ const PatientReceptionDashboard = () => {
 
                 {/* Información clínica */}
                 <div className="border-t border-[#e0e0e0] pt-5 mt-5">
-                  <h4 className="text-lg font-serif text-[#2c3e50] mb-4">Información Clínica</h4>
+                  <h4 className="text-lg font-serif text-[#23270A] mb-4">Información Clínica</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Motivo de consulta</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Motivo de consulta</label>
                       <textarea
                         name="consultationReason"
                         value={editingPatient.consultationReason || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Historia del problema</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Historia del problema</label>
                       <textarea
                         name="problemHistory"
                         value={editingPatient.problemHistory || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Expectativas de la terapia</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Expectativas de la terapia</label>
                       <textarea
                         name="therapyExpectations"
                         value={editingPatient.therapyExpectations || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Examen mental</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Examen mental</label>
                       <textarea
                         name="mentalExam"
                         value={editingPatient.mentalExam || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Evaluación psicológica</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Evaluación psicológica</label>
                       <textarea
                         name="psychologicalAssessment"
                         value={editingPatient.psychologicalAssessment || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Diagnóstico (DSM5-CIE10)</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Diagnóstico (DSM5-CIE10)</label>
                       <textarea
                         name="diagnosis"
                         value={editingPatient.diagnosis || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Objetivos terapéuticos</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Objetivos terapéuticos</label>
                       <textarea
                         name="therapeuticGoals"
                         value={editingPatient.therapeuticGoals || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Plan terapéutico</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Plan terapéutico</label>
                       <textarea
                         name="treatmentPlan"
                         value={editingPatient.treatmentPlan || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Derivación/Remisión</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Derivación/Remisión</label>
                       <textarea
                         name="referralInfo"
                         value={editingPatient.referralInfo || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Recomendaciones</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Recomendaciones</label>
                       <textarea
                         name="recommendations"
                         value={editingPatient.recommendations || ''}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[#7f8c8d] mb-2">Evolución</label>
+                      <label className="block text-sm font-medium text-[#5D601E] mb-2">Evolución</label>
                       <textarea
                         name="evolution"
                         value={editingPatient.evolution || ''}
                         onChange={handleEditChange}
                         rows={4}
-                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50]"
+                        className="w-full px-4 py-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A]"
                       />
                     </div>
                   </div>
@@ -1216,7 +1216,7 @@ const PatientReceptionDashboard = () => {
                   <button
                     type="button"
                     onClick={closeModals}
-                    className="px-6 py-3 bg-[#f2f2f2] text-[#7f8c8d] rounded-xl hover:bg-[#e8e8e8] transition-all"
+                    className="px-6 py-3 bg-[#f2f2f2] text-[#5D601E] rounded-xl hover:bg-[#e8e8e8] transition-all"
                   >
                     Cancelar
                   </button>
@@ -1241,15 +1241,15 @@ const PatientReceptionDashboard = () => {
               <div className="w-16 h-16 mx-auto bg-gradient-to-br from-red-400/20 to-red-500/20 rounded-2xl flex items-center justify-center mb-4">
                 <FaTrash className="text-red-400 text-2xl" />
               </div>
-              <h3 className="text-2xl font-serif text-[#2c3e50] mb-2">Confirmar Eliminación</h3>
-              <p className="text-[#7f8c8d]">
-                ¿Estás seguro de que deseas eliminar al paciente <span className="font-medium text-[#2c3e50]">{patientToDelete.patientName}</span>? Esta acción no se puede deshacer.
+              <h3 className="text-2xl font-serif text-[#23270A] mb-2">Confirmar Eliminación</h3>
+              <p className="text-[#5D601E]">
+                ¿Estás seguro de que deseas eliminar al paciente <span className="font-medium text-[#23270A]">{patientToDelete.patientName}</span>? Esta acción no se puede deshacer.
               </p>
             </div>
             <div className="mt-8 flex justify-center space-x-4">
               <button
                 onClick={closeModals}
-                className="px-6 py-3 bg-[#f2f2f2] text-[#7f8c8d] rounded-xl hover:bg-[#e8e8e8] transition-all"
+                className="px-6 py-3 bg-[#f2f2f2] text-[#5D601E] rounded-xl hover:bg-[#e8e8e8] transition-all"
               >
                 Cancelar
               </button>

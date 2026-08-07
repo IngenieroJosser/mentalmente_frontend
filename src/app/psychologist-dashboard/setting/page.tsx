@@ -1,9 +1,5 @@
-const SettingDashboardPsychologist: React.FC = () => {
-  return (
-    <div>
-      Configuración
-    </div>
-  );
-};
+import DashboardPlaceholder from '@/components/DashboardPlaceholder';
 
-export default SettingDashboardPsychologist;
+export default function SettingsPage() {
+  return <DashboardPlaceholder type="settings" backHref="/psychologist-dashboard" />;
+}

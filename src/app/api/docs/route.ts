@@ -6,7 +6,7 @@ export async function GET() {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Documentación API - Mentalmente</title>
+      <title>Documentación API - SanaTú</title>
       <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
       <style>
         body {

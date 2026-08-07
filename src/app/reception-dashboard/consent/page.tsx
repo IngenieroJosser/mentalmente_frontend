@@ -123,17 +123,17 @@ const ConsentsPage = () => {
         {/* Encabezado */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-serif text-[#2c3e50] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-serif text-[#23270A] tracking-tight">
               Consentimientos Informados
             </h1>
-            <p className="text-[#7f8c8d] mt-2 max-w-2xl">
+            <p className="text-[#5D601E] mt-2 max-w-2xl">
               Visualice y gestione todos los consentimientos firmados por los pacientes.
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex items-center space-x-4">
             <div className="bg-white rounded-2xl px-6 py-3 shadow-sm border border-[#bec5a4]/20">
-              <div className="text-xs uppercase tracking-wider text-[#7f8c8d]">Total</div>
-              <div className="text-3xl font-light text-[#2c3e50]">{consents.length}</div>
+              <div className="text-xs uppercase tracking-wider text-[#5D601E]">Total</div>
+              <div className="text-3xl font-light text-[#23270A]">{consents.length}</div>
             </div>
           </div>
         </div>
@@ -147,7 +147,7 @@ const ConsentsPage = () => {
               placeholder="Buscar por paciente, firmante o documento..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#2c3e50] placeholder-[#95a5a6]"
+              className="w-full pl-12 pr-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 outline-none transition-all text-[#23270A] placeholder-[#95a5a6]"
             />
           </div>
         </div>
@@ -214,7 +214,7 @@ const ConsentsPage = () => {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
-                <h2 className="text-2xl font-serif text-[#2c3e50]">Detalle del Consentimiento</h2>
+                <h2 className="text-2xl font-serif text-[#23270A]">Detalle del Consentimiento</h2>
                 <button
                   onClick={() => setShowModal(false)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -226,27 +226,27 @@ const ConsentsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Paciente</p>
-                    <p className="text-lg text-[#2c3e50] font-medium">{selectedConsent.medicalRecord.patientName}</p>
+                    <p className="text-lg text-[#23270A] font-medium">{selectedConsent.medicalRecord.patientName}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Identificación</p>
-                    <p className="text-lg text-[#2c3e50]">{selectedConsent.medicalRecord.identificationNumber}</p>
+                    <p className="text-lg text-[#23270A]">{selectedConsent.medicalRecord.identificationNumber}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Firmado por</p>
-                    <p className="text-lg text-[#2c3e50]">{selectedConsent.signedByName}</p>
+                    <p className="text-lg text-[#23270A]">{selectedConsent.signedByName}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Documento</p>
-                    <p className="text-lg text-[#2c3e50]">{selectedConsent.signedByDocument}</p>
+                    <p className="text-lg text-[#23270A]">{selectedConsent.signedByDocument}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Fecha firma</p>
-                    <p className="text-lg text-[#2c3e50]">{formatDate(selectedConsent.signedAt)}</p>
+                    <p className="text-lg text-[#23270A]">{formatDate(selectedConsent.signedAt)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#95a5a6] uppercase mb-1">Plantilla</p>
-                    <p className="text-lg text-[#2c3e50]">{selectedConsent.template.title}</p>
+                    <p className="text-lg text-[#23270A]">{selectedConsent.template.title}</p>
                   </div>
                 </div>
 
@@ -254,7 +254,7 @@ const ConsentsPage = () => {
                 <div>
                   <p className="text-xs text-[#95a5a6] uppercase mb-2">Documento firmado</p>
                   <div
-                    className="bg-[#f9f9f9] p-6 rounded-xl border border-gray-200 text-[#2c3e50]"
+                    className="bg-[#f9f9f9] p-6 rounded-xl border border-gray-200 text-[#23270A]"
                     dangerouslySetInnerHTML={{ __html: selectedConsent.documentSnapshot }}
                   />
                 </div>

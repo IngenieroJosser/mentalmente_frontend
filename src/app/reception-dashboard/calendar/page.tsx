@@ -110,8 +110,8 @@ const CalendarDashboardPsychologist = () => {
           </div>
         </div>
         <div className="text-center mt-8">
-          <h2 className="text-2xl font-light text-[#2c3e50] mb-2">Cargando calendario</h2>
-          <p className="text-[#7f8c8d]">Preparando vista de citas y registros...</p>
+          <h2 className="text-2xl font-light text-[#23270A] mb-2">Cargando calendario</h2>
+          <p className="text-[#5D601E]">Preparando vista de citas y registros...</p>
         </div>
       </div>
     );
@@ -127,8 +127,8 @@ const CalendarDashboardPsychologist = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#2c3e50]">Error de conexión</h2>
-            <p className="text-[#7f8c8d] mt-2">{error}</p>
+            <h2 className="text-2xl font-bold text-[#23270A]">Error de conexión</h2>
+            <p className="text-[#5D601E] mt-2">{error}</p>
           </div>
           <button 
             onClick={fetchMedicalRecords}
@@ -147,17 +147,17 @@ const CalendarDashboardPsychologist = () => {
         {/* Encabezado */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-serif font-light text-[#2c3e50] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-serif font-light text-[#23270A] tracking-tight">
               Calendario Clínico
             </h1>
-            <p className="text-[#7f8c8d] mt-2 max-w-2xl text-sm">
+            <p className="text-[#5D601E] mt-2 max-w-2xl text-sm">
               Visualiza tus sesiones y pacientes por día. Cada día muestra los pacientes atendidos con historias clínicas completadas.
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex items-center space-x-4">
             <div className="bg-white rounded-2xl px-6 py-3 shadow-sm border border-[#bec5a4]/20">
-              <div className="text-xs uppercase tracking-wider text-[#7f8c8d]">Total registros</div>
-              <div className="text-3xl font-light text-[#2c3e50]">{events.length}</div>
+              <div className="text-xs uppercase tracking-wider text-[#5D601E]">Total registros</div>
+              <div className="text-3xl font-light text-[#23270A]">{events.length}</div>
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@ const CalendarDashboardPsychologist = () => {
           <div className="flex items-center justify-between p-6 bg-gradient-to-r from-[#f9f9f9] to-[#f5f5f5] border-b border-[#bec5a4]/20">
             <button 
               onClick={goToPreviousMonth}
-              className="flex items-center text-[#2c3e50] hover:text-[#bec5a4] transition-colors group"
+              className="flex items-center text-[#23270A] hover:text-[#bec5a4] transition-colors group"
             >
               <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl mr-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#e0e0e0] group-hover:border-[#bec5a4] shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,13 +178,13 @@ const CalendarDashboardPsychologist = () => {
               <span className="font-medium hidden sm:inline">Mes anterior</span>
             </button>
             
-            <h2 className="text-2xl md:text-3xl font-serif text-[#2c3e50]">
+            <h2 className="text-2xl md:text-3xl font-serif text-[#23270A]">
               {capitalizedMonthTitle}
             </h2>
             
             <button 
               onClick={goToNextMonth}
-              className="flex items-center text-[#2c3e50] hover:text-[#bec5a4] transition-colors group"
+              className="flex items-center text-[#23270A] hover:text-[#bec5a4] transition-colors group"
             >
               <span className="font-medium hidden sm:inline">Siguiente mes</span>
               <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl ml-3 group-hover:bg-[#bec5a4]/10 transition-colors border border-[#e0e0e0] group-hover:border-[#bec5a4] shadow-sm">
@@ -199,11 +199,11 @@ const CalendarDashboardPsychologist = () => {
           <div className="px-6 pt-4 flex items-center space-x-6 text-sm">
             <div className="flex items-center">
               <div className="w-3 h-3 bg-[#bec5a4] rounded-full mr-2"></div>
-              <span className="text-[#2c3e50]">Día con pacientes</span>
+              <span className="text-[#23270A]">Día con pacientes</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-[#e0e0e0] rounded-full mr-2 border border-[#bec5a4]"></div>
-              <span className="text-[#2c3e50]">Hoy</span>
+              <span className="text-[#23270A]">Hoy</span>
             </div>
           </div>
 
@@ -235,7 +235,7 @@ const CalendarDashboardPsychologist = () => {
                       : 'bg-[#f9f9f9] border border-[#eaeaea] text-[#b0b0b0]'} 
                     ${isToday ? 'border-2 border-[#bec5a4] shadow-sm' : ''}`}
                 >
-                  <div className={`text-right text-sm font-medium ${isToday ? 'text-[#bec5a4]' : isCurrentMonth ? 'text-[#2c3e50]' : 'text-[#b0b0b0]'}`}>
+                  <div className={`text-right text-sm font-medium ${isToday ? 'text-[#bec5a4]' : isCurrentMonth ? 'text-[#23270A]' : 'text-[#b0b0b0]'}`}>
                     {format(day, 'd')}
                   </div>
                   
@@ -243,7 +243,7 @@ const CalendarDashboardPsychologist = () => {
                     {dayEvents.map(event => (
                       <div 
                         key={event.id} 
-                        className="text-xs p-1 mb-1 rounded-md bg-[#f2f2f2] text-[#2c3e50] truncate hover:bg-[#bec5a4] hover:text-white transition-colors cursor-default"
+                        className="text-xs p-1 mb-1 rounded-md bg-[#f2f2f2] text-[#23270A] truncate hover:bg-[#bec5a4] hover:text-white transition-colors cursor-default"
                         title={event.patientName}
                       >
                         <div className="flex items-center">
@@ -267,7 +267,7 @@ const CalendarDashboardPsychologist = () => {
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Total registros</div>
-              <div className="text-2xl font-light text-[#2c3e50]">{events.length}</div>
+              <div className="text-2xl font-light text-[#23270A]">{events.length}</div>
             </div>
           </div>
           <div className="bg-white rounded-3xl shadow-sm border border-[#bec5a4]/20 p-6 flex items-center">
@@ -276,7 +276,7 @@ const CalendarDashboardPsychologist = () => {
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Pacientes únicos</div>
-              <div className="text-2xl font-light text-[#2c3e50]">
+              <div className="text-2xl font-light text-[#23270A]">
                 {new Set(events.map(e => e.patientName)).size}
               </div>
             </div>
@@ -287,7 +287,7 @@ const CalendarDashboardPsychologist = () => {
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-[#95a5a6]">Registros hoy</div>
-              <div className="text-2xl font-light text-[#2c3e50]">
+              <div className="text-2xl font-light text-[#23270A]">
                 {getEventsForDate(new Date()).length}
               </div>
             </div>
@@ -302,7 +302,7 @@ const CalendarDashboardPsychologist = () => {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-lg font-serif text-[#2c3e50]">SanaTú</h3>
+            <h3 className="text-lg font-serif text-[#23270A]">SanaTú</h3>
           </div>
           <p className="text-xs text-[#95a5a6] max-w-2xl mx-auto">
             Plataforma de gestión clínica premium para profesionales de la salud mental.

@@ -1,9 +1,5 @@
-const SettingDashboardPsychologist = () => {
-  return (
-    <div>
-      Configuración
-    </div>
-  );
-};
+import DashboardPlaceholder from '@/components/DashboardPlaceholder';
 
-export default SettingDashboardPsychologist;
+export default function SettingsPage() {
+  return <DashboardPlaceholder type="settings" backHref="/management-dashboard" />;
+}

@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SanaTú — Sitio web y sistema clínico
 
-## Getting Started
+Rediseño integral de la experiencia digital de SanaTú construido con **Next.js 15**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **Framer Motion**, **Prisma** y **PostgreSQL**.
 
-First, run the development server:
+## Qué incluye esta versión
+
+- Landing page cinematográfica guiada por scroll, con escenas sticky, parallax, morphing visual, transiciones de contenido y microinteracciones.
+- Identidad visual unificada a partir de la paleta original del logo: marfil, crema, oliva y verde profundo.
+- Navegación responsive con menú móvil animado.
+- Rediseño completo de inicio de sesión y registro.
+- Transiciones entre rutas y barra de progreso de scroll.
+- Renovación visual transversal de los paneles de administración, psicología y recepción.
+- Nuevas pantallas de configuración y plantillas.
+- Pantalla 404 coherente con la nueva experiencia.
+- Soporte para `prefers-reduced-motion` y estilos de impresión para documentos clínicos.
+
+## Ejecución local
+
+1. Crea el archivo de variables de entorno:
+
+```bash
+cp .env.example .env
+```
+
+2. Completa las variables requeridas.
+
+3. Instala dependencias y genera Prisma Client:
+
+```bash
+npm install
+npx prisma generate
+```
+
+4. Ejecuta el proyecto:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Consulta `.env.example`. No se incluye ningún secreto real en el paquete entregado.
 
-## Learn More
+## Rutas principales
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — experiencia pública.
+- `/login` — acceso clínico.
+- `/register` — registro de recepción.
+- `/management-dashboard` — panel de administración.
+- `/psychologist-dashboard` — panel de psicología.
+- `/reception-dashboard` — panel de recepción.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notas de producción
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Ejecuta las migraciones de Prisma en un paso controlado del pipeline, antes del despliegue de la aplicación.
+- Configura `DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_BASE_URL` y `BLOB_READ_WRITE_TOKEN` mediante el gestor de secretos del entorno.
+- Conserva HTTPS, cookies seguras y una política de respaldo para la base de datos debido a la naturaleza clínica de la información.

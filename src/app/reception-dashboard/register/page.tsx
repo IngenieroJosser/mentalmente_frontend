@@ -216,11 +216,11 @@ const RegisterDashboardPsychologist = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#D4AF37] mb-6"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#23270A] to-[#414719] p-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#858735] mb-6"></div>
         <div className="text-center">
-          <h2 className="text-2xl font-light text-[#F0F4F8] mb-2">Cargando usuarios</h2>
-          <p className="text-[#A3B8CC]">Obteniendo los registros de usuarios...</p>
+          <h2 className="text-2xl font-light text-[#23270A] mb-2">Cargando usuarios</h2>
+          <p className="text-[#5D601E]">Obteniendo los registros de usuarios...</p>
         </div>
       </div>
     );
@@ -228,20 +228,20 @@ const RegisterDashboardPsychologist = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4">
-        <div className="max-w-md w-full bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl p-8 backdrop-blur-sm">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#23270A] to-[#414719] p-4">
+        <div className="max-w-md w-full bg-[#FEFCE9] rounded-2xl border border-[#C6B976] shadow-xl p-8 backdrop-blur-sm">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#1A2B40]" viewBox="0 0 20 20" fill="currentColor">
+            <div className="w-16 h-16 bg-[#858735] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#FEFCE9]" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#F0F4F8]">Error de conexión</h2>
-            <p className="text-[#A3B8CC] mt-2">{error}</p>
+            <h2 className="text-2xl font-bold text-[#23270A]">Error de conexión</h2>
+            <p className="text-[#5D601E] mt-2">{error}</p>
           </div>
           <button 
             onClick={() => window.location.reload()}
-            className="w-full py-3 px-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold rounded-xl hover:from-[#B8860B] hover:to-[#D4AF37] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#D4AF37]/20"
+            className="w-full py-3 px-4 bg-gradient-to-r from-[#858735] to-[#5D601E] text-[#23270A] font-bold rounded-xl hover:from-[#5D601E] hover:to-[#858735] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#858735]/20"
           >
             Reintentar
           </button>
@@ -251,22 +251,22 @@ const RegisterDashboardPsychologist = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0d1e30] to-[#1a3657] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#23270A] to-[#414719] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Encabezado premium */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl backdrop-blur-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 p-6 bg-[#FEFCE9] rounded-2xl border border-[#C6B976] shadow-xl backdrop-blur-sm">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0E68C]">
+            <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#858735] to-[#EBE0AE]">
               Gestión de Usuarios
             </h1>
-            <p className="text-[#A3B8CC] mt-2 max-w-2xl">
-              Administra los usuarios registrados en Mentalmente Global con altos estándares de seguridad y ética.
+            <p className="text-[#5D601E] mt-2 max-w-2xl">
+              Administra los usuarios registrados en SanaTú con altos estándares de seguridad y ética.
             </p>
           </div>
           
           <button 
             onClick={openCreateModal}
-            className="mt-6 md:mt-0 px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold rounded-xl hover:from-[#B8860B] hover:to-[#D4AF37] transition-all duration-300 flex items-center"
+            className="mt-6 md:mt-0 px-6 py-3 bg-gradient-to-r from-[#858735] to-[#5D601E] text-[#23270A] font-bold rounded-xl hover:from-[#5D601E] hover:to-[#858735] transition-all duration-300 flex items-center"
           >
             <FaUserPlus className="mr-2" />
             Nuevo Usuario
@@ -274,14 +274,14 @@ const RegisterDashboardPsychologist = () => {
         </div>
         
         {/* Controles de búsqueda */}
-        <div className="mb-6 p-6 bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl">
+        <div className="mb-6 p-6 bg-[#FEFCE9] rounded-2xl border border-[#C6B976] shadow-xl">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <FaSearch className="text-[#A3B8CC]" />
+              <FaSearch className="text-[#5D601E]" />
             </div>
             <input
               type="text"
-              className="w-full pl-10 pr-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent text-[#F0F4F8] placeholder-[#5a7a9a]"
+              className="w-full pl-10 pr-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl focus:ring-2 focus:ring-[#858735] focus:border-transparent text-[#23270A] placeholder-[#858735]"
               placeholder="Buscar por nombre, correo o rol..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -290,44 +290,44 @@ const RegisterDashboardPsychologist = () => {
         </div>
         
         {/* Tabla de usuarios */}
-        <div className="bg-[#1A2B40] rounded-2xl border border-[#2C4A6B] shadow-xl overflow-hidden">
+        <div className="bg-[#FEFCE9] rounded-2xl border border-[#C6B976] shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">
-              <thead className="bg-gradient-to-r from-[#0d1e30] to-[#1a3657]">
+              <thead className="bg-gradient-to-r from-[#23270A] to-[#414719]">
                 <tr>
-                  <th className="py-4 px-6 text-left text-[#D4AF37] font-bold">Usuario</th>
-                  <th className="py-4 px-6 text-left text-[#D4AF37] font-bold">Correo</th>
-                  <th className="py-4 px-6 text-left text-[#D4AF37] font-bold">Género</th>
-                  <th className="py-4 px-6 text-left text-[#D4AF37] font-bold">Rol</th>
-                  <th className="py-4 px-6 text-left text-[#D4AF37] font-bold">Registro</th>
-                  <th className="py-4 px-6 text-center text-[#D4AF37] font-bold">Acciones</th>
+                  <th className="py-4 px-6 text-left text-[#858735] font-bold">Usuario</th>
+                  <th className="py-4 px-6 text-left text-[#858735] font-bold">Correo</th>
+                  <th className="py-4 px-6 text-left text-[#858735] font-bold">Género</th>
+                  <th className="py-4 px-6 text-left text-[#858735] font-bold">Rol</th>
+                  <th className="py-4 px-6 text-left text-[#858735] font-bold">Registro</th>
+                  <th className="py-4 px-6 text-center text-[#858735] font-bold">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#2C4A6B]">
+              <tbody className="divide-y divide-[#C6B976]">
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-[#152233] transition-colors">
-                      <td className="py-4 px-6 text-[#F0F4F8]">
+                    <tr key={user.id} className="hover:bg-[#F4F3E8] transition-colors">
+                      <td className="py-4 px-6 text-[#23270A]">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center text-[#0d1e30] font-bold mr-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-[#858735] to-[#5D601E] rounded-full flex items-center justify-center text-[#23270A] font-bold mr-3">
                             {user.usuario.charAt(0)}
                           </div>
                           {user.usuario}
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-[#A3B8CC]">{user.correo}</td>
-                      <td className="py-4 px-6 text-[#F0F4F8]">{user.genero}</td>
+                      <td className="py-4 px-6 text-[#5D601E]">{user.correo}</td>
+                      <td className="py-4 px-6 text-[#23270A]">{user.genero}</td>
                       <td className="py-4 px-6">
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#2a4b6c] text-[#F0F4F8]">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#5D601E] text-[#23270A]">
                           {roleTranslations[user.role]}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-[#A3B8CC]">{formatDate(user.createdAt)}</td>
+                      <td className="py-4 px-6 text-[#5D601E]">{formatDate(user.createdAt)}</td>
                       <td className="py-4 px-6">
                         <div className="flex justify-center space-x-2">
                           <button 
                             onClick={() => openViewModal(user)}
-                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-white rounded-xl hover:from-[#1a2b40] hover:to-[#0d1e30] transition-all"
+                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#5D601E] to-[#414719] text-white rounded-xl hover:from-[#FEFCE9] hover:to-[#23270A] transition-all"
                             title="Ver detalles"
                           >
                             <FaEye className="text-sm" />
@@ -335,7 +335,7 @@ const RegisterDashboardPsychologist = () => {
                           
                           <button 
                             onClick={() => openEditModal(user)}
-                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-white rounded-xl hover:from-[#D4AF37] hover:to-[#B8860B] transition-all"
+                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#5D601E] to-[#414719] text-white rounded-xl hover:from-[#858735] hover:to-[#5D601E] transition-all"
                             title="Editar usuario"
                           >
                             <FaEdit className="text-sm" />
@@ -343,7 +343,7 @@ const RegisterDashboardPsychologist = () => {
                           
                           <button 
                             onClick={() => openDeleteModal(user)}
-                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-white rounded-xl hover:from-[#ff6b6b] hover:to-[#ff5252] transition-all"
+                            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#5D601E] to-[#414719] text-white rounded-xl hover:from-[#ff6b6b] hover:to-[#ff5252] transition-all"
                             title="Eliminar usuario"
                           >
                             <FaTrash className="text-sm" />
@@ -356,9 +356,9 @@ const RegisterDashboardPsychologist = () => {
                   <tr>
                     <td colSpan={6} className="py-12 text-center">
                       <div className="flex flex-col items-center justify-center">
-                        <FaUser className="text-5xl text-[#A3B8CC] mb-4" />
-                        <h3 className="text-xl font-bold text-[#F0F4F8] mb-2">No se encontraron usuarios</h3>
-                        <p className="text-[#A3B8CC] max-w-md">
+                        <FaUser className="text-5xl text-[#5D601E] mb-4" />
+                        <h3 className="text-xl font-bold text-[#23270A] mb-2">No se encontraron usuarios</h3>
+                        <p className="text-[#5D601E] max-w-md">
                           {searchTerm 
                             ? `No hay usuarios que coincidan con "${searchTerm}"`
                             : 'No hay usuarios registrados en este momento'}
@@ -374,40 +374,40 @@ const RegisterDashboardPsychologist = () => {
         
         {/* Estadísticas de usuarios */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] p-6 shadow-xl backdrop-blur-sm">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaUser className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-[#FEFCE9] rounded-xl flex items-center justify-center mr-4 border border-[#C6B976]">
+                <FaUser className="h-6 w-6 text-[#858735]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Total de usuarios</h3>
-                <p className="text-3xl font-bold text-[#F0F4F8] mt-1">{users.length}</p>
+                <h3 className="text-[#5D601E] text-sm uppercase tracking-wider">Total de usuarios</h3>
+                <p className="text-3xl font-bold text-[#23270A] mt-1">{users.length}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] p-6 shadow-xl backdrop-blur-sm">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaUserTag className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-[#FEFCE9] rounded-xl flex items-center justify-center mr-4 border border-[#C6B976]">
+                <FaUserTag className="h-6 w-6 text-[#858735]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Psicólogos</h3>
-                <p className="text-3xl font-bold text-[#F0F4F8] mt-1">
+                <h3 className="text-[#5D601E] text-sm uppercase tracking-wider">Psicólogos</h3>
+                <p className="text-3xl font-bold text-[#23270A] mt-1">
                   {users.filter(u => u.role === 'PSYCHOLOGIST').length}
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] p-6 shadow-xl backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] p-6 shadow-xl backdrop-blur-sm">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-[#1A2B40] rounded-xl flex items-center justify-center mr-4 border border-[#2C4A6B]">
-                <FaUserTag className="h-6 w-6 text-[#D4AF37]" />
+              <div className="w-12 h-12 bg-[#FEFCE9] rounded-xl flex items-center justify-center mr-4 border border-[#C6B976]">
+                <FaUserTag className="h-6 w-6 text-[#858735]" />
               </div>
               <div>
-                <h3 className="text-[#A3B8CC] text-sm uppercase tracking-wider">Administrativos</h3>
-                <p className="text-3xl font-bold text-[#F0F4F8] mt-1">
+                <h3 className="text-[#5D601E] text-sm uppercase tracking-wider">Administrativos</h3>
+                <p className="text-3xl font-bold text-[#23270A] mt-1">
                   {users.filter(u => u.role === 'MANAGEMENT').length}
                 </p>
               </div>
@@ -416,18 +416,18 @@ const RegisterDashboardPsychologist = () => {
         </div>
         
         {/* Pie de página premium */}
-        <div className="mt-12 text-center py-8 border-t border-[#2C4A6B]/30">
+        <div className="mt-12 text-center py-8 border-t border-[#C6B976]/30">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#0d1e30]" viewBox="0 0 20 20" fill="currentColor">
+            <div className="w-10 h-10 bg-gradient-to-r from-[#858735] to-[#5D601E] rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#23270A]" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F0E68C]">
-              Mentalmente Global
+            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#858735] to-[#EBE0AE]">
+              SanaTú
             </h3>
           </div>
-          <p className="text-[#A3B8CC] max-w-2xl mx-auto">
+          <p className="text-[#5D601E] max-w-2xl mx-auto">
             Transformando la atención psicológica a nivel mundial con tecnología de vanguardia y altos estándares de calidad y ética.
           </p>
         </div>
@@ -435,16 +435,16 @@ const RegisterDashboardPsychologist = () => {
       
       {/* Modal para crear/editar usuario */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-[#0d1e30]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] shadow-2xl w-full max-w-md">
+        <div className="fixed inset-0 bg-[#23270A]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] shadow-2xl w-full max-w-md">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-[#F0F4F8]">
+                <h3 className="text-2xl font-bold text-[#23270A]">
                   {currentUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
                 </h3>
                 <button 
                   onClick={closeModals}
-                  className="text-[#A3B8CC] hover:text-[#D4AF37] transition-colors"
+                  className="text-[#5D601E] hover:text-[#858735] transition-colors"
                 >
                   <FaTimes size={24} />
                 </button>
@@ -453,26 +453,26 @@ const RegisterDashboardPsychologist = () => {
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[#A3B8CC] mb-2">Nombre de usuario</label>
+                    <label className="block text-[#5D601E] mb-2">Nombre de usuario</label>
                     <input
                       type="text"
                       name="usuario"
                       value={formData.usuario}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl text-[#F0F4F8] placeholder-[#5a7a9a]"
+                      className="w-full px-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl text-[#23270A] placeholder-[#858735]"
                       placeholder="Nombre de usuario"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-[#A3B8CC] mb-2">Correo electrónico</label>
+                    <label className="block text-[#5D601E] mb-2">Correo electrónico</label>
                     <input
                       type="email"
                       name="correo"
                       value={formData.correo}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl text-[#F0F4F8] placeholder-[#5a7a9a]"
+                      className="w-full px-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl text-[#23270A] placeholder-[#858735]"
                       placeholder="correo@ejemplo.com"
                       required
                     />
@@ -480,13 +480,13 @@ const RegisterDashboardPsychologist = () => {
                   
                   {!currentUser && (
                     <div>
-                      <label className="block text-[#A3B8CC] mb-2">Contraseña</label>
+                      <label className="block text-[#5D601E] mb-2">Contraseña</label>
                       <input
                         type="password"
                         name="contrasena"
                         value={formData.contrasena}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl text-[#F0F4F8] placeholder-[#5a7a9a]"
+                        className="w-full px-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl text-[#23270A] placeholder-[#858735]"
                         placeholder="Mínimo 6 caracteres"
                         minLength={6}
                         required={!currentUser}
@@ -496,12 +496,12 @@ const RegisterDashboardPsychologist = () => {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[#A3B8CC] mb-2">Género</label>
+                      <label className="block text-[#5D601E] mb-2">Género</label>
                       <select
                         name="genero"
                         value={formData.genero}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl text-[#F0F4F8]"
+                        className="w-full px-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl text-[#23270A]"
                         required
                       >
                         <option value="Masculino">Masculino</option>
@@ -511,12 +511,12 @@ const RegisterDashboardPsychologist = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-[#A3B8CC] mb-2">Rol</label>
+                      <label className="block text-[#5D601E] mb-2">Rol</label>
                       <select
                         name="role"
                         value={formData.role}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-[#152233] border border-[#2C4A6B] rounded-xl text-[#F0F4F8]"
+                        className="w-full px-4 py-3 bg-[#F4F3E8] border border-[#C6B976] rounded-xl text-[#23270A]"
                         required
                       >
                         <option value="PSYCHOLOGIST">Psicólogo</option>
@@ -531,13 +531,13 @@ const RegisterDashboardPsychologist = () => {
                   <button
                     type="button"
                     onClick={closeModals}
-                    className="px-6 py-3 bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-[#F0F4F8] font-medium rounded-xl hover:from-[#1a2b40] hover:to-[#0d1e30] transition-all"
+                    className="px-6 py-3 bg-gradient-to-r from-[#5D601E] to-[#414719] text-[#23270A] font-medium rounded-xl hover:from-[#FEFCE9] hover:to-[#23270A] transition-all"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0d1e30] font-bold rounded-xl hover:from-[#B8860B] hover:to-[#D4AF37] transition-all shadow-lg"
+                    className="px-6 py-3 bg-gradient-to-r from-[#858735] to-[#5D601E] text-[#23270A] font-bold rounded-xl hover:from-[#5D601E] hover:to-[#858735] transition-all shadow-lg"
                   >
                     {currentUser ? 'Actualizar' : 'Crear Usuario'}
                   </button>
@@ -550,14 +550,14 @@ const RegisterDashboardPsychologist = () => {
       
       {/* Modal de visualización de usuario */}
       {isViewModalOpen && viewedUser && (
-        <div className="fixed inset-0 bg-[#0d1e30]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] shadow-2xl w-full max-w-md">
+        <div className="fixed inset-0 bg-[#23270A]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] shadow-2xl w-full max-w-md">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-[#F0F4F8]">Detalles del Usuario</h3>
+                <h3 className="text-2xl font-bold text-[#23270A]">Detalles del Usuario</h3>
                 <button 
                   onClick={closeModals}
-                  className="text-[#A3B8CC] hover:text-[#D4AF37] transition-colors"
+                  className="text-[#5D601E] hover:text-[#858735] transition-colors"
                 >
                   <FaTimes size={24} />
                 </button>
@@ -565,29 +565,29 @@ const RegisterDashboardPsychologist = () => {
               
               <div className="space-y-5">
                 <div className="flex flex-col items-center mb-4">
-                  <div className="w-24 h-24 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center text-3xl text-[#0d1e30] font-bold mb-4">
+                  <div className="w-24 h-24 bg-gradient-to-r from-[#858735] to-[#5D601E] rounded-full flex items-center justify-center text-3xl text-[#23270A] font-bold mb-4">
                     {viewedUser.usuario.charAt(0)}
                   </div>
-                  <h4 className="text-xl font-bold text-[#F0F4F8]">{viewedUser.usuario}</h4>
-                  <p className="text-[#A3B8CC]">{viewedUser.correo}</p>
+                  <h4 className="text-xl font-bold text-[#23270A]">{viewedUser.usuario}</h4>
+                  <p className="text-[#5D601E]">{viewedUser.correo}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#152233] p-4 rounded-xl border border-[#2C4A6B]">
-                    <p className="text-[#A3B8CC] text-sm">Rol</p>
-                    <p className="text-[#F0F4F8] font-medium">
+                  <div className="bg-[#F4F3E8] p-4 rounded-xl border border-[#C6B976]">
+                    <p className="text-[#5D601E] text-sm">Rol</p>
+                    <p className="text-[#23270A] font-medium">
                       {roleTranslations[viewedUser.role]}
                     </p>
                   </div>
                   
-                  <div className="bg-[#152233] p-4 rounded-xl border border-[#2C4A6B]">
-                    <p className="text-[#A3B8CC] text-sm">Género</p>
-                    <p className="text-[#F0F4F8] font-medium">{viewedUser.genero}</p>
+                  <div className="bg-[#F4F3E8] p-4 rounded-xl border border-[#C6B976]">
+                    <p className="text-[#5D601E] text-sm">Género</p>
+                    <p className="text-[#23270A] font-medium">{viewedUser.genero}</p>
                   </div>
                   
-                  <div className="bg-[#152233] p-4 rounded-xl border border-[#2C4A6B] col-span-2">
-                    <p className="text-[#A3B8CC] text-sm">Fecha de Registro</p>
-                    <p className="text-[#F0F4F8] font-medium">{formatDate(viewedUser.createdAt)}</p>
+                  <div className="bg-[#F4F3E8] p-4 rounded-xl border border-[#C6B976] col-span-2">
+                    <p className="text-[#5D601E] text-sm">Fecha de Registro</p>
+                    <p className="text-[#23270A] font-medium">{formatDate(viewedUser.createdAt)}</p>
                   </div>
                 </div>
               </div>
@@ -595,7 +595,7 @@ const RegisterDashboardPsychologist = () => {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={closeModals}
-                  className="px-6 py-3 bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-[#F0F4F8] font-medium rounded-xl hover:from-[#1a2b40] hover:to-[#0d1e30] transition-all"
+                  className="px-6 py-3 bg-gradient-to-r from-[#5D601E] to-[#414719] text-[#23270A] font-medium rounded-xl hover:from-[#FEFCE9] hover:to-[#23270A] transition-all"
                 >
                   Cerrar
                 </button>
@@ -607,23 +607,23 @@ const RegisterDashboardPsychologist = () => {
       
       {/* Modal de confirmación de eliminación */}
       {isDeleteModalOpen && userToDelete && (
-        <div className="fixed inset-0 bg-[#0d1e30]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
-          <div className="bg-gradient-to-br from-[#1A2B40] to-[#0d1e30] rounded-2xl border border-[#2C4A6B] shadow-2xl w-full max-w-md">
+        <div className="fixed inset-0 bg-[#23270A]/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+          <div className="bg-gradient-to-br from-[#FEFCE9] to-[#23270A] rounded-2xl border border-[#C6B976] shadow-2xl w-full max-w-md">
             <div className="p-6">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-r from-[#ff6b6b]/20 to-[#ff5252]/20 rounded-full flex items-center justify-center mb-4">
                   <FaTrash className="text-[#ff6b6b] text-2xl" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#F0F4F8] mb-2">Confirmar Eliminación</h3>
-                <p className="text-[#A3B8CC]">
-                  ¿Estás seguro de que deseas eliminar al usuario <span className="font-bold text-[#F0F4F8]">{userToDelete.usuario}</span>? Esta acción no se puede deshacer.
+                <h3 className="text-2xl font-bold text-[#23270A] mb-2">Confirmar Eliminación</h3>
+                <p className="text-[#5D601E]">
+                  ¿Estás seguro de que deseas eliminar al usuario <span className="font-bold text-[#23270A]">{userToDelete.usuario}</span>? Esta acción no se puede deshacer.
                 </p>
               </div>
               
               <div className="mt-8 flex justify-center space-x-4">
                 <button
                   onClick={closeModals}
-                  className="px-6 py-3 bg-gradient-to-r from-[#2a4b6c] to-[#1a3657] text-[#F0F4F8] font-medium rounded-xl hover:from-[#1a2b40] hover:to-[#0d1e30] transition-all"
+                  className="px-6 py-3 bg-gradient-to-r from-[#5D601E] to-[#414719] text-[#23270A] font-medium rounded-xl hover:from-[#FEFCE9] hover:to-[#23270A] transition-all"
                 >
                   Cancelar
                 </button>

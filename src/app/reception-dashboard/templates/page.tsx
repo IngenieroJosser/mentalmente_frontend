@@ -1,9 +1,5 @@
-const TemplatesDashboardPsychologist = () => {
-  return (
-    <div>
-      Plantillas
-    </div>
-  );
-};
+import DashboardPlaceholder from '@/components/DashboardPlaceholder';
 
-export default TemplatesDashboardPsychologist;
+export default function TemplatesPage() {
+  return <DashboardPlaceholder type="templates" backHref="/reception-dashboard" />;
+}
