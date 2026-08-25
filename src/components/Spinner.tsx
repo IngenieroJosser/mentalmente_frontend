@@ -49,7 +49,7 @@ export default function FullPageSpinner() {
         >
           Preparando tu experiencia
         </motion.p>
-        <p className="mt-3 text-xs text-[#fefce9]/40">SanaTú · Bienestar psicológico</p>
+        <p className="mt-3 text-xs text-[#fefce9]/40">SanaTú · Orientación Psicológica</p>
       </div>
     </div>
   );

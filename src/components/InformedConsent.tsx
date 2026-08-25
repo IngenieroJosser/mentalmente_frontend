@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { FaCheck, FaTimes, FaDownload } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 type ConsentMethod = 'signature' | 'upload';
 
@@ -206,15 +206,6 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
           </h2>
 
           <div className="flex gap-2">
-            <a
-              href="/CONSENTIMIENTO INFORMADO ATENCIÓN PRESENCIAL .docx"
-              download
-              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition-colors"
-              title="Descargar plantilla para diligenciar"
-            >
-              <FaDownload />
-            </a>
-
             <button
               type="button"
               onClick={onCancel}
@@ -254,79 +245,113 @@ const InformedConsent: React.FC<InformedConsentProps> = ({
         <div className="space-y-6">
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 text-sm text-gray-800 leading-relaxed">
             <h3 className="text-center font-bold text-lg mb-5 uppercase">
-              Consentimiento Informado para Atención Psicológica
+              Consentimiento Informado para Servicio de Orientación Psicológica
+              Virtual o Domiciliario
             </h3>
 
             <p>
-              <strong>FECHA:</strong> ____ / ____ / ____
+              <strong>FECHA:</strong> ____ / ____ / 20____
             </p>
 
             <p>
-              <strong>CIUDAD;</strong> Quibdó, Chocó: ____________________
+              <strong>CIUDAD DE CONEXIÓN:</strong> ____________________
             </p>
 
             <p className="mt-4">
-              Yo, <strong>{displayPatientName}</strong> mayor de edad,
-              identificado(a) con la cédula número{' '}
-              <strong>{displayPatientDocument}</strong>, por medio de este
-              documento declaro que acepto de manera voluntaria recibir atención
-              psicológica por parte de la psicóloga{' '}
+              Yo, <strong>{displayPatientName}</strong>, mayor de edad,
+              identificado(a) con la cédula de ciudadanía número{' '}
+              <strong>{displayPatientDocument}</strong>, manifiesto que acepto
+              de manera voluntaria recibir el servicio de Orientación Psicológica
+              en modalidad virtual brindado por la psicóloga{' '}
               <strong>LIYIVETH QUINTERO GARCÍA</strong>, identificada con C.C.
-              1.077.465.202 y Tarjeta Profesional No. 229742
+              1.077.465.202 y Tarjeta Profesional No. 229742.
             </p>
 
             <p className="mt-4 font-semibold">
-              Entiendo y acepto las siguientes condiciones del servicio:
+              Declaro que he sido informado(a) sobre las características del
+              servicio y acepto las siguientes condiciones:
             </p>
 
             <ol className="list-decimal pl-5 space-y-3 mt-3">
               <li>
-                <strong>Confidencialidad:</strong> Toda la información compartida
-                en las sesiones está protegida por el secreto profesional (Ley
-                1090 de 2006). Solo podrá ser revelada en las excepciones que la
-                ley colombiana establece: cuando exista un riesgo inminente para
-                mi integridad física o la de terceros, o por requerimiento
-                judicial expreso.
+                <strong>Naturaleza del servicio:</strong> Comprendo que la
+                Orientación Psicológica es un espacio profesional de escucha,
+                análisis, acompañamiento y orientación frente a situaciones
+                personales, emocionales, familiares, relacionales o de adaptación.
+                Este servicio está dirigido a brindar herramientas y
+                recomendaciones psicológicas que favorezcan mi bienestar y toma
+                de decisiones. Entiendo que este servicio no corresponde a un
+                proceso de psicoterapia clínica ni sustituye tratamientos médicos
+                o psicológicos especializados cuando estos sean requeridos. En
+                caso de identificarse la necesidad de una atención especializada,
+                recibiré la orientación correspondiente.
               </li>
 
               <li>
-                <strong>Autonomía:</strong> Tengo el derecho de realizar todas
-                las preguntas que considere necesarias sobre mi proceso, las
-                técnicas utilizadas y los objetivos terapéuticos. Así mismo,
-                puedo dar por terminada la relación profesional en el momento que
-                lo desee.
+                <strong>Confidencialidad y privacidad:</strong> La información
+                compartida durante la orientación será manejada bajo el principio
+                de confidencialidad y secreto profesional establecido en la Ley
+                1090 de 2006. Me comprometo a realizar la sesión desde un espacio
+                que permita proteger mi privacidad y confidencialidad.
               </li>
 
               <li>
-                <strong>Calidad de la Atención:</strong> Recibiré un trato
-                digno, respetuoso y basado en principios éticos y científicos,
-                orientado siempre hacia mi bienestar y autonomía emocional.
+                <strong>Modalidad de atención domiciliaria:</strong> La
+                orientación psicológica domiciliaria consiste en la prestación
+                del servicio profesional en el lugar de residencia o ubicación
+                acordada con la persona usuaria, dentro del área de cobertura
+                establecida. Esta modalidad busca brindar acompañamiento y
+                orientación psicológica en un entorno cercano para el usuario,
+                manteniendo los principios de confidencialidad, respeto, ética
+                profesional y calidad en la atención.
               </li>
 
               <li>
-                <strong>Tratamiento de Datos Personales:</strong> Autorizo a la
-                profesional Liyiveth Quintero García para recolectar, almacenar y
-                utilizar mis datos personales y de contacto exclusivamente para
-                fines de registro en la historia clínica, agendamiento de citas y
-                comunicaciones relacionadas con el proceso terapéutico, bajo las
-                normas de protección de datos (Ley 1581 de 2012).
+                <strong>Condiciones de la modalidad virtual:</strong> Comprendo
+                que la orientación se desarrolla mediante herramientas
+                tecnológicas de comunicación. En caso de presentarse dificultades
+                técnicas que impidan la adecuada prestación del servicio, se podrá
+                acordar una alternativa de comunicación o una reprogramación de
+                la sesión.
               </li>
 
               <li>
-                <strong>Honorarios:</strong> Me comprometo a cumplir con los
-                pagos acordados por concepto de honorarios profesionales en los
-                tiempos y medios establecidos.
+                <strong>Autonomía y participación:</strong> Reconozco mi derecho
+                a realizar preguntas, expresar inquietudes y decidir libremente
+                sobre mi participación en el servicio de orientación psicológica.
+              </li>
+
+              <li>
+                <strong>Calidad de la atención:</strong> Recibiré una atención
+                basada en el respeto, la ética profesional y la dignidad humana,
+                orientada a favorecer mi bienestar y autonomía personal.
+              </li>
+
+              <li>
+                <strong>Tratamiento de datos personales:</strong> Autorizo a la
+                psicóloga Liyiveth Quintero García para recolectar, almacenar y
+                utilizar mis datos personales únicamente para fines relacionados
+                con la prestación del servicio, registro de la atención y procesos
+                administrativos necesarios, conforme a la Ley 1581 de 2012 y
+                demás normas aplicables de protección de datos personales.
+              </li>
+
+              <li>
+                <strong>Honorarios:</strong> Me comprometo a realizar el pago
+                correspondiente por el servicio de orientación psicológica de
+                acuerdo con las condiciones previamente informadas y mediante los
+                canales establecidos por la profesional.
               </li>
             </ol>
 
             <p className="mt-4">
-              Al firmar, confirmo que he leído y comprendido la totalidad de este
-              documento, que he podido aclarar mis dudas y que acepto los términos
-              aquí descritos de manera consciente y voluntaria.
+              Al firmar este documento o manifestar mi aceptación por medios
+              electrónicos, declaro que he leído, comprendido y aceptado las
+              condiciones aquí descritas.
             </p>
 
             <div className="mt-6">
-              <p className="font-semibold">FIRMA DEL PACIENTE:</p>
+              <p className="font-semibold">FIRMA DEL USUARIO(A):</p>
               <p className="mt-6">________________________________________</p>
               <p className="mt-2">C.C. No. ____________________</p>
             </div>

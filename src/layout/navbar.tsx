@@ -51,7 +51,7 @@ const Header = () => {
 
   const handleContactClick = () => {
     const phoneNumber = '+573113266223';
-    const message = encodeURIComponent('Hola Psic. Liyiveth, vi tu página y quiero agendar mi cita.');
+    const message = encodeURIComponent('Hola, Psic. Liyiveth. Vi tu página web y me gustaría recibir orientación psicológica. ¿Podrías brindarme información para agendar una cita?');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 

@@ -5,7 +5,7 @@ import { Calendar, ChevronRight } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '573113266223';
 const WHATSAPP_MESSAGE = encodeURIComponent(
-  'Hola Psic. Liyiveth, vi tu página y quiero agendar mi cita.'
+  'Hola, Psic. Liyiveth. Vi tu página web y me gustaría recibir orientación psicológica. ¿Podrías brindarme información para agendar una cita?.'
 );
 
 const HeroSection = () => {

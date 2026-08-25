@@ -27,7 +27,7 @@ import {
 import { useRef, useState } from 'react';
 
 const WA_NUMBER = '573113266223';
-const WA_MESSAGE = encodeURIComponent('Hola Psic. Liyiveth, vi tu página y quiero agendar mi cita.');
+const WA_MESSAGE = encodeURIComponent('Hola, Psic. Liyiveth. Vi tu página web y me gustaría recibir orientación psicológica. ¿Podrías brindarme información para agendar una cita?');
 const whatsappUrl = `https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`;
 
 const navItems = [
@@ -60,10 +60,10 @@ const services = [
 ];
 
 const process = [
-  ['Escuchamos', 'Comprendemos tu contexto sin juicios ni respuestas prefabricadas.'],
-  ['Comprendemos', 'Identificamos emociones, patrones y necesidades que requieren atención.'],
-  ['Construimos', 'Definimos recursos y acciones realistas que puedas integrar a tu vida.'],
-  ['Acompañamos', 'Revisamos el proceso con ética, cercanía y respeto por tu ritmo.'],
+  ['Te escucho', 'Comprendo tu contexto sin juicios ni respuestas prefabricadas.'],
+  ['Te comprendo', 'Identifico emociones, patrones y necesidades que requieren atención.'],
+  ['Construimos', 'Defino recursos y acciones realistas que puedas integrar a tu vida.'],
+  ['Te acompaño', 'Reviso el proceso con ética, cercanía y respeto por tu ritmo.'],
 ];
 
 const faqs = [
@@ -81,7 +81,7 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
       </span>
       <span className="brand-mark-copy">
         <strong>SANATÚ</strong>
-        <small>Bienestar psicológico</small>
+        <small>Orientación Psicológica</small>
       </span>
     </span>
   );
@@ -196,7 +196,7 @@ export default function LandingExperience() {
               <Sparkles size={15} /> Orientación psicológica humana y responsable
             </motion.div>
             <h1>Lo que sientes<br /><em>también merece espacio.</em></h1>
-            <p>Te acompañamos a comprender tus emociones, fortalecer tus recursos y afrontar tus procesos con mayor claridad.</p>
+            <p>Te acompaño a comprender tus emociones, fortalecer tus recursos y afrontar tus procesos con mayor claridad.</p>
             <div className="hero-actions">
               <PrimaryButton>Agenda tu orientación</PrimaryButton>
               <a href="#sobre-mi" className="cinematic-button cinematic-button-ghost">Conoce el enfoque <ArrowDown size={17} /></a>
@@ -218,7 +218,7 @@ export default function LandingExperience() {
       <section id="sobre-mi" className="cinematic-about">
         <div className="section-heading">
           <span>02 / SOBRE MÍ</span>
-          <h2>La escucha clínica puede ser rigurosa<br />sin dejar de ser <em>profundamente humana.</em></h2>
+          <h2>La orientación psicológica puede ser rigurosa<br />sin dejar de ser <em>profundamente humana.</em></h2>
         </div>
         <div className="about-grid">
           <motion.div className="about-portrait" initial={{ clipPath: 'inset(12% 12% 12% 12% round 40px)' }} whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 28px)' }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}>
@@ -243,7 +243,7 @@ export default function LandingExperience() {
       <section id="ayuda" className="services-section">
         <div className="section-heading section-heading-light">
           <span>03 / CÓMO PUEDO AYUDARTE</span>
-          <h2>Intervenciones claras para momentos<br />que pueden sentirse <em>complejos.</em></h2>
+          <h2>Orientaciones claras para momentos<br />que pueden sentirse <em>complejos.</em></h2>
         </div>
         <div className="service-stack">
           {services.map((service, index) => {

@@ -12,7 +12,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: 'SanaTú Quingar — Bienestar psicológico',
+    default: 'SanaTú Quingar — Orientación Psicológica',
     template: '%s | SanaTú Quingar',
   },
   description: 'Orientación psicológica humana, ética y cercana en Quibdó, Chocó. Atención virtual y domiciliaria.',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
   },
   openGraph: {
-    title: 'SanaTú Quingar — Bienestar psicológico',
+    title: 'SanaTú Quingar — Orientación Psicológica',
     description: 'Un espacio humano y responsable para comprender tus emociones y fortalecer tus recursos.',
     url: 'https://www.sanatuquingar.com.co/',
     siteName: 'SanaTú Quingar',

@@ -73,12 +73,12 @@ export default function LoginPage() {
         <aside className="auth-visual">
           <Link href="/" className="brand-mark" aria-label="Volver al inicio">
             <span className="brand-mark-image"><Image src="/logo-sana-tu-icon.png" alt="SanaTú" fill sizes="58px" priority /></span>
-            <span className="brand-mark-copy"><strong>SANATÚ</strong><small>Bienestar psicológico</small></span>
+            <span className="brand-mark-copy"><strong>SANATÚ</strong><small>Orientación Psicológica</small></span>
           </Link>
           <motion.div className="auth-visual-orb" animate={{ rotate: 360 }} transition={{ duration: 42, repeat: Infinity, ease: 'linear' }} />
           <div className="auth-visual-copy">
             <span className="eyebrow"><Sparkles size={14} /> Espacio profesional</span>
-            <h1>Gestión clínica con una experiencia <em>más humana.</em></h1>
+            <h1>Gestión documental con una experiencia <em>más humana.</em></h1>
             <p>Accede a historias, agenda, pacientes y reportes dentro de un entorno seguro y coherente con la identidad de SanaTú.</p>
           </div>
           <div className="auth-proof">

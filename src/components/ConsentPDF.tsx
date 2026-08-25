@@ -91,7 +91,10 @@ const ConsentPDF: React.FC<Props> = ({ consent }) => {
           <Text>Quibdó, Chocó</Text>
         </View>
 
-        <Text style={styles.title}>Consentimiento Informado</Text>
+        <Text style={styles.title}>
+          Consentimiento Informado para Servicio de Orientación Psicológica
+          Virtual o Domiciliario
+        </Text>
 
         <View style={styles.section}>
           <Text style={styles.label}>Paciente</Text>
