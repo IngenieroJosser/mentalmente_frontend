@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
   headerRight: {
     alignItems: 'flex-end',
   },
-  companyName: {
+  professionalName: {
     fontSize: 16,
     fontFamily: 'Times-Roman',
     color: '#2c3e50',
     marginBottom: 4,
   },
-  companyLine: {
+  professionalLine: {
     fontSize: 9,
     color: '#7f8c8d',
     flexDirection: 'row',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 8,
-    color: '#95a5a6',
+    color: '#000000',
     textTransform: 'uppercase',
     marginBottom: 2,
   },
@@ -193,14 +193,14 @@ const MedicalRecordPDF: React.FC<Props> = ({ record, baseUrl }) => {
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image style={styles.logo} src={`${baseUrl}/logo-sana-tu.png`} />
           <View style={styles.headerRight}>
-            <Text style={styles.companyName}>SANATÚ SAS</Text>
-            <View style={styles.companyLine}>
-              <Text>NIT 902010331-8</Text>
+            <Text style={styles.professionalName}>Liyiveth Quintero García</Text>
+            <View style={styles.professionalLine}>
+              <Text>Psicóloga | T.P. No. 229742</Text>
             </View>
-            <View style={styles.companyLine}>
-              <Text>Tel: 3113266223</Text>
+            <View style={styles.professionalLine}>
+              <Text>Orientación psicológica</Text>
             </View>
-            <Text style={styles.title}>Historia Clínica Psicológica</Text>
+            <Text style={styles.title}>Historia de Orientación Psicológica</Text>
           </View>
         </View>
 
@@ -368,60 +368,75 @@ const MedicalRecordPDF: React.FC<Props> = ({ record, baseUrl }) => {
           </View>
         </View>
 
-        {/* Información Clínica */}
+        {/* Orientación psicológica */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Información Clínica</Text>
+          <Text style={styles.sectionTitle}>Orientación Psicológica</Text>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Motivo de consulta</Text>
+            <Text style={styles.fieldLabel}>Motivo de la orientación</Text>
             <Text style={styles.fieldValueMultiline}>{record.consultationReason || '—'}</Text>
           </View>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Historia del problema</Text>
+            <Text style={styles.fieldLabel}>Descripción de la situación actual</Text>
             <Text style={styles.fieldValueMultiline}>{record.problemHistory || '—'}</Text>
           </View>
-          <View style={styles.twoColumns}>
-            <View style={styles.column}>
-              <Text style={styles.fieldLabel}>Examen mental</Text>
-              <Text style={styles.fieldValueMultiline}>{record.mentalExam || '—'}</Text>
-            </View>
-            <View style={styles.column}>
-              <Text style={styles.fieldLabel}>Evaluación psicológica</Text>
-              <Text style={styles.fieldValueMultiline}>{record.psychologicalAssessment || '—'}</Text>
-            </View>
-          </View>
-          <View style={styles.twoColumns}>
-            <View style={styles.column}>
-              <Text style={styles.fieldLabel}>Diagnóstico (DSM5/CIE10)</Text>
-              <Text style={styles.fieldValueMultiline}>{record.diagnosis || '—'}</Text>
-            </View>
-            <View style={styles.column}>
-              <Text style={styles.fieldLabel}>Objetivos terapéuticos</Text>
-              <Text style={styles.fieldValueMultiline}>{record.therapeuticGoals || '—'}</Text>
-            </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Antecedentes relevantes</Text>
+            <Text style={styles.fieldValueMultiline}>{record.personalOther || '—'}</Text>
           </View>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Plan terapéutico</Text>
-            <Text style={styles.fieldValueMultiline}>{record.treatmentPlan || '—'}</Text>
+            <Text style={styles.fieldLabel}>Fortalezas y recursos personales</Text>
+            <Text style={styles.fieldValueMultiline}>{record.strengthsResources || '—'}</Text>
           </View>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Derivaciones / Recomendaciones</Text>
-            <Text style={styles.fieldValueMultiline}>{record.referralInfo || '—'}</Text>
+            <Text style={styles.fieldLabel}>Trastorno mental identificado</Text>
+            <Text style={styles.fieldValueMultiline}>{record.diagnosis || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Valoración profesional</Text>
+            <Text style={styles.fieldValueMultiline}>{record.psychologicalAssessment || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Objetivo de la orientación</Text>
+            <Text style={styles.fieldValueMultiline}>{record.therapeuticGoals || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Qué se busca lograr durante la sesión</Text>
+            <Text style={styles.fieldValueMultiline}>{record.sessionGoal || '—'}</Text>
+          </View>
+        </View>
+
+        {/* Seguimiento */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Seguimiento y plan de acción</Text>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Temas abordados</Text>
+            <Text style={styles.fieldValueMultiline}>{record.topicsDiscussed || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Herramientas entregadas</Text>
+            <Text style={styles.fieldValueMultiline}>{record.toolsProvided || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Plan de acción</Text>
+            <Text style={styles.fieldValueMultiline}>{record.actionPlan || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Recomendaciones</Text>
             <Text style={styles.fieldValueMultiline}>{record.recommendations || '—'}</Text>
           </View>
-        </View>
-
-        {/* Evolución */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Evolución</Text>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Evolución del paciente</Text>
-            <Text style={styles.fieldValueMultiline}>{record.evolution || '—'}</Text>
+            <Text style={styles.fieldLabel}>Remisión</Text>
+            <Text style={styles.fieldValueMultiline}>{record.referralInfo || '—'}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Seguimiento</Text>
+            <Text style={styles.fieldValueMultiline}>{record.followUp || '—'}</Text>
           </View>
         </View>
 
-        {/* Profesionales */}
+        {/* Profesional responsable */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profesionales y Responsables</Text>
+          <Text style={styles.sectionTitle}>Profesional responsable</Text>
           <View style={styles.twoColumns}>
             <View style={styles.column}>
               <Text style={[styles.fieldLabel, { fontSize: 10, marginBottom: 4 }]}>Responsable 1</Text>
@@ -469,9 +484,9 @@ const MedicalRecordPDF: React.FC<Props> = ({ record, baseUrl }) => {
         {/* Pie de página */}
         <View style={styles.footer}>
           <Text style={styles.footerName}>Liyiveth Quintero García</Text>
-          <Text style={styles.footerText}>Psicóloga - TP No. 229742</Text>
-          <Text style={styles.footerText}>SanaTú SAS</Text>
-          <Text style={styles.footerText}>Toda la información contenida en esta historia clínica es confidencial, bajo la Ley 1090 de 2006 y la Resolución 1995 de 1999</Text>
+          <Text style={styles.footerText}>Psicóloga | T.P. No. 229742</Text>
+          <Text style={styles.footerText}>Orientación psicológica</Text>
+          <Text style={styles.footerText}>Toda la información contenida en esta historia de orientación es confidencial, bajo la Ley 1090 de 2006 y la Resolución 1995 de 1999</Text>
         </View>
 
         {/* Número de página */}

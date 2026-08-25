@@ -83,7 +83,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
           <h1 className="text-3xl font-serif text-[#2c3e50] tracking-tight">
             Liyiveth Quintero García
           </h1>
-          <p className="text-sm text-[#7f8c8d]">Psicóloga - Atención psicológica</p>
+          <p className="text-sm text-[#7f8c8d]">Psicóloga - Orientación psicológica</p>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
         </div>
         <div className="mt-3 pt-2 border-t border-[#bec5a4]">
           <span className="font-serif text-[#2c3e50] uppercase tracking-wider text-sm">
-            Historia Clínica Psicológica
+            Historia de Orientación Psicológica
           </span>
         </div>
       </div>
@@ -153,10 +153,8 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
 
   const tabs = [
     { id: 'basic', label: 'Datos Personales', icon: <FaUser /> },
-    { id: 'medical', label: 'Antecedentes', icon: <FaNotesMedical /> },
-    { id: 'clinical', label: 'Información Clínica', icon: <FaStethoscope /> },
-    { id: 'evolution', label: 'Evolución', icon: <FaHistory /> },
-    { id: 'professionals', label: 'Profesionales', icon: <FaUsers /> },
+    { id: 'orientation', label: 'Orientación Psicológica', icon: <FaStethoscope /> },
+    { id: 'followUp', label: 'Seguimiento', icon: <FaHistory /> },
   ];
 
   return (
@@ -289,6 +287,37 @@ const MedicalRecordDetailsModal: React.FC<MedicalRecordDetailsModalProps> = ({
             )}
 
             {/* Pestaña Clínica */}
+            {activeTab === 'orientation' && (
+              <div>
+                <SectionHeader icon={<FaStethoscope />} title="Orientación Psicológica" />
+                <div className="space-y-6">
+                  <MultilineField label="Motivo de la orientación" value={record.consultationReason} />
+                  <MultilineField label="Descripción de la situación actual" value={record.problemHistory} />
+                  <MultilineField label="Antecedentes relevantes" value={record.personalOther} />
+                  <MultilineField label="Fortalezas y recursos personales" value={record.strengthsResources} />
+                  <MultilineField label="Trastorno mental identificado" value={record.diagnosis} />
+                  <MultilineField label="Valoración profesional" value={record.psychologicalAssessment} />
+                  <MultilineField label="Objetivo de la orientación" value={record.therapeuticGoals} />
+                  <MultilineField label="Qué se busca lograr durante la sesión" value={record.sessionGoal} />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'followUp' && (
+              <div>
+                <SectionHeader icon={<FaHistory />} title="Registro y seguimiento" />
+                <div className="space-y-6">
+                  <MultilineField label="Temas abordados" value={record.topicsDiscussed} />
+                  <MultilineField label="Herramientas entregadas" value={record.toolsProvided} />
+                  <MultilineField label="Plan de acción" value={record.actionPlan} />
+                  <MultilineField label="Recomendaciones" value={record.recommendations} />
+                  <MultilineField label="Remisión" value={record.referralInfo} />
+                  <MultilineField label="Seguimiento" value={record.followUp} />
+                </div>
+              </div>
+            )}
+
+            {/* Compatibilidad con la vista antigua */}
             {activeTab === 'clinical' && (
               <div>
                 <SectionHeader icon={<FaStethoscope />} title="Información Clínica" />

@@ -199,7 +199,7 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
   patientName: initialPatientName, 
   patientDocument: initialPatientDocument 
 }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [formData, setFormData] = useState<MedicalRecordFormData>({
     patientName: initialPatientName || '',
     identificationType: 'Cédula',
@@ -256,10 +256,14 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
     psychologicalAssessment: '',
     diagnosis: '',
     therapeuticGoals: '',
-    treatmentPlan: '',
+    sessionGoal: '',
+    strengthsResources: '',
+    topicsDiscussed: '',
+    toolsProvided: '',
+    actionPlan: '',
     referralInfo: '',
     recommendations: '',
-    evolution: '',
+    followUp: '',
     recordNumber: `HC-${Date.now()}`,
     pathologySeverity: 1
   });
@@ -350,7 +354,7 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
             patientName,
             identificationNumber,
             identificationType: 'Cédula',
-            recordNumber: `HC-${Date.now()}`,
+            recordNumber: `HC-${crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase()}`,
             userId: user.id,
             diagnosis: '',
             treatment: '',
@@ -372,14 +376,20 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
           }
         } catch (error) {
           console.error('Error creando borrador:', error);
-          setDraftError('No se pudo iniciar el proceso. Intente nuevamente.');
+          const errorMessage = error instanceof Error ? error.message : '';
+          if (errorMessage.includes('usuario de la sesión ya no existe')) {
+            logout();
+            setDraftError('La sesión expiró. Inicie sesión nuevamente.');
+          } else {
+            setDraftError('No se pudo iniciar el proceso. Intente nuevamente.');
+          }
         } finally {
           setIsCreatingDraft(false);
         }
       };
       createDraft();
     }
-  }, [historyId, currentHistoryId, user, initialPatientName, initialPatientDocument, isCreatingDraft]);
+  }, [historyId, currentHistoryId, user, initialPatientName, initialPatientDocument, isCreatingDraft, logout]);
 
   // Efecto para asegurar que los datos del paciente tengan valores antes de mostrar el consentimiento
   useEffect(() => {
@@ -445,8 +455,8 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!user) {
       alert('No se ha identificado al usuario. Por favor inicie sesión.');
       return;
@@ -501,13 +511,8 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
 
   const sectionItems = [
     { id: 'personal', label: 'Información Personal', icon: <FaUser /> },
-    { id: 'guardians', label: 'Responsables', icon: <FaIdCard /> },
-    { id: 'professional', label: 'Profesional', icon: <FaStethoscope /> },
-    { id: 'personalHistory', label: 'Antecedentes Personales', icon: <FaNotesMedical /> },
-    { id: 'familyHistory', label: 'Antecedentes Familiares', icon: <FaClipboardList /> },
-    { id: 'development', label: 'Desarrollo', icon: <FaFlask /> },
-    { id: 'clinical', label: 'Información Clínica', icon: <FaFileMedical /> },
-    { id: 'evolution', label: 'Evolución', icon: <FaHospital /> }
+    { id: 'orientation', label: 'Orientación Psicológica', icon: <FaFileMedical /> },
+    { id: 'followUp', label: 'Seguimiento', icon: <FaHospital /> }
   ];
 
   const currentSectionIndex = sectionItems.findIndex(item => item.id === activeSection);
@@ -645,7 +650,7 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
             <p className="text-gray-800 font-medium">Cargando información...</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
             {/* Barra de progreso */}
             <div className="mb-8">
               <div className="flex justify-between mb-2">
@@ -773,6 +778,59 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
                     </div>
                     {renderField("Referido por", "referredBy", "text")}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {(activeSection === 'orientation') && (
+              <div>
+                <SectionHeader icon={<FaFileMedical />} title="Orientación Psicológica" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Motivo de la orientación", "consultationReason", "textarea")}
+                  {renderField("Descripción de la situación actual", "problemHistory", "textarea")}
+                  {renderField("Antecedentes relevantes", "personalOther", "textarea")}
+                  {renderField("Fortalezas y recursos personales", "strengthsResources", "textarea")}
+
+                  <div className="mb-5">
+                    <label className="block text-sm font-medium mb-1 text-gray-800">
+                      Trastorno mental identificado, si aplica
+                    </label>
+                    <select
+                      name="diagnosis"
+                      value={formData.diagnosis || ''}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#bec5a4] focus:ring-2 focus:ring-[#bec5a4]/20 bg-[#f8fafc] text-gray-800"
+                    >
+                      <option value="">Seleccione una opción</option>
+                      {DIAGNOSIS_OPTIONS.map(group => (
+                        <optgroup label={group.category} key={group.category}>
+                          {group.options.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </div>
+
+                  {renderField("Valoración profesional", "psychologicalAssessment", "textarea")}
+                  {renderField("Objetivo de la orientación", "therapeuticGoals", "textarea")}
+                  {renderField("Qué se busca lograr durante la sesión", "sessionGoal", "textarea")}
+                </div>
+              </div>
+            )}
+
+            {(activeSection === 'followUp') && (
+              <div>
+                <SectionHeader icon={<FaHospital />} title="Registro de la orientación y seguimiento" />
+
+                <div className="grid grid-cols-1 gap-6">
+                  {renderField("Temas abordados", "topicsDiscussed", "textarea")}
+                  {renderField("Herramientas entregadas", "toolsProvided", "textarea")}
+                  {renderField("Plan de acción", "actionPlan", "textarea")}
+                  {renderField("Recomendaciones", "recommendations", "textarea")}
+                  {renderField("Remisión", "referralInfo", "textarea")}
+                  {renderField("Seguimiento", "followUp", "textarea")}
                 </div>
               </div>
             )}
@@ -1086,7 +1144,8 @@ const HistoryForm: React.FC<ExtendedHistoryFormProps> = ({
               </button>
               {isLastSection ? (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => handleSubmit()}
                   disabled={isLoading}
                   className="flex items-center px-6 py-3 bg-linear-to-r from-[#bec5a4] to-[#a0a78c] text-white font-medium rounded-xl hover:from-[#a0a78c] hover:to-[#8a9379] transition-all shadow-lg"
                 >

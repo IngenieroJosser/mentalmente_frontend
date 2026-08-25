@@ -42,10 +42,14 @@ export type MedicalRecordWithUser = MedicalRecord & {
   mentalExam?: string;
   psychologicalAssessment?: string;
   therapeuticGoals?: string;
-  treatmentPlan?: string;
+  sessionGoal?: string;
+  strengthsResources?: string;
+  topicsDiscussed?: string;
+  toolsProvided?: string;
+  actionPlan?: string;
   referralInfo?: string;
   recommendations?: string;
-  evolution?: string;
+  followUp?: string;
 };
 
 export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | 'admissionDate'> & {
@@ -62,10 +66,14 @@ export type MedicalRecordFormData = Omit<Partial<MedicalRecord>, 'birthDate' | '
   mentalExam?: string;
   psychologicalAssessment?: string;
   therapeuticGoals?: string;
-  treatmentPlan?: string;
+  sessionGoal?: string;
+  strengthsResources?: string;
+  topicsDiscussed?: string;
+  toolsProvided?: string;
+  actionPlan?: string;
   referralInfo?: string;
   recommendations?: string;
-  evolution?: string;
+  followUp?: string;
   birthDate?: Date;
   admissionDate?: Date;
   pathologySeverity?: number;
@@ -97,8 +105,14 @@ export type MedicalRecordFormData_ = Omit<Partial<MedicalRecord>, 'birthDate' | 
   psychologicalAssessment?: string;
   therapeuticGoals?: string;
   treatmentPlan?: string;
+  sessionGoal?: string;
+  strengthsResources?: string;
+  topicsDiscussed?: string;
+  toolsProvided?: string;
+  actionPlan?: string;
   referralInfo?: string;
   recommendations?: string;
+  followUp?: string;
   evolution?: string;
 };
 

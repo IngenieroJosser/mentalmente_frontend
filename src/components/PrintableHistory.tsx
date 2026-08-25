@@ -35,10 +35,10 @@ const PrintableHistory: React.FC<PrintableHistoryProps> = ({ record }) => {
             </div>
             <div>
               <h1 className="text-center text-2xl font-bold uppercase">
-                HISTORIA CLÍNICA PSICOLÓGICA
+                HISTORIA DE ORIENTACIÓN PSICOLÓGICA
               </h1>
               <p className="text-center text-sm text-[#c77914] font-medium mt-1">
-                SANATÚ SAS - Centro de Psicología Integral
+                Liyiveth Quintero García - Psicóloga
               </p>
             </div>
           </div>
@@ -276,67 +276,69 @@ const PrintableHistory: React.FC<PrintableHistoryProps> = ({ record }) => {
         {/* Página 2 */}
         <div className="page-break mb-10">
           <h2 className="text-xl font-semibold mb-2 border-b border-black">
-            Motivo de consulta
+            Motivo de la orientación
           </h2>
           <div className="border-b border-gray-400 min-h-[1em]">{record.consultationReason}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Historia del problema (duración, evolución, frecuencia)
+            Descripción de la situación actual
           </h2>
           <div className="border-b border-gray-400 min-h-[1em]">{record.problemHistory}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Expectativas del paciente respecto a la terapia
+            Antecedentes relevantes
           </h2>
-          <div className="border-b border-gray-400 min-h-[1em]">{record.therapyExpectations}</div>
+          <div className="border-b border-gray-400 min-h-[1em]">{record.personalOther}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Examen Mental
+            Fortalezas y recursos personales
           </h2>
-          <div className="border-b border-gray-400 min-h-[1em]">{record.mentalExam}</div>
+          <div className="border-b border-gray-400 min-h-[1em]">{record.strengthsResources}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Evaluación psicológica (estado de ánimo, niveles de ansiedad y estrés, habilidades de afrontamiento,
-            funcionamiento cognitivo, emocional, conductual y social)
+            Valoración profesional
           </h2>
           <div className="border-b border-gray-400 min-h-[1em]">{record.psychologicalAssessment}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            IDX O DX (DSM5-CIE 10)
+            Trastorno mental identificado
           </h2>
           <div className="border-b border-gray-400 min-h-[1em]">{record.diagnosis}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Objetivos terapéuticos
+            Objetivo de la orientación
           </h2>
           <div className="border-b border-gray-400 min-h-[1em]">{record.therapeuticGoals}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Plan Terapéutico
+            Qué se busca lograr durante la sesión
           </h2>
-          <div className="border-b border-gray-400 min-h-[1em]">{record.treatmentPlan}</div>
+          <div className="border-b border-gray-400 min-h-[1em]">{record.sessionGoal}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Derivación Y/O Remisión
+            Temas abordados
           </h2>
-          <div className="border-b border-gray-400 min-h-[1em]">{record.referralInfo}</div>
+          <div className="border-b border-gray-400 min-h-[1em]">{record.topicsDiscussed}</div>
 
           <h2 className="text-xl font-semibold mt-6 mb-2 border-b border-black">
-            Recomendaciones
+            Herramientas entregadas
           </h2>
-          <div className="border-b border-gray-400 min-h-[1em]">{record.recommendations}</div>
+          <div className="border-b border-gray-400 min-h-[1em]">{record.toolsProvided}</div>
         </div>
 
         {/* Página 3 */}
         <div className="page-break">
           <h1 className="text-center text-2xl font-bold uppercase mb-4">
-            EVOLUCIÓN
+            SEGUIMIENTO Y PLAN DE ACCIÓN
           </h1>
           <div className="mb-4">
             <strong>Historia N°</strong> {record.recordNumber}
           </div>
           <div className="min-h-[600px] border border-gray-300 p-4">
-            <p>{record.evolution}</p>
+            <p><strong>Plan de acción:</strong> {record.actionPlan}</p>
+            <p><strong>Recomendaciones:</strong> {record.recommendations}</p>
+            <p><strong>Remisión:</strong> {record.referralInfo}</p>
+            <p><strong>Seguimiento:</strong> {record.followUp}</p>
           </div>
         </div>
       </div>
@@ -349,9 +351,9 @@ const PrintableHistory: React.FC<PrintableHistoryProps> = ({ record }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
           </div>
-          <p className="text-[#19334c]">SanaTú - Centro de Orientación Psicológica</p>
+          <p className="text-[#19334c]">Liyiveth Quintero García | Psicóloga</p>
         </div>
-        <p className="text-[#19334c]">322 9565 682 | @mentalmentep | mentalmente.gerencio@gmail.com</p>
+        <p className="text-[#19334c]">T.P. No. 229742 | Orientación psicológica</p>
       </div>
     </div>
   );

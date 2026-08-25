@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 
 /**
  * @swagger
@@ -486,20 +487,32 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const userId = Number(body.userId);
     
     // Validación de campos obligatorios
-    if (!body.recordNumber || !body.userId || !body.patientName) {
+    if (!body.recordNumber || !Number.isInteger(userId) || userId <= 0 || !body.patientName) {
       return NextResponse.json(
         { error: 'Número de registro, ID de usuario y nombre del paciente son requeridos' },
         { status: 400 }
       );
     }
 
-    // Crear la historia clínica con conversión de tipos
-    const newMedicalRecord = await prisma.medicalRecord.create({
-      data: {
-        recordNumber: body.recordNumber,
-        userId: body.userId,
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'El usuario de la sesión ya no existe. Inicie sesión nuevamente.' },
+        { status: 401 }
+      );
+    }
+
+    // Crear la historia clínica con conversión de tipos.
+    const createData = {
+      recordNumber: body.recordNumber as string,
+        userId,
         patientName: body.patientName,
         identificationType: body.identificationType,
         identificationNumber: body.identificationNumber,
@@ -555,12 +568,30 @@ export async function POST(req: NextRequest) {
         psychologicalAssessment: body.psychologicalAssessment,
         diagnosis: body.diagnosis,
         therapeuticGoals: body.therapeuticGoals,
-        treatmentPlan: body.treatmentPlan,
+        sessionGoal: body.sessionGoal,
+        strengthsResources: body.strengthsResources,
+        topicsDiscussed: body.topicsDiscussed,
+        toolsProvided: body.toolsProvided,
+        actionPlan: body.actionPlan,
         referralInfo: body.referralInfo,
         recommendations: body.recommendations,
         evolution: body.evolution,
-      },
-    });
+        followUp: body.followUp,
+    };
+
+    let newMedicalRecord;
+    try {
+      newMedicalRecord = await prisma.medicalRecord.create({ data: createData });
+    } catch (error) {
+      if ((error as { code?: string }).code !== 'P2002') throw error;
+
+      newMedicalRecord = await prisma.medicalRecord.create({
+        data: {
+          ...createData,
+          recordNumber: `HC-${randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase()}`,
+        },
+      });
+    }
 
     return NextResponse.json(newMedicalRecord, { status: 201 });
     
@@ -759,8 +790,9 @@ export async function PUT(req: NextRequest) {
       'familyTraumatic', 'familySubstanceUse', 'familyOther', 'pregnancyInfo',
       'deliveryInfo', 'psychomotorDevelopment', 'familyDynamics', 'consultationReason',
       'problemHistory', 'therapyExpectations', 'mentalExam', 'psychologicalAssessment',
-      'diagnosis', 'therapeuticGoals', 'treatmentPlan', 'referralInfo',
-      'recommendations', 'evolution'
+      'diagnosis', 'therapeuticGoals', 'treatmentPlan',
+      'sessionGoal', 'strengthsResources', 'topicsDiscussed', 'toolsProvided',
+      'actionPlan', 'referralInfo', 'recommendations', 'evolution', 'followUp'
     ];
 
     // Filtrar solo campos permitidos

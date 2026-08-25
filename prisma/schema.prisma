@@ -114,11 +114,15 @@ model MedicalRecord {
   diagnosis                           String?
   therapeuticGoals                    String?
   treatmentPlan                       String?
+  sessionGoal                         String?
+  strengthsResources                  String?
+  topicsDiscussed                     String?
+  toolsProvided                       String?
+  actionPlan                          String?
   referralInfo                        String?
   recommendations                     String?
-
-  // Evolución (campo amplio para registros de seguimiento)
   evolution                           String?
+  followUp                            String?
 }
 
 model ConsentTemplate {
