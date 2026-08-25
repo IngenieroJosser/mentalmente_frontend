@@ -404,8 +404,8 @@ const DashboardReceptionMentalmentePage = () => {
                 <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4">
                   <FileText size={40} className="text-gray-400" />
                 </div>
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No hay historias clínicas</h3>
-                <p className="text-gray-500 mb-6">Comience creando la primera historia clínica</p>
+                <h3 className="text-xl font-medium text-gray-700 mb-2">No orientaciones psicológicas</h3>
+                <p className="text-gray-500 mb-6">Comience creando la primera historia de orientación</p>
                 <button
                   onClick={() => setShowForm(true)}
                   className="bg-gradient-to-r from-[#bec5a4] to-[#aab38c] text-white px-6 py-3 rounded-xl inline-flex items-center hover:shadow-lg transition-all"
@@ -570,31 +570,6 @@ const DashboardReceptionMentalmentePage = () => {
                 </div>
               </div>
             )}
-
-            {/* Templates Section */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50 p-6 mt-8">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">Plantillas de Historias Clínicas</h2>
-                <button className="text-sm text-[#bec5a4] hover:text-[#8f9f7a] font-medium transition-colors">
-                  Ver todas
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {templates.map(template => (
-                  <div key={template.id} className="group bg-white rounded-xl border border-gray-200 p-5 hover:border-[#bec5a4] hover:shadow-md transition-all">
-                    <div className="bg-[#bec5a4]/10 p-3 rounded-lg mb-4 inline-block group-hover:bg-[#bec5a4] group-hover:text-white transition-colors">
-                      <FileText size={24} className="text-[#bec5a4] group-hover:text-white" />
-                    </div>
-                    <h3 className="font-semibold text-gray-800 mb-1">{template.name}</h3>
-                    <p className="text-sm text-gray-500 mb-4">{template.category}</p>
-                    <button className="w-full py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-[#bec5a4] hover:text-white transition-all">
-                      Usar plantilla
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </main>
