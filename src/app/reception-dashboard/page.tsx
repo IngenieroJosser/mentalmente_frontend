@@ -21,7 +21,7 @@ import {
   X
 } from 'lucide-react';
 import Image from 'next/image';
-import { templates, filters } from '@/lib/constants';
+import { filters } from '@/lib/constants';
 import { MedicalRecordWithUser } from '@/lib/type';
 import HistoryForm from '@/components/HistoryForm';
 import { useAuth } from '@/context/AuthContext';
