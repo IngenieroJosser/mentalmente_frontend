@@ -149,10 +149,5 @@ export const stats = [
 
 // Filtros
 export const filters = [
-  { id: "all", name: "Todas" },
   { id: "my", name: "Mis Historias" },
-  { id: "initial", name: "Evaluaciones" },
-  { id: "follow", name: "Seguimientos" },
-  { id: "therapy", name: "Terapias" },
-  { id: "closure", name: "Cierres" },
 ];
